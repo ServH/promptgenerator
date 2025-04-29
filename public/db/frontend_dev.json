@@ -1,6 +1,322 @@
 {
-  "components": [],
-  "stateManagement": [],
-  "responsiveDesign": [],
-  "accessibility": []
+  "components": [
+    {
+      "id": "fc001",
+      "title": {
+        "es": "Componentizar interfaces de usuario",
+        "en": "Componentize user interfaces"
+      },
+      "description": {
+        "es": "Dividir interfaces en componentes reutilizables y modulares",
+        "en": "Break interfaces into reusable, modular components"
+      },
+      "text": {
+        "es": "Divide las interfaces de usuario en componentes pequeños, reutilizables y con un solo propósito. Esto mejora la mantenibilidad, facilita las pruebas y permite una mayor reutilización de código. Sigue una estructura jerárquica clara y evita componentes excesivamente grandes con demasiadas responsabilidades.",
+        "en": "Break user interfaces into small, reusable, single-purpose components. This improves maintainability, simplifies testing, and allows for greater code reuse. Follow a clear hierarchical structure and avoid overly large components with too many responsibilities."
+      },
+      "importance": "high",
+      "category": "components",
+      "subcategory": "component_design",
+      "tags": ["frontend", "organization", "reusability"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Code Project section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "vue", "angular", "svelte", "nextjs"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web", "mobile"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de componentización en React",
+            "en": "Example of componentization in React"
+          },
+          "code": "// En lugar de un componente grande\nfunction UserDashboard() {\n  // ... mucho código aquí\n  return (\n    <div>\n      {/* Muchos elementos UI aquí */}\n    </div>\n  );\n}\n\n// Mejor: Dividir en componentes más pequeños\nfunction UserDashboard() {\n  return (\n    <div className=\"dashboard\">\n      <UserProfile />\n      <ActivityFeed />\n      <StatisticsSummary />\n      <RecentNotifications />\n    </div>\n  );\n}"
+        }
+      ],
+      "relatedInstructions": ["fc002"]
+    },
+    {
+      "id": "fc002",
+      "title": {
+        "es": "Utilizar props con valores por defecto",
+        "en": "Use props with default values"
+      },
+      "description": {
+        "es": "Proporcionar valores por defecto para las props de componentes",
+        "en": "Provide default values for component props"
+      },
+      "text": {
+        "es": "Siempre proporciona valores por defecto para las props de componentes cuando sea posible. Esto mejora la robustez del componente, facilita su uso y evita errores inesperados cuando no se proporcionan ciertos valores. Además, documenta claramente el propósito de cada prop y su tipo esperado.",
+        "en": "Always provide default values for component props when possible. This improves component robustness, makes them easier to use, and prevents unexpected errors when certain values are not provided. Additionally, clearly document the purpose of each prop and its expected type."
+      },
+      "importance": "medium",
+      "category": "components",
+      "subcategory": "props_management",
+      "tags": ["frontend", "robustness", "usability"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Working in Next Lite section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "vue", "svelte", "nextjs"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web", "mobile"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de props con valores por defecto en React",
+            "en": "Example of props with default values in React"
+          },
+          "code": "// React con JavaScript\nfunction Button({ text = 'Click me', type = 'primary', onClick = () => {} }) {\n  return (\n    <button\n      className={`btn btn-${type}`}\n      onClick={onClick}\n    >\n      {text}\n    </button>\n  );\n}\n\n// React con TypeScript\ntype ButtonProps = {\n  text?: string;\n  type?: 'primary' | 'secondary' | 'danger';\n  onClick?: () => void;\n};\n\nfunction Button({ text = 'Click me', type = 'primary', onClick = () => {} }: ButtonProps) {\n  return (\n    <button\n      className={`btn btn-${type}`}\n      onClick={onClick}\n    >\n      {text}\n    </button>\n  );\n}"
+        }
+      ],
+      "relatedInstructions": ["fc001"]
+    }
+  ],
+  "stateManagement": [
+    {
+      "id": "sm001",
+      "title": {
+        "es": "Minimizar estado global",
+        "en": "Minimize global state"
+      },
+      "description": {
+        "es": "Mantener el estado lo más local posible",
+        "en": "Keep state as local as possible"
+      },
+      "text": {
+        "es": "Mantener el estado lo más local posible. Solo coloca en el estado global lo que realmente necesita ser compartido entre componentes distantes. El exceso de estado global dificulta el seguimiento de los cambios y puede provocar re-renderizados innecesarios. Utiliza el estado de componente, Context API o bibliotecas de gestión de estado según la complejidad de tus necesidades.",
+        "en": "Keep state as local as possible. Only place in global state what truly needs to be shared between distant components. Excessive global state makes it difficult to track changes and can cause unnecessary re-renders. Use component state, Context API, or state management libraries according to the complexity of your needs."
+      },
+      "importance": "high",
+      "category": "state_management",
+      "subcategory": "state_organization",
+      "tags": ["frontend", "performance", "maintainability"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "React Component section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "vue", "angular", "svelte", "nextjs"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web", "mobile"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de mantener estado local vs. global",
+            "en": "Example of keeping state local vs. global"
+          },
+          "code": "// MAL: Poner todo en estado global\n// En tu store global\nconst globalStore = {\n  username: '',\n  isLoggedIn: false,\n  theme: 'light',\n  sidebarOpen: false, // Esto no necesita ser global\n  currentFormValues: {}, // Esto no necesita ser global\n  searchResults: [], // Esto no necesita ser global\n}\n\n// MEJOR: Estado distribuido apropiadamente\n// En tu store global, solo lo que debe compartirse ampliamente\nconst globalStore = {\n  username: '',\n  isLoggedIn: false,\n  theme: 'light',\n}\n\n// Estado local en componentes que lo necesitan\nfunction Sidebar() {\n  const [isOpen, setIsOpen] = useState(false); // Estado local\n  // ...\n}\n\nfunction SearchForm() {\n  const [formValues, setFormValues] = useState({}); // Estado local\n  const [searchResults, setSearchResults] = useState([]); // Estado local\n  // ...\n}"
+        }
+      ],
+      "relatedInstructions": ["sm002"]
+    },
+    {
+      "id": "sm002",
+      "title": {
+        "es": "Evitar renderizados innecesarios",
+        "en": "Avoid unnecessary renders"
+      },
+      "description": {
+        "es": "Optimizar renderizados para mejorar el rendimiento",
+        "en": "Optimize renders to improve performance"
+      },
+      "text": {
+        "es": "Evita renderizados innecesarios mediante el uso de técnicas de memorización como React.memo, useMemo y useCallback. Estos hooks pueden ayudar a prevenir re-cálculos costosos y reconstrucción de objetos y funciones en cada renderizado. Sin embargo, utiliza estas optimizaciones solo cuando sean necesarias, ya que la memorización también tiene un costo.",
+        "en": "Avoid unnecessary renders by using memoization techniques like React.memo, useMemo, and useCallback. These hooks can help prevent costly recalculations and rebuilding of objects and functions on every render. However, use these optimizations only when necessary, as memoization also comes with a cost."
+      },
+      "importance": "medium",
+      "category": "state_management",
+      "subcategory": "performance_optimization",
+      "tags": ["frontend", "performance", "react"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "React Component section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "nextjs"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web", "mobile"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de optimización de renderizado en React",
+            "en": "Example of render optimization in React"
+          },
+          "code": "// Uso de React.memo para evitar renderizados innecesarios\nconst ExpensiveComponent = React.memo(function ExpensiveComponent({ data }) {\n  // Componente que solo debe renderizarse cuando data cambia\n  return <div>{/* Renderizado costoso */}</div>;\n});\n\n// Uso de useMemo para evitar recalcular valores costosos\nfunction DataProcessor({ items }) {\n  // Procesar elementos solo cuando items cambia\n  const processedData = useMemo(() => {\n    return items.map(item => expensiveCalculation(item));\n  }, [items]);\n  \n  return <div>{processedData.map(data => <div key={data.id}>{data.value}</div>)}</div>;\n}\n\n// Uso de useCallback para evitar recrear funciones\nfunction Parent() {\n  const [count, setCount] = useState(0);\n  \n  // La función se crea una vez y solo se recrea si dependencies cambian\n  const handleClick = useCallback(() => {\n    console.log('Button clicked');\n    setCount(c => c + 1);\n  }, []); // Array de dependencias vacío\n  \n  return <Child onClick={handleClick} />;\n}"
+        }
+      ],
+      "relatedInstructions": ["sm001"]
+    }
+  ],
+  "responsiveDesign": [
+    {
+      "id": "rd001",
+      "title": {
+        "es": "Adoptar enfoque mobile-first",
+        "en": "Adopt mobile-first approach"
+      },
+      "description": {
+        "es": "Diseñar primero para dispositivos móviles y luego escalar hacia arriba",
+        "en": "Design for mobile devices first, then scale up"
+      },
+      "text": {
+        "es": "Adopta un enfoque mobile-first donde diseñas primero para dispositivos móviles y luego escalas hacia arriba para pantallas más grandes. Esto ayuda a enfocarse en el contenido esencial y garantiza una experiencia robusta en todos los dispositivos. Utiliza media queries para adaptar el diseño a tamaños de pantalla más grandes de manera progresiva.",
+        "en": "Adopt a mobile-first approach where you design for mobile devices first and then scale up for larger screens. This helps focus on essential content and ensures a robust experience across all devices. Use media queries to progressively adapt the layout to larger screen sizes."
+      },
+      "importance": "high",
+      "category": "responsive_design",
+      "subcategory": "design_approach",
+      "tags": ["frontend", "mobile", "ux"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Styling section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["html", "css", "javascript", "typescript"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de CSS con enfoque mobile-first",
+            "en": "Example of mobile-first CSS"
+          },
+          "code": "/* Estilos base para móviles */\n.container {\n  width: 100%;\n  padding: 1rem;\n}\n\n.card {\n  display: block;\n  margin-bottom: 1rem;\n}\n\n/* Media queries para pantallas más grandes */\n@media (min-width: 768px) {\n  .container {\n    max-width: 720px;\n    margin: 0 auto;\n    padding: 2rem;\n  }\n  \n  .card {\n    display: flex;\n    margin-bottom: 2rem;\n  }\n}\n\n@media (min-width: 1024px) {\n  .container {\n    max-width: 960px;\n  }\n  \n  /* Más adaptaciones para desktop */\n}"
+        }
+      ],
+      "relatedInstructions": ["rd002"]
+    },
+    {
+      "id": "rd002",
+      "title": {
+        "es": "Utilizar unidades relativas en CSS",
+        "en": "Use relative units in CSS"
+      },
+      "description": {
+        "es": "Preferir unidades relativas como rem, em y porcentajes sobre píxeles fijos",
+        "en": "Prefer relative units like rem, em, and percentages over fixed pixels"
+      },
+      "text": {
+        "es": "Utiliza unidades relativas (rem, em, %, vh/vw) en lugar de píxeles fijos siempre que sea posible. Las unidades relativas escalan mejor en diferentes tamaños de pantalla y respetan la configuración de accesibilidad del usuario, como el tamaño de fuente del navegador. Usa 'rem' para tamaños consistentes basados en la configuración del usuario y 'em' para escalado relativo al elemento padre.",
+        "en": "Use relative units (rem, em, %, vh/vw) instead of fixed pixels whenever possible. Relative units scale better across different screen sizes and respect user accessibility settings like browser font size. Use 'rem' for consistent sizing based on user settings and 'em' for scaling relative to the parent element."
+      },
+      "importance": "medium",
+      "category": "responsive_design",
+      "subcategory": "css_best_practices",
+      "tags": ["frontend", "css", "accessibility"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Styling section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["css", "scss", "less"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de uso de unidades relativas en CSS",
+            "en": "Example of using relative units in CSS"
+          },
+          "code": "/* MAL: Usar unidades absolutas */\nbody {\n  font-size: 16px;\n}\n\nh1 {\n  font-size: 24px;\n  margin-bottom: 20px;\n}\n\n.container {\n  width: 960px;\n  padding: 30px;\n}\n\n/* MEJOR: Usar unidades relativas */\n:root {\n  font-size: 16px; /* Base para cálculos rem */\n}\n\nbody {\n  font-size: 1rem;\n}\n\nh1 {\n  font-size: 1.5rem;\n  margin-bottom: 1.25rem;\n}\n\n.container {\n  width: 100%;\n  max-width: 60rem; /* 960px / 16px = 60rem */\n  padding: 1.875rem; /* 30px / 16px = 1.875rem */\n}"
+        }
+      ],
+      "relatedInstructions": ["rd001"]
+    }
+  ],
+  "accessibility": [
+    {
+      "id": "a001",
+      "title": {
+        "es": "Usar elementos HTML semánticos",
+        "en": "Use semantic HTML elements"
+      },
+      "description": {
+        "es": "Preferir elementos HTML semánticos sobre divs o spans genéricos",
+        "en": "Prefer semantic HTML elements over generic divs or spans"
+      },
+      "text": {
+        "es": "Utiliza elementos HTML semánticos (<header>, <nav>, <main>, <section>, <article>, <footer>, etc.) en lugar de <div> o <span> genéricos cuando corresponda. Los elementos semánticos proporcionan significado a tu estructura HTML, mejoran la accesibilidad para tecnologías de asistencia, benefician el SEO y hacen que tu código sea más fácil de leer y mantener.",
+        "en": "Use semantic HTML elements (<header>, <nav>, <main>, <section>, <article>, <footer>, etc.) instead of generic <div> or <span> elements when appropriate. Semantic elements provide meaning to your HTML structure, improve accessibility for assistive technologies, benefit SEO, and make your code more readable and maintainable."
+      },
+      "importance": "high",
+      "category": "accessibility",
+      "subcategory": "semantic_html",
+      "tags": ["frontend", "accessibility", "seo"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Accessibility section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["html", "jsx"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de HTML semántico vs. no semántico",
+            "en": "Example of semantic vs. non-semantic HTML"
+          },
+          "code": "<!-- MAL: Uso excesivo de divs sin semántica -->\n<div class=\"header\">\n  <div class=\"logo\">Logo</div>\n  <div class=\"nav\">\n    <div class=\"nav-item\">Home</div>\n    <div class=\"nav-item\">About</div>\n  </div>\n</div>\n<div class=\"content\">\n  <div class=\"article\">\n    <div class=\"title\">Artículo Título</div>\n    <div class=\"text\">Contenido...</div>\n  </div>\n</div>\n<div class=\"footer\">Copyright 2023</div>\n\n<!-- MEJOR: Uso de elementos semánticos -->\n<header>\n  <div class=\"logo\">Logo</div>\n  <nav>\n    <ul>\n      <li><a href=\"/\">Home</a></li>\n      <li><a href=\"/about\">About</a></li>\n    </ul>\n  </nav>\n</header>\n<main>\n  <article>\n    <h1>Artículo Título</h1>\n    <p>Contenido...</p>\n  </article>\n</main>\n<footer>Copyright 2023</footer>"
+        }
+      ],
+      "relatedInstructions": ["a002"]
+    },
+    {
+      "id": "a002",
+      "title": {
+        "es": "Proporcionar texto alternativo para imágenes",
+        "en": "Provide alternative text for images"
+      },
+      "description": {
+        "es": "Añadir atributos alt descriptivos a las imágenes",
+        "en": "Add descriptive alt attributes to images"
+      },
+      "text": {
+        "es": "Siempre proporciona texto alternativo (atributo alt) para imágenes relevantes. El texto debe describir concisamente el contenido y la función de la imagen. Para imágenes decorativas que no aportan contenido significativo, usa un alt vacío (alt=\"\"). Esto permite que los usuarios con lectores de pantalla u otras tecnologías de asistencia comprendan el contenido de la página.",
+        "en": "Always provide alternative text (alt attribute) for relevant images. The text should concisely describe the content and function of the image. For decorative images that don't add meaningful content, use an empty alt (alt=\"\"). This allows users with screen readers or other assistive technologies to understand the page content."
+      },
+      "importance": "high",
+      "category": "accessibility",
+      "subcategory": "image_accessibility",
+      "tags": ["frontend", "accessibility", "images"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Accessibility section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["html", "jsx"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplos de uso correcto de atributos alt",
+            "en": "Examples of proper use of alt attributes"
+          },
+          "code": "<!-- Imagen informativa con alt descriptivo -->\n<img src=\"chart-revenue-2023.png\" alt=\"Gráfico de barras mostrando ingresos por trimestre en 2023\" />\n\n<!-- Imagen de logo con alt conciso -->\n<img src=\"company-logo.png\" alt=\"Logo de Acme Inc.\" />\n\n<!-- Imagen que es un enlace - alt describe destino -->\n<a href=\"/productos\">\n  <img src=\"ver-productos.png\" alt=\"Ver catálogo de productos\" />\n</a>\n\n<!-- Imagen decorativa con alt vacío -->\n<img src=\"decorative-divider.png\" alt=\"\" role=\"presentation\" />\n\n<!-- Imagen compleja con descripción detallada en otro lugar -->\n<figure>\n  <img src=\"infografia-proceso.png\" alt=\"Infografía del proceso de fabricación\" aria-describedby=\"desc-infografia\" />\n  <figcaption id=\"desc-infografia\">\n    El proceso de fabricación incluye 5 etapas: diseño, preparación de materiales,\n    ensamblaje, control de calidad y empaquetado.\n  </figcaption>\n</figure>"
+        }
+      ],
+      "relatedInstructions": ["a001"]
+    }
+  ]
 }
