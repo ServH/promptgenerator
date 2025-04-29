@@ -1,0 +1,82 @@
+{
+  "hooks": [
+    {
+      "id": "react007",
+      "title": {
+        "es": "Hooks personalizados reutilizables",
+        "en": "Reusable custom hooks"
+      },
+      "description": {
+        "es": "Extraer lógica compleja en hooks personalizados para mejorar la reutilización de código",
+        "en": "Extract complex logic into custom hooks to improve code reuse"
+      },
+      "text": {
+        "es": "Crea hooks personalizados para encapsular y reutilizar lógica compleja en tus aplicaciones React. Los hooks personalizados son funciones JavaScript que pueden usar otros hooks de React y deben comenzar con 'use' (por ejemplo, useFetch, useLocalStorage). Esto permite extraer la lógica del ciclo de vida y estado de los componentes, facilitando la reutilización en diferentes partes de la aplicación y mejorando la legibilidad y mantenibilidad del código. Los hooks personalizados bien diseñados hacen que la lógica sea independiente de la interfaz de usuario y simplifican las pruebas.",
+        "en": "Create custom hooks to encapsulate and reuse complex logic in your React applications. Custom hooks are JavaScript functions that can use other React hooks and should start with 'use' (e.g., useFetch, useLocalStorage). This allows extracting lifecycle and state logic from components, enabling reuse across different parts of the application and improving code readability and maintainability. Well-designed custom hooks make logic independent of the UI and simplify testing."
+      },
+      "importance": "high",
+      "category": "hooks",
+      "subcategory": "custom",
+      "tags": ["frontend", "react", "code_organization"],
+      "source": {
+        "agentType": "windsurf",
+        "repository": "Windsurf/Windsurf.txt",
+        "context": "Web Development section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "nextjs", "gatsby"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplos de hooks personalizados comunes",
+            "en": "Examples of common custom hooks"
+          },
+          "code": "import { useState, useEffect, useCallback, useRef } from 'react';\n\n// Custom hook for fetching data\nexport function useFetch(url, options = {}) {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n  \n  const fetchData = useCallback(async () => {\n    try {\n      setLoading(true);\n      setError(null);\n      \n      const response = await fetch(url, options);\n      \n      if (!response.ok) {\n        throw new Error(`HTTP error! Status: ${response.status}`);\n      }\n      \n      const result = await response.json();\n      setData(result);\n    } catch (err) {\n      setError(err.message || 'An error occurred while fetching data');\n    } finally {\n      setLoading(false);\n    }\n  }, [url, options]);\n  \n  useEffect(() => {\n    fetchData();\n  }, [fetchData]);\n  \n  // Return values and a refetch function\n  return { data, loading, error, refetch: fetchData };\n}\n\n// Custom hook for managing local storage\nexport function useLocalStorage(key, initialValue) {\n  // State to store our value\n  const [storedValue, setStoredValue] = useState(() => {\n    if (typeof window === 'undefined') {\n      return initialValue;\n    }\n    \n    try {\n      const item = window.localStorage.getItem(key);\n      return item ? JSON.parse(item) : initialValue;\n    } catch (error) {\n      console.error(error);\n      return initialValue;\n    }\n  });\n  \n  // Function to update stored value and localStorage\n  const setValue = (value) => {\n    try {\n      // Allow value to be a function\n      const valueToStore =\n        value instanceof Function ? value(storedValue) : value;\n      \n      setStoredValue(valueToStore);\n      \n      if (typeof window !== 'undefined') {\n        window.localStorage.setItem(key, JSON.stringify(valueToStore));\n      }\n    } catch (error) {\n      console.error(error);\n    }\n  };\n  \n  return [storedValue, setValue];\n}"
+        }
+      ],
+      "relatedInstructions": ["react003", "react004"]
+    },
+    {
+      "id": "react008",
+      "title": {
+        "es": "Reglas de los hooks",
+        "en": "Rules of hooks"
+      },
+      "description": {
+        "es": "Seguir las reglas de los hooks de React para evitar bugs y comportamientos inesperados",
+        "en": "Follow React hooks rules to avoid bugs and unexpected behavior"
+      },
+      "text": {
+        "es": "Sigue estrictamente las dos reglas principales de los hooks de React para evitar bugs y comportamientos inesperados: 1) Llama a los hooks solo en el nivel superior de componentes funcionales o custom hooks, nunca dentro de bucles, condicionales o funciones anidadas; 2) Llama a los hooks solo desde componentes funcionales de React o custom hooks, no desde funciones regulares de JavaScript. Para facilitar el cumplimiento de estas reglas, considera usar el linter 'eslint-plugin-react-hooks' que detecta automáticamente violaciones a estas reglas.",
+        "en": "Strictly follow the two main rules of React hooks to avoid bugs and unexpected behavior: 1) Only call hooks at the top level of functional components or custom hooks, never inside loops, conditions, or nested functions; 2) Only call hooks from React functional components or custom hooks, not from regular JavaScript functions. To help enforce these rules, consider using the 'eslint-plugin-react-hooks' linter which automatically detects violations of these rules."
+      },
+      "importance": "high",
+      "category": "hooks",
+      "subcategory": "rules",
+      "tags": ["frontend", "react", "best_practices"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "React Hooks section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "nextjs", "gatsby"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplos de uso correcto e incorrecto de hooks",
+            "en": "Examples of correct and incorrect hooks usage"
+          },
+          "code": "import React, { useState, useEffect } from 'react';\n\n// ✅ CORRECT: Hooks called at the top level\nfunction GoodComponent() {\n  const [count, setCount] = useState(0);\n  const [user, setUser] = useState(null);\n  \n  useEffect(() => {\n    document.title = `You clicked ${count} times`;\n  }, [count]);\n  \n  useEffect(() => {\n    fetchUser().then(user => setUser(user));\n  }, []);\n  \n  return (\n    <div>\n      <p>You clicked {count} times</p>\n      <button onClick={() => setCount(count + 1)}>\n        Click me\n      </button>\n      {user && <p>Hello, {user.name}</p>}\n    </div>\n  );\n}\n\n// ❌ INCORRECT: Hook inside a condition\nfunction BadConditionalComponent() {\n  const [count, setCount] = useState(0);\n  \n  // This violates the first rule - hooks must be called at the top level\n  if (count > 5) {\n    // Error: React Hooks must be called in a React function component or a custom React Hook function\n    useEffect(() => {\n      document.title = 'Count is greater than 5';\n    }, []);\n  }\n  \n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + 1)}>Increment</button>\n    </div>\n  );\n}\n\n// ❌ INCORRECT: Hook inside a loop\nfunction BadLoopComponent({ items }) {\n  // This violates the first rule - hooks must be called at the top level\n  items.forEach(item => {\n    // Error: React Hooks must be called in a React function component or a custom React Hook function\n    const [isSelected, setIsSelected] = useState(false);\n    // ...\n  });\n  \n  return <div>This won't work</div>;\n}\n\n// ❌ INCORRECT: Hook inside a nested function\nfunction BadNestedComponent() {\n  const [count, setCount] = useState(0);\n  \n  function handleClick() {\n    // This violates the first rule - hooks must be called at the top level\n    // Error: React Hooks must be called in a React function component or a custom React Hook function\n    const [clickTime, setClickTime] = useState(new Date());\n    setClickTime(new Date());\n    setCount(count + 1);\n  }\n  \n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={handleClick}>Increment</button>\n    </div>\n  );\n}"
+        }
+      ],
+      "relatedInstructions": ["react003", "react007"]
+    }
+  ]
+}
