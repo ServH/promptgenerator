@@ -77,6 +77,45 @@
         }
       ],
       "relatedInstructions": ["react001", "react003"]
+    },
+    {
+      "id": "react003",
+      "title": {
+        "es": "Uso de componentes funcionales con hooks",
+        "en": "Use functional components with hooks"
+      },
+      "description": {
+        "es": "Preferir componentes funcionales con hooks sobre componentes de clase",
+        "en": "Prefer functional components with hooks over class components"
+      },
+      "text": {
+        "es": "Utiliza componentes funcionales con hooks en lugar de componentes de clase en tus proyectos React. Los componentes funcionales son más concisos, fáciles de leer y mantener, y generan un código más limpio. Los hooks como useState, useEffect, useContext y useReducer proporcionan toda la funcionalidad que antes requería clases, pero con una API más intuitiva y composición más sencilla. Esta práctica está alineada con la dirección actual del desarrollo en React.",
+        "en": "Use functional components with hooks instead of class components in your React projects. Functional components are more concise, easier to read and maintain, and result in cleaner code. Hooks like useState, useEffect, useContext, and useReducer provide all the functionality that previously required classes, but with a more intuitive API and simpler composition. This practice aligns with the current direction of React development."
+      },
+      "importance": "high",
+      "category": "components",
+      "subcategory": "paradigm",
+      "tags": ["frontend", "react", "hooks"],
+      "source": {
+        "agentType": "windsurf",
+        "repository": "Windsurf/Windsurf.txt",
+        "context": "Web Development section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "nextjs", "gatsby"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Comparación entre componente de clase y funcional con hooks",
+            "en": "Comparison between class component and functional component with hooks"
+          },
+          "code": "// Componente de clase (enfoque antiguo)\nimport React, { Component } from 'react';\n\nclass Counter extends Component {\n  constructor(props) {\n    super(props);\n    this.state = {\n      count: 0\n    };\n    this.increment = this.increment.bind(this);\n    this.decrement = this.decrement.bind(this);\n  }\n  \n  componentDidMount() {\n    document.title = `Count: ${this.state.count}`;\n  }\n  \n  componentDidUpdate() {\n    document.title = `Count: ${this.state.count}`;\n  }\n  \n  increment() {\n    this.setState(prevState => ({\n      count: prevState.count + 1\n    }));\n  }\n  \n  decrement() {\n    this.setState(prevState => ({\n      count: prevState.count - 1\n    }));\n  }\n  \n  render() {\n    return (\n      <div className=\"counter\">\n        <h2>Counter: {this.state.count}</h2>\n        <button onClick={this.decrement}>-</button>\n        <button onClick={this.increment}>+</button>\n      </div>\n    );\n  }\n}\n\n// Componente funcional con hooks (enfoque moderno)\nimport React, { useState, useEffect } from 'react';\n\nconst Counter = () => {\n  const [count, setCount] = useState(0);\n  \n  useEffect(() => {\n    document.title = `Count: ${count}`;\n  }, [count]); // Solo se ejecuta cuando count cambia\n  \n  const increment = () => setCount(prevCount => prevCount + 1);\n  const decrement = () => setCount(prevCount => prevCount - 1);\n  \n  return (\n    <div className=\"counter\">\n      <h2>Counter: {count}</h2>\n      <button onClick={decrement}>-</button>\n      <button onClick={increment}>+</button>\n    </div>\n  );\n};\n\nexport default Counter;"
+        }
+      ],
+      "relatedInstructions": ["react001", "react002", "react004"]
     }
   ]
 }
