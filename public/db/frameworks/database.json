@@ -1,0 +1,162 @@
+{
+  "optimization": [
+    {
+      "id": "db001",
+      "title": {
+        "es": "Optimizar consultas a bases de datos",
+        "en": "Optimize database queries"
+      },
+      "description": {
+        "es": "Mejorar el rendimiento de las consultas a bases de datos",
+        "en": "Improve database query performance"
+      },
+      "text": {
+        "es": "Optimiza las consultas a bases de datos utilizando indexación apropiada, limitando los campos recuperados, utilizando paginación para grandes conjuntos de datos y evitando consultas N+1. Analiza los planes de ejecución para identificar cuellos de botella y considera el uso de caché para consultas frecuentes que no requieran datos en tiempo real. Implementa la carga diferida (lazy loading) cuando sea apropiado.",
+        "en": "Optimize database queries by using appropriate indexing, limiting retrieved fields, using pagination for large datasets, and avoiding N+1 queries. Analyze execution plans to identify bottlenecks and consider using cache for frequent queries that don't require real-time data. Implement lazy loading when appropriate."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["backend", "performance", "database"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Backend Instructions section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["backend"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de optimización de consultas en MongoDB",
+            "en": "Example of query optimization in MongoDB"
+          },
+          "code": "// Consulta ineficiente (sin índices, sin proyección, sin paginación)\nconst users = await User.find({ role: 'admin' });\n\n// Consulta optimizada\n// 1. Crear índice primero\n// En el modelo o en una migración:\nUserSchema.index({ role: 1 });\n\n// 2. Proyección, paginación, y orden\nconst page = 1;\nconst limit = 20;\nconst skip = (page - 1) * limit;\n\nconst users = await User.find({ role: 'admin' })\n  .select('name email lastLogin') // Proyección: seleccionar solo campos necesarios\n  .sort({ lastLogin: -1 }) // Ordenar\n  .skip(skip) // Paginación\n  .limit(limit); // Limitar resultados\n\n// 3. Evitar consultas N+1\n// MAL: Consultas múltiples (una por usuario)\nconst users = await User.find({ role: 'admin' });\nfor (const user of users) {\n  const posts = await Post.find({ userId: user._id });\n  user.posts = posts;\n}\n\n// BIEN: Usar populate (en Mongoose) o agregación\nconst users = await User.find({ role: 'admin' })\n  .populate('posts'); // Carga relacionada en una sola consulta\n\n// ALTERNATIVA: Usar agregación para mayor control\nconst usersWithPosts = await User.aggregate([\n  { $match: { role: 'admin' } },\n  { $lookup: {\n    from: 'posts',\n    localField: '_id',\n    foreignField: 'userId',\n    as: 'posts'\n  }},\n  { $project: {\n    name: 1,\n    email: 1,\n    posts: 1\n  }}\n]);\n\n// 4. Usar caché para consultas frecuentes\nconst redis = require('redis');\nconst { promisify } = require('util');\nconst client = redis.createClient();\nconst getAsync = promisify(client.get).bind(client);\nconst setexAsync = promisify(client.setex).bind(client);\n\nasync function getCachedUsers(role) {\n  const cacheKey = `users:role:${role}`;\n  \n  // Intentar obtener del caché\n  const cachedData = await getAsync(cacheKey);\n  if (cachedData) {\n    return JSON.parse(cachedData);\n  }\n  \n  // Si no está en caché, obtener de DB\n  const users = await User.find({ role })\n    .select('name email')\n    .limit(100);\n  \n  // Guardar en caché por 5 minutos\n  await setexAsync(cacheKey, 300, JSON.stringify(users));\n  \n  return users;\n}"
+        }
+      ],
+      "relatedInstructions": ["db002"]
+    },
+    {
+      "id": "db002",
+      "title": {
+        "es": "Diseñar esquemas de base de datos eficientes",
+        "en": "Design efficient database schemas"
+      },
+      "description": {
+        "es": "Crear estructuras de datos optimizadas para las necesidades de la aplicación",
+        "en": "Create data structures optimized for application needs"
+      },
+      "text": {
+        "es": "Diseña esquemas de base de datos optimizados para los patrones de acceso de tu aplicación. Normaliza datos para evitar redundancias, pero considera la desnormalización estratégica para mejorar el rendimiento de lectura cuando sea necesario. Utiliza tipos de datos adecuados, establece relaciones claras con claves foráneas, y define índices para las consultas frecuentes. Asegura la integridad de los datos mediante restricciones apropiadas y considera el impacto de tu diseño en la escalabilidad futura.",
+        "en": "Design database schemas optimized for your application's access patterns. Normalize data to avoid redundancies, but consider strategic denormalization to improve read performance when necessary. Use appropriate data types, establish clear relationships with foreign keys, and define indexes for frequent queries. Ensure data integrity through appropriate constraints and consider the impact of your design on future scalability."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "schema_design",
+      "tags": ["backend", "database", "architecture"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Management section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["backend"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de diseño de esquema en MongoDB",
+            "en": "Example of schema design in MongoDB"
+          },
+          "code": "// Ejemplo de esquemas con Mongoose para un blog\nconst mongoose = require('mongoose');\nconst { Schema } = mongoose;\n\n// Esquema de Usuario\nconst UserSchema = new Schema({\n  username: {\n    type: String,\n    required: true,\n    unique: true,\n    trim: true,\n    minlength: 3,\n    maxlength: 30,\n    index: true // Indexar para búsquedas frecuentes por username\n  },\n  email: {\n    type: String,\n    required: true,\n    unique: true,\n    lowercase: true,\n    trim: true,\n    match: [/^\\S+@\\S+\\.\\S+$/, 'Por favor, usa un email válido'],\n    index: true // Indexar para búsquedas por email\n  },\n  password: {\n    type: String,\n    required: true,\n    minlength: 8,\n    select: false // No incluir por defecto en consultas\n  },\n  role: {\n    type: String,\n    enum: ['user', 'editor', 'admin'],\n    default: 'user',\n    index: true // Indexar para filtrar por rol\n  },\n  bio: {\n    type: String,\n    maxlength: 500,\n    default: ''\n  },\n  active: {\n    type: Boolean,\n    default: true,\n    index: true // Indexar para filtrar usuarios activos/inactivos\n  },\n  createdAt: {\n    type: Date,\n    default: Date.now,\n    index: true // Indexar para ordenar por fecha de creación\n  },\n  lastLogin: {\n    type: Date,\n    default: null\n  }\n}, {\n  timestamps: true, // Automáticamente añade createdAt y updatedAt\n  toJSON: { virtuals: true }, // Incluir virtuales en JSON\n  toObject: { virtuals: true } // Incluir virtuales en objetos\n});\n\n// Definición de índices compuestos\nUserSchema.index({ username: 'text', bio: 'text' }); // Índice de texto para búsquedas\n\n// Virtuales (campos calculados)\nUserSchema.virtual('posts', {\n  ref: 'Post',\n  localField: '_id',\n  foreignField: 'author',\n  justOne: false, // Devuelve array\n  options: { sort: { createdAt: -1 } } // Ordenados por fecha de creación descendente\n});\n\n// Esquema de Post (Publicación)\nconst PostSchema = new Schema({\n  title: {\n    type: String,\n    required: true,\n    trim: true,\n    minlength: 3,\n    maxlength: 100,\n    index: true // Indexar para búsquedas por título\n  },\n  slug: {\n    type: String,\n    required: true,\n    unique: true,\n    lowercase: true,\n    trim: true,\n    index: true // Indexar para búsquedas por slug\n  },\n  content: {\n    type: String,\n    required: true,\n    minlength: 10\n  },\n  summary: {\n    type: String,\n    required: true,\n    minlength: 10,\n    maxlength: 200\n  },\n  published: {\n    type: Boolean,\n    default: false,\n    index: true // Indexar para filtrar posts publicados/borradores\n  },\n  author: {\n    type: Schema.Types.ObjectId,\n    ref: 'User',\n    required: true,\n    index: true // Indexar para buscar posts por autor\n  },\n  categories: [{\n    type: Schema.Types.ObjectId,\n    ref: 'Category',\n    index: true // Indexar para buscar posts por categoría\n  }],\n  tags: [{\n    type: String,\n    lowercase: true,\n    trim: true\n  }],\n  viewCount: {\n    type: Number,\n    default: 0\n  },\n  likeCount: {\n    type: Number,\n    default: 0\n  }\n}, {\n  timestamps: true,\n  toJSON: { virtuals: true },\n  toObject: { virtuals: true }\n});\n\n// Índices para eficiencia\nPostSchema.index({ author: 1, createdAt: -1 }); // Posts de un autor ordenados por fecha\nPostSchema.index({ tags: 1 }); // Búsqueda por tags\nPostSchema.index({ title: 'text', content: 'text' }); // Búsqueda de texto completo\n\n// Virtuales\nPostSchema.virtual('comments', {\n  ref: 'Comment',\n  localField: '_id',\n  foreignField: 'post',\n  justOne: false,\n  options: { sort: { createdAt: -1 } }\n});\n\n// Esquema de Categoría\nconst CategorySchema = new Schema({\n  name: {\n    type: String,\n    required: true,\n    unique: true,\n    trim: true,\n    maxlength: 50,\n    index: true\n  },\n  slug: {\n    type: String,\n    required: true,\n    unique: true,\n    lowercase: true,\n    trim: true,\n    index: true\n  },\n  description: {\n    type: String,\n    maxlength: 500\n  },\n  parent: {\n    type: Schema.Types.ObjectId,\n    ref: 'Category',\n    default: null,\n    index: true // Para estructura jerárquica\n  }\n}, {\n  timestamps: true,\n  toJSON: { virtuals: true },\n  toObject: { virtuals: true }\n});\n\n// Para consultas de categorías con sus subcategorías\nCategorySchema.virtual('subcategories', {\n  ref: 'Category',\n  localField: '_id',\n  foreignField: 'parent',\n  justOne: false\n});\n\n// Esquema de Comentario\nconst CommentSchema = new Schema({\n  post: {\n    type: Schema.Types.ObjectId,\n    ref: 'Post',\n    required: true,\n    index: true\n  },\n  author: {\n    type: Schema.Types.ObjectId,\n    ref: 'User',\n    required: true,\n    index: true\n  },\n  parent: {\n    type: Schema.Types.ObjectId,\n    ref: 'Comment',\n    default: null,\n    index: true // Para comentarios anidados\n  },\n  content: {\n    type: String,\n    required: true,\n    minlength: 1,\n    maxlength: 1000\n  },\n  likeCount: {\n    type: Number,\n    default: 0\n  },\n  isApproved: {\n    type: Boolean,\n    default: true,\n    index: true // Para moderación de comentarios\n  }\n}, {\n  timestamps: true,\n  toJSON: { virtuals: true },\n  toObject: { virtuals: true }\n});\n\n// Para consultas de respuestas a comentarios\nCommentSchema.virtual('replies', {\n  ref: 'Comment',\n  localField: '_id',\n  foreignField: 'parent',\n  justOne: false,\n  options: { sort: { createdAt: 1 } }\n});\n\n// Ejemplo de desnormalización estratégica para contador de comentarios\n// Añadimos un contador de comentarios en el esquema de Post para evitar\n// tener que contar comentarios en cada consulta\nPostSchema.add({\n  commentCount: {\n    type: Number,\n    default: 0\n  }\n});\n\n// Hook para actualizar el contador cuando se crea un comentario\nCommentSchema.post('save', async function() {\n  if (this.isNew) {\n    await mongoose.model('Post').updateOne(\n      { _id: this.post },\n      { $inc: { commentCount: 1 } }\n    );\n  }\n});\n\n// Hook para actualizar el contador cuando se elimina un comentario\nCommentSchema.post('remove', async function() {\n  await mongoose.model('Post').updateOne(\n    { _id: this.post },\n    { $inc: { commentCount: -1 } }\n  );\n});\n\n// Crear modelos\nconst User = mongoose.model('User', UserSchema);\nconst Post = mongoose.model('Post', PostSchema);\nconst Category = mongoose.model('Category', CategorySchema);\nconst Comment = mongoose.model('Comment', CommentSchema);\n\nmodule.exports = { User, Post, Category, Comment };"
+        }
+      ],
+      "relatedInstructions": ["db001"]
+    },
+    {
+      "id": "db003",
+      "title": {
+        "es": "Implementar transacciones para operaciones atómicas",
+        "en": "Implement transactions for atomic operations"
+      },
+      "description": {
+        "es": "Utilizar transacciones para mantener la integridad de datos en operaciones complejas",
+        "en": "Use transactions to maintain data integrity in complex operations"
+      },
+      "text": {
+        "es": "Utiliza transacciones para operaciones que afectan a múltiples registros o tablas y que deben ejecutarse de manera atómica (todo o nada). Las transacciones garantizan que los datos permanezcan en un estado consistente incluso en caso de fallos. Implementa un manejo adecuado de errores con rollback automático en caso de excepción y asegúrate de liberar los recursos correctamente. Considera el impacto de las transacciones en el rendimiento y la concurrencia.",
+        "en": "Use transactions for operations that affect multiple records or tables and must execute atomically (all or nothing). Transactions ensure that data remains in a consistent state even in case of failures. Implement proper error handling with automatic rollback in case of exception and make sure to release resources properly. Consider the impact of transactions on performance and concurrency."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "data_integrity",
+      "tags": ["backend", "database", "reliability"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Management section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["backend"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de transacciones en Node.js con Sequelize",
+            "en": "Example of transactions in Node.js with Sequelize"
+          },
+          "code": "// Transacciones con Sequelize (ORM para Node.js)\nconst { sequelize, User, Order, Product, Payment } = require('../models');\n\nasync function createOrderWithTransaction(userId, productIds, paymentDetails) {\n  // Iniciar transacción\n  const t = await sequelize.transaction();\n  \n  try {\n    // 1. Verificar que el usuario existe\n    const user = await User.findByPk(userId, { transaction: t });\n    if (!user) {\n      throw new Error('Usuario no encontrado');\n    }\n    \n    // 2. Verificar stock de productos y calcular total\n    const products = await Product.findAll({\n      where: { id: productIds, inStock: true },\n      transaction: t\n    });\n    \n    if (products.length !== productIds.length) {\n      throw new Error('Algunos productos no están disponibles');\n    }\n    \n    const totalAmount = products.reduce((sum, product) => sum + product.price, 0);\n    \n    // 3. Crear la orden\n    const order = await Order.create({\n      userId,\n      status: 'pending',\n      totalAmount,\n      date: new Date()\n    }, { transaction: t });\n    \n    // 4. Añadir productos a la orden\n    await Promise.all(products.map(product => \n      order.addProduct(product, { \n        through: { quantity: 1, price: product.price },\n        transaction: t \n      })\n    ));\n    \n    // 5. Actualizar inventario (decrementar stock)\n    await Promise.all(products.map(product => \n      product.decrement('stock', { by: 1, transaction: t })\n    ));\n    \n    // 6. Procesar pago\n    const payment = await Payment.create({\n      orderId: order.id,\n      amount: totalAmount,\n      method: paymentDetails.method,\n      status: 'processing',\n      transactionId: paymentDetails.transactionId\n    }, { transaction: t });\n    \n    // 7. Simular verificación de pago con servicio externo\n    const paymentVerified = await verifyPayment(payment.id, totalAmount, paymentDetails);\n    \n    if (!paymentVerified) {\n      throw new Error('Error en la verificación del pago');\n    }\n    \n    // 8. Actualizar estado de pago y orden\n    await payment.update({ status: 'completed' }, { transaction: t });\n    await order.update({ status: 'confirmed' }, { transaction: t });\n    \n    // Si llegamos aquí, todo ha ido bien, confirmamos la transacción\n    await t.commit();\n    \n    return { orderId: order.id, status: 'confirmed', totalAmount };\n  } catch (error) {\n    // Si hay cualquier error, revertimos todos los cambios\n    await t.rollback();\n    console.error('Error en la transacción:', error);\n    throw new Error(`Error al procesar la orden: ${error.message}`);\n  }\n}\n\n// Servicio externo para verificar pago (simplificado)\nasync function verifyPayment(paymentId, amount, details) {\n  // En una implementación real, aquí iría la lógica de verificación\n  // con un servicio externo de pagos como Stripe, PayPal, etc.\n  return new Promise(resolve => {\n    setTimeout(() => {\n      // Simulamos 95% de éxito en los pagos\n      const isSuccessful = Math.random() < 0.95;\n      resolve(isSuccessful);\n    }, 500);\n  });\n}\n\n// Uso desde una ruta API\napp.post('/api/orders', async (req, res) => {\n  try {\n    const { userId, productIds, paymentDetails } = req.body;\n    \n    const result = await createOrderWithTransaction(\n      userId, \n      productIds, \n      paymentDetails\n    );\n    \n    res.status(201).json(result);\n  } catch (error) {\n    res.status(400).json({ error: error.message });\n  }\n});"
+        }
+      ],
+      "relatedInstructions": ["db002"]
+    }
+  ],
+  "security": [
+    {
+      "id": "dbs001",
+      "title": {
+        "es": "Implementar control de acceso a nivel de base de datos",
+        "en": "Implement database-level access control"
+      },
+      "description": {
+        "es": "Asegurar la base de datos mediante permisos granulares",
+        "en": "Secure the database through granular permissions"
+      },
+      "text": {
+        "es": "Implementa control de acceso a nivel de base de datos para restringir qué usuarios y aplicaciones pueden acceder a los datos y qué operaciones pueden realizar. Sigue el principio de privilegio mínimo, otorgando solo los permisos estrictamente necesarios para cada rol. Utiliza usuarios específicos para cada servicio o aplicación, evita usar el usuario root o administrador para operaciones regulares, y revisa periódicamente los permisos para mantener la seguridad.",
+        "en": "Implement database-level access control to restrict which users and applications can access data and what operations they can perform. Follow the principle of least privilege, granting only the permissions strictly necessary for each role. Use specific users for each service or application, avoid using the root or administrator user for regular operations, and periodically review permissions to maintain security."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "security",
+      "tags": ["backend", "database", "security"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Security section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["backend"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de configuración de permisos en MySQL",
+            "en": "Example of permissions configuration in MySQL"
+          },
+          "code": "-- Configuración de permisos en MySQL\n\n-- 1. Crear usuarios específicos para diferentes roles\n-- Usuario para la aplicación web (solo operaciones CRUD básicas)\nCREATE USER 'app_user'@'%' IDENTIFIED BY 'strong_password_here';\n\n-- Usuario para operaciones administrativas (puede alterar esquemas)\nCREATE USER 'admin_user'@'localhost' IDENTIFIED BY 'different_strong_password';\n\n-- Usuario para monitoreo (solo lectura)\nCREATE USER 'monitoring_user'@'%' IDENTIFIED BY 'another_strong_password';\n\n-- 2. Crear la base de datos\nCREATE DATABASE my_application;\n\n-- 3. Otorgar permisos específicos a cada usuario\n-- Permisos para app_user (operaciones CRUD)\nGRANT SELECT, INSERT, UPDATE, DELETE ON my_application.* TO 'app_user'@'%';\n\n-- Permisos para admin_user (todos los privilegios)\nGRANT ALL PRIVILEGES ON my_application.* TO 'admin_user'@'localhost';\n\n-- Permisos para monitoring_user (solo lectura)\nGRANT SELECT ON my_application.* TO 'monitoring_user'@'%';\n\n-- 4. Permisos más granulares (a nivel de tabla)\n-- Restringir app_user para que no pueda modificar tablas críticas\nREVOKE INSERT, UPDATE, DELETE ON my_application.audit_logs FROM 'app_user'@'%';\nREVOKE INSERT, UPDATE, DELETE ON my_application.user_permissions FROM 'app_user'@'%';\n\n-- 5. Permisos a nivel de columna (MySQL 8.0+)\n-- Evitar que app_user pueda ver datos sensibles\nGRANT SELECT (id, username, email, created_at) ON my_application.users TO 'app_user'@'%';\nREVOKE SELECT ON my_application.users FROM 'app_user'@'%';\n\n-- 6. Aplicar los cambios\nFLUSH PRIVILEGES;\n\n-- 7. Verificar permisos otorgados\nSHOW GRANTS FOR 'app_user'@'%';\nSHOW GRANTS FOR 'admin_user'@'localhost';\nSHOW GRANTS FOR 'monitoring_user'@'%';\n\n-- 8. Configurar acceso desde aplicación (ejemplo en Node.js)\n/*\n// Conexión desde la aplicación web\nconst mysql = require('mysql2/promise');\n\nconst dbConfig = {\n  host: process.env.DB_HOST,\n  user: 'app_user', // Usuario con permisos limitados\n  password: process.env.DB_PASSWORD,\n  database: 'my_application',\n  ssl: {\n    rejectUnauthorized: true // Requerir SSL para conexiones\n  }\n};\n\nconst pool = mysql.createPool(dbConfig);\n\n// Uso en código de aplicación\nasync function getUserProfile(userId) {\n  const [rows] = await pool.execute(\n    'SELECT id, username, email, created_at FROM users WHERE id = ?',\n    [userId]\n  );\n  return rows[0];\n}\n*/"
+        }
+      ],
+      "relatedInstructions": ["db001", "db002"]
+    }
+  ]
+}
