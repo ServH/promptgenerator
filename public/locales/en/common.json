@@ -1,0 +1,21 @@
+{
+  "app": {
+    "name": "AI Prompt Generator",
+    "description": "Create customized prompts for web development with AI"
+  },
+  "nav": {
+    "home": "Home",
+    "generator": "Generator",
+    "templates": "Templates",
+    "about": "About"
+  },
+  "general": {
+    "next": "Next",
+    "previous": "Previous",
+    "save": "Save",
+    "cancel": "Cancel",
+    "copy": "Copy",
+    "download": "Download",
+    "edit": "Edit"
+  }
+}

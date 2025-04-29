@@ -1,0 +1,21 @@
+{
+  "app": {
+    "name": "Generador de Prompts para IA",
+    "description": "Crea prompts personalizados para desarrollo web con IA"
+  },
+  "nav": {
+    "home": "Inicio",
+    "generator": "Generador",
+    "templates": "Plantillas",
+    "about": "Acerca de"
+  },
+  "general": {
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "copy": "Copiar",
+    "download": "Descargar",
+    "edit": "Editar"
+  }
+}
