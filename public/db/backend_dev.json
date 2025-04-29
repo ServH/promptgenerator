@@ -1,7 +1,164 @@
 {
-  "apiDesign": [],
-  "authentication": [],
-  "database": [],
-  "errorHandling": [],
-  "performance": []
+  "apiDesign": [
+    {
+      "id": "api001",
+      "title": {
+        "es": "Diseñar APIs RESTful",
+        "en": "Design RESTful APIs"
+      },
+      "description": {
+        "es": "Seguir principios REST para diseño de APIs",
+        "en": "Follow REST principles for API design"
+      },
+      "text": {
+        "es": "Diseña APIs RESTful que sigan convenciones estándar: usa sustantivos plurales para endpoints (ej. /users), métodos HTTP adecuados (GET para obtener, POST para crear, PUT/PATCH para actualizar, DELETE para eliminar), códigos de estado apropiados (200, 201, 400, 404, 500), y respuestas consistentes. Implementa paginación, filtrado y ordenación para colecciones grandes y versiona tu API para cambios incompatibles.",
+        "en": "Design RESTful APIs that follow standard conventions: use plural nouns for endpoints (e.g., /users), appropriate HTTP methods (GET to retrieve, POST to create, PUT/PATCH to update, DELETE to remove), proper status codes (200, 201, 400, 404, 500), and consistent responses. Implement pagination, filtering, and sorting for large collections, and version your API for incompatible changes."
+      },
+      "importance": "high",
+      "category": "api_design",
+      "subcategory": "rest_principles",
+      "tags": ["backend", "api", "conventions"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Backend Instructions section"
+      },
+      "compatibility": {
+        "frameworks": ["express", "nestjs", "django", "flask", "spring", "laravel"],
+        "languages": ["all"],
+        "environments": ["backend"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de endpoints RESTful en Express.js",
+            "en": "Example of RESTful endpoints in Express.js"
+          },
+          "code": "// Estructura RESTful en Express.js\nconst router = express.Router();\n\n// Listar todos los usuarios (GET /users)\nrouter.get('/users', async (req, res) => {\n  try {\n    // Implementación de paginación\n    const page = parseInt(req.query.page) || 1;\n    const limit = parseInt(req.query.limit) || 10;\n    const offset = (page - 1) * limit;\n    \n    // Implementación de filtrado\n    const filter = {};\n    if (req.query.role) filter.role = req.query.role;\n    \n    const users = await User.find(filter).skip(offset).limit(limit);\n    const total = await User.countDocuments(filter);\n    \n    res.status(200).json({\n      data: users,\n      meta: {\n        total,\n        page,\n        limit,\n        pages: Math.ceil(total / limit)\n      }\n    });\n  } catch (error) {\n    res.status(500).json({ error: 'Error al obtener usuarios' });\n  }\n});\n\n// Obtener un usuario específico (GET /users/:id)\nrouter.get('/users/:id', async (req, res) => {\n  try {\n    const user = await User.findById(req.params.id);\n    \n    if (!user) {\n      return res.status(404).json({ error: 'Usuario no encontrado' });\n    }\n    \n    res.status(200).json({ data: user });\n  } catch (error) {\n    res.status(500).json({ error: 'Error al obtener usuario' });\n  }\n});\n\n// Crear un nuevo usuario (POST /users)\nrouter.post('/users', async (req, res) => {\n  try {\n    const newUser = new User(req.body);\n    const savedUser = await newUser.save();\n    \n    res.status(201).json({ data: savedUser });\n  } catch (error) {\n    res.status(400).json({ error: 'Error al crear usuario' });\n  }\n});\n\n// Actualizar un usuario (PUT /users/:id)\nrouter.put('/users/:id', async (req, res) => {\n  try {\n    const updatedUser = await User.findByIdAndUpdate(\n      req.params.id,\n      req.body,\n      { new: true }\n    );\n    \n    if (!updatedUser) {\n      return res.status(404).json({ error: 'Usuario no encontrado' });\n    }\n    \n    res.status(200).json({ data: updatedUser });\n  } catch (error) {\n    res.status(400).json({ error: 'Error al actualizar usuario' });\n  }\n});\n\n// Eliminar un usuario (DELETE /users/:id)\nrouter.delete('/users/:id', async (req, res) => {\n  try {\n    const deletedUser = await User.findByIdAndDelete(req.params.id);\n    \n    if (!deletedUser) {\n      return res.status(404).json({ error: 'Usuario no encontrado' });\n    }\n    \n    res.status(200).json({ message: 'Usuario eliminado correctamente' });\n  } catch (error) {\n    res.status(500).json({ error: 'Error al eliminar usuario' });\n  }\n});"
+        }
+      ],
+      "relatedInstructions": ["api002"]
+    },
+    {
+      "id": "api002",
+      "title": {
+        "es": "Documentar APIs",
+        "en": "Document APIs"
+      },
+      "description": {
+        "es": "Proporcionar documentación clara y completa para las APIs",
+        "en": "Provide clear and comprehensive documentation for APIs"
+      },
+      "text": {
+        "es": "Documenta tus APIs de forma clara y completa utilizando estándares como OpenAPI/Swagger. Incluye descripción de endpoints, parámetros requeridos y opcionales, formatos de solicitud y respuesta, códigos de estado posibles, ejemplos de uso y manejo de errores. La documentación debe mantenerse actualizada con cada cambio en la API y ser accesible tanto para desarrolladores internos como para consumidores externos.",
+        "en": "Document your APIs clearly and comprehensively using standards like OpenAPI/Swagger. Include descriptions of endpoints, required and optional parameters, request and response formats, possible status codes, usage examples, and error handling. Documentation should be kept up-to-date with every API change and be accessible to both internal developers and external consumers."
+      },
+      "importance": "high",
+      "category": "api_design",
+      "subcategory": "documentation",
+      "tags": ["backend", "api", "documentation"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Backend Instructions section"
+      },
+      "compatibility": {
+        "frameworks": ["express", "nestjs", "django", "flask", "spring", "laravel"],
+        "languages": ["all"],
+        "environments": ["backend"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de documentación OpenAPI/Swagger",
+            "en": "Example of OpenAPI/Swagger documentation"
+          },
+          "code": "// En Express.js con Swagger UI\nconst express = require('express');\nconst swaggerUi = require('swagger-ui-express');\nconst swaggerJsDoc = require('swagger-jsdoc');\n\nconst options = {\n  definition: {\n    openapi: '3.0.0',\n    info: {\n      title: 'API de Usuarios',\n      version: '1.0.0',\n      description: 'API para gestionar usuarios',\n    },\n    servers: [\n      {\n        url: 'http://localhost:3000',\n        description: 'Servidor de desarrollo',\n      },\n    ],\n  },\n  apis: ['./routes/*.js'], // Archivos donde están las anotaciones\n};\n\nconst specs = swaggerJsDoc(options);\napp.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));\n\n// Anotaciones en el código de ruta\n/**\n * @swagger\n * /users:  \n *   get:\n *     summary: Retorna una lista de usuarios\n *     description: Recupera una lista paginada de todos los usuarios\n *     parameters:\n *       - in: query\n *         name: page\n *         schema:\n *           type: integer\n *         description: Número de página para paginación\n *       - in: query\n *         name: limit\n *         schema:\n *           type: integer\n *         description: Número de resultados por página\n *     responses:\n *       200:\n *         description: Lista de usuarios recuperada con éxito\n *         content:\n *           application/json:\n *             schema:\n *               type: object\n *               properties:\n *                 data:\n *                   type: array\n *                   items:\n *                     $ref: '#/components/schemas/User'\n *                 meta:\n *                   type: object\n *                   properties:\n *                     total:\n *                       type: integer\n *                     page:\n *                       type: integer\n *                     limit:\n *                       type: integer\n *                     pages:\n *                       type: integer\n */\nrouter.get('/users', async (req, res) => {\n  // Implementación de la función\n});"
+        }
+      ],
+      "relatedInstructions": ["api001"]
+    }
+  ],
+  "errorHandling": [
+    {
+      "id": "err001",
+      "title": {
+        "es": "Implementar manejo de errores centralizado",
+        "en": "Implement centralized error handling"
+      },
+      "description": {
+        "es": "Crear un sistema centralizado para manejar errores en la aplicación",
+        "en": "Create a centralized system for handling errors in the application"
+      },
+      "text": {
+        "es": "Implementa un sistema de manejo de errores centralizado que capture, registre y responda a los errores de manera consistente. Utiliza middleware para interceptar errores, registra información detallada para depuración (incluyendo stack trace en entornos de desarrollo), pero devuelve mensajes de error amigables y seguros a los usuarios. Categoriza los errores por tipo y devuelve códigos de estado HTTP apropiados.",
+        "en": "Implement a centralized error handling system that captures, logs, and responds to errors consistently. Use middleware to intercept errors, log detailed information for debugging (including stack trace in development environments), but return user-friendly and secure error messages to users. Categorize errors by type and return appropriate HTTP status codes."
+      },
+      "importance": "high",
+      "category": "error_handling",
+      "subcategory": "error_middleware",
+      "tags": ["backend", "robustness", "user_experience"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Backend Instructions section"
+      },
+      "compatibility": {
+        "frameworks": ["express", "nestjs", "django", "flask", "spring", "laravel"],
+        "languages": ["all"],
+        "environments": ["backend"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de middleware de manejo de errores en Express.js",
+            "en": "Example of error handling middleware in Express.js"
+          },
+          "code": "// En Express.js - Middleware de manejo de errores centralizado\n\n// Definición de clases de error personalizadas\nclass AppError extends Error {\n  constructor(message, statusCode, errorCode) {\n    super(message);\n    this.statusCode = statusCode;\n    this.errorCode = errorCode || 'APP_ERROR';\n    this.isOperational = true; // Error esperado/operacional\n    \n    Error.captureStackTrace(this, this.constructor);\n  }\n}\n\nclass NotFoundError extends AppError {\n  constructor(message = 'Recurso no encontrado') {\n    super(message, 404, 'NOT_FOUND');\n  }\n}\n\nclass ValidationError extends AppError {\n  constructor(message = 'Datos de entrada inválidos', errors = []) {\n    super(message, 400, 'VALIDATION_ERROR');\n    this.errors = errors;\n  }\n}\n\nclass AuthorizationError extends AppError {\n  constructor(message = 'No autorizado para realizar esta acción') {\n    super(message, 403, 'FORBIDDEN');\n  }\n}\n\n// Middleware para capturar errores asíncronos\nconst asyncHandler = fn => (req, res, next) => {\n  Promise.resolve(fn(req, res, next)).catch(next);\n};\n\n// Middleware de manejo de errores centralizado\nconst errorHandler = (err, req, res, next) => {\n  // Log detallado para debugging interno\n  console.error(`[ERROR] ${err.stack || err}`);\n  \n  // Variables por defecto\n  let statusCode = err.statusCode || 500;\n  let errorCode = err.errorCode || 'SERVER_ERROR';\n  let message = err.message || 'Error interno del servidor';\n  let errors = err.errors || null;\n  \n  // Determinar si es un error de MongoDB/Mongoose\n  if (err.name === 'CastError') {\n    statusCode = 400;\n    errorCode = 'INVALID_ID';\n    message = `ID inválido: ${err.value}`;\n  } else if (err.name === 'ValidationError') {\n    statusCode = 400;\n    errorCode = 'VALIDATION_ERROR';\n    message = 'Error de validación';\n    errors = Object.values(err.errors).map(val => val.message);\n  } else if (err.code === 11000) { // MongoDB duplicate key error\n    statusCode = 400;\n    errorCode = 'DUPLICATE_KEY';\n    const field = Object.keys(err.keyValue)[0];\n    message = `El valor '${field}' ya existe`;\n  }\n  \n  // En producción, ocultar detalles de errores del servidor\n  if (process.env.NODE_ENV === 'production' && statusCode === 500) {\n    message = 'Error interno del servidor';\n    errors = null;\n  }\n  \n  // Enviar respuesta de error estructurada\n  res.status(statusCode).json({\n    status: 'error',\n    code: errorCode,\n    message,\n    errors,\n    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })\n  });\n};\n\n// Middleware para manejar rutas no encontradas\nconst notFoundHandler = (req, res, next) => {\n  next(new NotFoundError(`No se encontró ${req.originalUrl} en este servidor`));\n};\n\n// Uso en Express\napp.use(notFoundHandler); // Debe ser después de todas las rutas\napp.use(errorHandler); // Último middleware\n\n// Ejemplo de uso en controladores\nconst getUserById = asyncHandler(async (req, res) => {\n  const user = await User.findById(req.params.id);\n  \n  if (!user) {\n    throw new NotFoundError('Usuario no encontrado');\n  }\n  \n  res.status(200).json({\n    status: 'success',\n    data: user\n  });\n});"
+        }
+      ],
+      "relatedInstructions": ["err002"]
+    }
+  ],
+  "performance": [
+    {
+      "id": "perf001",
+      "title": {
+        "es": "Implementar caché para mejorar rendimiento",
+        "en": "Implement caching to improve performance"
+      },
+      "description": {
+        "es": "Utilizar estrategias de caché para reducir carga y mejorar tiempos de respuesta",
+        "en": "Use caching strategies to reduce load and improve response times"
+      },
+      "text": {
+        "es": "Implementa estrategias de caché para mejorar el rendimiento de tu aplicación. Utiliza caché en memoria para datos frecuentemente accedidos, caché de consultas para resultados de base de datos repetitivos, y caché HTTP para respuestas de API. Considera Redis o Memcached para caché distribuido en aplicaciones con múltiples instancias. Establece políticas de invalidación de caché apropiadas para mantener la consistencia de datos.",
+        "en": "Implement caching strategies to improve your application's performance. Use in-memory caching for frequently accessed data, query caching for repetitive database results, and HTTP caching for API responses. Consider Redis or Memcached for distributed caching in multi-instance applications. Establish appropriate cache invalidation policies to maintain data consistency."
+      },
+      "importance": "medium",
+      "category": "performance",
+      "subcategory": "caching",
+      "tags": ["backend", "performance", "scalability"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Backend Instructions section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["backend"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de caché en Express.js con Redis",
+            "en": "Example of caching in Express.js with Redis"
+          },
+          "code": "// Implementación de caché con Redis en Express.js\nconst express = require('express');\nconst redis = require('redis');\nconst { promisify } = require('util');\n\nconst app = express();\n\n// Configuración de cliente Redis\nconst redisClient = redis.createClient({\n  host: process.env.REDIS_HOST || 'localhost',\n  port: process.env.REDIS_PORT || 6379,\n  password: process.env.REDIS_PASSWORD\n});\n\n// Promisificar métodos de Redis\nconst getAsync = promisify(redisClient.get).bind(redisClient);\nconst setexAsync = promisify(redisClient.setex).bind(redisClient);\n\n// Middleware de caché\nconst cacheMiddleware = (duration) => {\n  return async (req, res, next) => {\n    // Omitir caché para solicitudes no GET\n    if (req.method !== 'GET') {\n      return next();\n    }\n    \n    const cacheKey = `api:${req.originalUrl}`;\n    \n    try {\n      // Intentar obtener datos de caché\n      const cachedData = await getAsync(cacheKey);\n      \n      if (cachedData) {\n        const data = JSON.parse(cachedData);\n        return res.status(200).json({\n          ...data,\n          _cached: true\n        });\n      }\n      \n      // Modificar método res.json para almacenar en caché\n      const originalJson = res.json;\n      res.json = function(body) {\n        // Restaurar el método original\n        res.json = originalJson;\n        \n        // Almacenar en caché por la duración especificada (en segundos)\n        setexAsync(cacheKey, duration, JSON.stringify(body))\n          .catch(err => console.error('Error al guardar en caché:', err));\n        \n        // Llamar al método original\n        return res.json(body);\n      };\n      \n      next();\n    } catch (error) {\n      console.error('Error de caché:', error);\n      next();\n    }\n  };\n};\n\n// Función para invalidar caché\nconst invalidateCache = async (pattern) => {\n  const scanAsync = promisify(redisClient.scan).bind(redisClient);\n  const delAsync = promisify(redisClient.del).bind(redisClient);\n  \n  let cursor = '0';\n  do {\n    const [nextCursor, keys] = await scanAsync(cursor, 'MATCH', pattern, 'COUNT', 100);\n    cursor = nextCursor;\n    \n    if (keys.length > 0) {\n      await delAsync(keys);\n      console.log(`Invalidadas ${keys.length} claves de caché con patrón: ${pattern}`);\n    }\n  } while (cursor !== '0');\n};\n\n// Ejemplo de uso en rutas\n\n// Ruta cacheada por 5 minutos (300 segundos)\napp.get('/users', cacheMiddleware(300), async (req, res) => {\n  try {\n    const users = await User.find();\n    res.json({ data: users });\n  } catch (error) {\n    res.status(500).json({ error: error.message });\n  }\n});\n\n// Ruta que invalida caché cuando se modifican usuarios\napp.post('/users', async (req, res) => {\n  try {\n    const newUser = await User.create(req.body);\n    \n    // Invalidar caché relacionada con usuarios\n    await invalidateCache('api:/users*');\n    \n    res.status(201).json({ data: newUser });\n  } catch (error) {\n    res.status(400).json({ error: error.message });\n  }\n});"
+        }
+      ],
+      "relatedInstructions": ["perf002"]
+    }
+  ]
 }
