@@ -1,5 +1,359 @@
 {
-  "bestPractices": [],
-  "codeConventions": [],
-  "designPatterns": []
+  "bestPractices": [
+    {
+      "id": "bp001",
+      "title": {
+        "es": "Verificar disponibilidad de bibliotecas",
+        "en": "Verify library availability"
+      },
+      "description": {
+        "es": "No asumir que una biblioteca está disponible sin verificar primero",
+        "en": "Never assume a library is available without checking first"
+      },
+      "text": {
+        "es": "NUNCA asumas que una biblioteca dada está disponible, incluso si es bien conocida. Siempre verifica que esta biblioteca ya se utilice en el proyecto antes de escribir código que la use. Revisa archivos de configuración como package.json o busca importaciones en archivos existentes para confirmar.",
+        "en": "NEVER assume that a given library is available, even if it is well known. Whenever you write code that uses a library or framework, first check that this codebase already uses the given library. Look at configuration files like package.json or check for imports in existing files to confirm."
+      },
+      "importance": "high",
+      "category": "dependencies",
+      "subcategory": "dependency_management",
+      "tags": ["code_quality", "planning", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Coding Best Practices section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de verificación de biblioteca antes de usarla",
+            "en": "Example of checking for a library before using it"
+          },
+          "code": "// Primero, revisa los archivos de configuración como package.json\n// o busca importaciones en archivos existentes para confirmar\n// que la biblioteca ya está siendo utilizada."
+        }
+      ],
+      "relatedInstructions": ["bp002"]
+    },
+    {
+      "id": "bp002",
+      "title": {
+        "es": "Seguir convenciones de código existentes",
+        "en": "Follow existing code conventions"
+      },
+      "description": {
+        "es": "Adaptar el estilo y patrones al código existente",
+        "en": "Adapt style and patterns to match existing code"
+      },
+      "text": {
+        "es": "Al hacer cambios en archivos, primero comprende las convenciones de código del archivo. Imita el estilo de código, usa las bibliotecas y utilidades existentes, y sigue los patrones establecidos. Observa el estilo de nomenclatura, indentación y estructura utilizada en el resto del código.",
+        "en": "When making changes to files, first understand the file's code conventions. Mimic code style, use existing libraries and utilities, and follow existing patterns. Observe the naming style, indentation, and structure used in the rest of the code."
+      },
+      "importance": "high",
+      "category": "code_quality",
+      "subcategory": "code_conventions",
+      "tags": ["code_style", "maintenance", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Coding Best Practices section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de adaptación al estilo existente",
+            "en": "Example of adapting to existing style"
+          },
+          "code": "// Si el código existente usa camelCase para variables\n// y 2 espacios para indentación:\n\nfunction calculateTotal(itemPrices) {\n  let totalPrice = 0;\n  for (const price of itemPrices) {\n    totalPrice += price;\n  }\n  return totalPrice;\n}\n\n// NO uses snake_case o 4 espacios si ese no es el estilo del proyecto"
+        }
+      ],
+      "relatedInstructions": ["bp001"]
+    },
+    {
+      "id": "bp003",
+      "title": {
+        "es": "Minimizar comentarios redundantes",
+        "en": "Minimize redundant comments"
+      },
+      "description": {
+        "es": "No añadir comentarios que simplemente repitan lo que hace el código",
+        "en": "Don't add comments that simply restate what the code does"
+      },
+      "text": {
+        "es": "No dejes comentarios que simplemente repitan lo que hace el código. Por defecto, no añadas comentarios en absoluto. Solo añade comentarios si son absolutamente necesarios, como para explicar decisiones no obvias, algoritmos complejos o advertencias importantes.",
+        "en": "Never leave any comments that simply restate what the code does. Default to not adding comments at all. Only add comments if they're absolutely necessary, such as to explain non-obvious decisions, complex algorithms, or important warnings."
+      },
+      "importance": "medium",
+      "category": "code_quality",
+      "subcategory": "comments",
+      "tags": ["code_style", "readability", "universal"],
+      "source": {
+        "agentType": "vscode",
+        "repository": "VSCode Agent/Prompt.txt",
+        "context": "When using editor commands section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de comentarios innecesarios vs. útiles",
+            "en": "Example of unnecessary vs. useful comments"
+          },
+          "code": "// MALO: Comentario innecesario\n// Incrementa contador\ncount++;\n\n// BUENO: Comentario útil\n// Incrementamos en uno por cada solicitud no válida para limitar\n// intentos y prevenir ataques de fuerza bruta\nfailedAttempts++;\n"
+        }
+      ],
+      "relatedInstructions": ["bp002"]
+    },
+    {
+      "id": "bp004",
+      "title": {
+        "es": "Validación completa de entradas",
+        "en": "Complete input validation"
+      },
+      "description": {
+        "es": "Validar todas las entradas de usuario y datos externos",
+        "en": "Validate all user inputs and external data"
+      },
+      "text": {
+        "es": "Siempre implementa validación para datos de entrada, especialmente los que provienen del usuario o fuentes externas. Verifica tipos, formatos, rangos y posibles valores nulos. Esto previene errores inesperados y potenciales vulnerabilidades de seguridad como inyecciones de código.",
+        "en": "Always implement validation for input data, especially data that comes from users or external sources. Check types, formats, ranges, and potential null values. This prevents unexpected errors and potential security vulnerabilities like code injections."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "input_validation",
+      "tags": ["security", "robustness", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Security and Validation section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de validación de entrada en JavaScript",
+            "en": "Example of input validation in JavaScript"
+          },
+          "code": "// Validación básica de un campo email\nfunction validateEmail(email) {\n  if (!email) {\n    return 'El email es requerido';\n  }\n  \n  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;\n  if (!emailRegex.test(email)) {\n    return 'El formato de email no es válido';\n  }\n  \n  return null; // Sin errores\n}"
+        }
+      ],
+      "relatedInstructions": ["bp003"]
+    },
+    {
+      "id": "bp005",
+      "title": {
+        "es": "Manejar errores apropiadamente",
+        "en": "Handle errors appropriately"
+      },
+      "description": {
+        "es": "Implementar manejo de errores consistente y granular",
+        "en": "Implement consistent and granular error handling"
+      },
+      "text": {
+        "es": "Implementa manejo de errores centralizado con mensajes de error apropiados y códigos de estado HTTP. Usa bloques try-catch para capturar excepciones, registra los errores relevantes para depuración, pero no expongas información sensible en mensajes de error entregados al usuario.",
+        "en": "Implement centralized error handling with appropriate error messages and HTTP status codes. Use try-catch blocks to capture exceptions, log relevant errors for debugging, but do not expose sensitive information in error messages delivered to the user."
+      },
+      "importance": "high",
+      "category": "error_handling",
+      "subcategory": "error_management",
+      "tags": ["robustness", "user_experience", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Backend Instructions section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de manejo de errores en una API",
+            "en": "Example of error handling in an API"
+          },
+          "code": "// Manejador de errores centralizado\napp.use((err, req, res, next) => {\n  // Log detallado interno para debugging\n  console.error(`[ERROR] ${err.stack || err}`);\n  \n  // Respuesta al usuario\n  const statusCode = err.statusCode || 500;\n  const message = statusCode === 500 \n    ? 'Error interno del servidor' // Ocultar detalles de errores internos\n    : err.message;\n    \n  res.status(statusCode).json({\n    status: 'error',\n    message\n  });\n});"
+        }
+      ],
+      "relatedInstructions": ["bp004"]
+    }
+  ],
+  "codeConventions": [
+    {
+      "id": "cc001",
+      "title": {
+        "es": "Usar componentes funcionales con hooks en React",
+        "en": "Use functional components with hooks in React"
+      },
+      "description": {
+        "es": "Preferir componentes funcionales con hooks en lugar de componentes de clase",
+        "en": "Prefer functional components with hooks instead of class components"
+      },
+      "text": {
+        "es": "Utiliza componentes funcionales con hooks en lugar de componentes de clase en React. Los componentes funcionales son más concisos, más fáciles de probar y permiten una mejor reutilización de la lógica a través de hooks personalizados.",
+        "en": "Use functional components with hooks instead of class components in React. Functional components are more concise, easier to test, and allow for better logic reuse through custom hooks."
+      },
+      "importance": "high",
+      "category": "frontend",
+      "subcategory": "react",
+      "tags": ["react", "modern", "frontend"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "React Component section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "nextjs"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de componente funcional con hooks",
+            "en": "Example of functional component with hooks"
+          },
+          "code": "// Componente funcional con hooks\nfunction UserProfile({ userId }) {\n  const [user, setUser] = useState(null);\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    async function fetchUser() {\n      try {\n        setLoading(true);\n        const userData = await api.getUser(userId);\n        setUser(userData);\n      } catch (error) {\n        console.error('Error fetching user:', error);\n      } finally {\n        setLoading(false);\n      }\n    }\n    \n    fetchUser();\n  }, [userId]);\n\n  if (loading) return <Spinner />;\n  if (!user) return <NotFound />;\n  \n  return (\n    <div className=\"profile\">\n      <h1>{user.name}</h1>\n      <p>{user.bio}</p>\n    </div>\n  );\n}"
+        }
+      ],
+      "relatedInstructions": ["cc002"]
+    },
+    {
+      "id": "cc002",
+      "title": {
+        "es": "Evitar prop drilling",
+        "en": "Avoid prop drilling"
+      },
+      "description": {
+        "es": "Minimizar el paso de props a través de múltiples componentes",
+        "en": "Minimize passing props through multiple component levels"
+      },
+      "text": {
+        "es": "Minimiza el prop drilling (pasar props a través de múltiples niveles de componentes) utilizando Context API, composición de componentes u otras soluciones de gestión de estado cuando sea apropiado. Esto hace que el código sea más mantenible y reduce el acoplamiento entre componentes.",
+        "en": "Minimize prop drilling (passing props through multiple component levels) by using Context API, component composition, or other state management solutions when appropriate. This makes the code more maintainable and reduces coupling between components."
+      },
+      "importance": "medium",
+      "category": "frontend",
+      "subcategory": "react",
+      "tags": ["react", "state_management", "frontend"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "React Component section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "nextjs"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de uso de Context API para evitar prop drilling",
+            "en": "Example of using Context API to avoid prop drilling"
+          },
+          "code": "// Crear un contexto\nconst UserContext = React.createContext();\n\n// Proveedor en un componente superior\nfunction App() {\n  const userData = { /* ... */ };\n  return (\n    <UserContext.Provider value={userData}>\n      <MainContent />\n    </UserContext.Provider>\n  );\n}\n\n// Componente intermedio que no necesita los datos\nfunction MainContent() {\n  return (\n    <div>\n      <Header />\n      <UserProfile />\n      <Footer />\n    </div>\n  );\n}\n\n// Consumir en un componente profundo sin prop drilling\nfunction UserProfile() {\n  const userData = React.useContext(UserContext);\n  // Usar userData directamente\n  return <div>{userData.name}</div>;\n}"
+        }
+      ],
+      "relatedInstructions": ["cc001"]
+    }
+  ],
+  "designPatterns": [
+    {
+      "id": "dp001",
+      "title": {
+        "es": "Implementar arquitectura en capas",
+        "en": "Implement layered architecture"
+      },
+      "description": {
+        "es": "Separar la aplicación en capas con responsabilidades claras",
+        "en": "Separate the application into layers with clear responsibilities"
+      },
+      "text": {
+        "es": "Implementa una arquitectura en capas (controladores, servicios, modelos/repositorios) para separar claramente las responsabilidades. Los controladores manejan las solicitudes y respuestas, los servicios contienen la lógica de negocio, y los modelos/repositorios manejan el acceso a datos. Esta separación mejora la mantenibilidad, testabilidad y adaptabilidad del código.",
+        "en": "Implement a layered architecture (controllers, services, models/repositories) to clearly separate responsibilities. Controllers handle requests and responses, services contain business logic, and models/repositories handle data access. This separation improves maintainability, testability, and adaptability of the code."
+      },
+      "importance": "high",
+      "category": "architecture",
+      "subcategory": "application_structure",
+      "tags": ["backend", "architecture", "organization"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Backend Instructions section"
+      },
+      "compatibility": {
+        "frameworks": ["express", "nestjs", "django", "laravel", "spring"],
+        "languages": ["all"],
+        "environments": ["backend"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de arquitectura en capas en Express.js",
+            "en": "Example of layered architecture in Express.js"
+          },
+          "code": "// Estructura de directorios\n// /controllers - Manejo de HTTP requests/responses\n// /services - Lógica de negocio\n// /models - Definiciones de modelos y acceso a datos\n\n// Controlador\nconst UserController = {\n  async getUser(req, res) {\n    try {\n      const userId = req.params.id;\n      const user = await UserService.getUserById(userId);\n      \n      if (!user) {\n        return res.status(404).json({ message: 'Usuario no encontrado' });\n      }\n      \n      return res.json(user);\n    } catch (error) {\n      return res.status(500).json({ message: 'Error interno del servidor' });\n    }\n  }\n};\n\n// Servicio\nconst UserService = {\n  async getUserById(userId) {\n    // Lógica de negocio aquí\n    const user = await UserRepository.findById(userId);\n    return user;\n  }\n};\n\n// Repositorio/Modelo\nconst UserRepository = {\n  async findById(userId) {\n    // Acceso a la base de datos aquí\n    return await db.users.findUnique({ where: { id: userId } });\n  }\n};"
+        }
+      ],
+      "relatedInstructions": ["dp002"]
+    },
+    {
+      "id": "dp002",
+      "title": {
+        "es": "Seguir principios SOLID",
+        "en": "Follow SOLID principles"
+      },
+      "description": {
+        "es": "Aplicar los principios SOLID para mejorar el diseño del software",
+        "en": "Apply SOLID principles to improve software design"
+      },
+      "text": {
+        "es": "Sigue los principios SOLID para crear código modular y mantenible: Responsabilidad Única (cada clase tiene una sola responsabilidad), Abierto/Cerrado (abierto para extensión, cerrado para modificación), Sustitución de Liskov (las subclases deben ser sustituibles por sus clases base), Segregación de Interfaces (interfaces específicas son mejores que una grande) e Inversión de Dependencias (depender de abstracciones, no de implementaciones).",
+        "en": "Follow SOLID principles to create modular and maintainable code: Single Responsibility (a class should have only one reason to change), Open/Closed (open for extension, closed for modification), Liskov Substitution (subtypes must be substitutable for their base types), Interface Segregation (specific interfaces are better than one general interface), and Dependency Inversion (depend on abstractions, not on concretions)."
+      },
+      "importance": "high",
+      "category": "architecture",
+      "subcategory": "design_principles",
+      "tags": ["architecture", "maintenance", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Coding Best Practices section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de aplicación de principio de responsabilidad única",
+            "en": "Example of applying single responsibility principle"
+          },
+          "code": "// MAL: Clase con múltiples responsabilidades\nclass User {\n  constructor(name, email) {\n    this.name = name;\n    this.email = email;\n  }\n  \n  saveToDatabase() {\n    // Código para guardar usuario en la base de datos\n  }\n  \n  sendWelcomeEmail() {\n    // Código para enviar email de bienvenida\n  }\n  \n  validateUserData() {\n    // Validaciones de datos\n  }\n}\n\n// MEJOR: Separar responsabilidades\nclass User {\n  constructor(name, email) {\n    this.name = name;\n    this.email = email;\n  }\n}\n\nclass UserRepository {\n  saveUser(user) {\n    // Código para guardar usuario en la base de datos\n  }\n}\n\nclass EmailService {\n  sendWelcomeEmail(user) {\n    // Código para enviar email de bienvenida\n  }\n}\n\nclass UserValidator {\n  validate(user) {\n    // Validaciones de datos\n  }\n}"
+        }
+      ],
+      "relatedInstructions": ["dp001"]
+    }
+  ]
 }
