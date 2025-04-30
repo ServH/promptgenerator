@@ -1,0 +1,121 @@
+{
+  "instructions": [
+    {
+      "id": "back001",
+      "title": {
+        "es": "Diseñar APIs RESTful",
+        "en": "Design RESTful APIs"
+      },
+      "description": {
+        "es": "Implementar APIs siguiendo principios REST",
+        "en": "Implement APIs following REST principles"
+      },
+      "text": {
+        "es": "Diseña APIs RESTful que sigan los principios de arquitectura REST. Utiliza sustantivos en plural para los endpoints, verbos HTTP adecuados para las operaciones (GET, POST, PUT, DELETE), implementa códigos de estado HTTP apropiados, mantén las APIs sin estado, y utiliza formatos de respuesta consistentes. Versiona tus APIs adecuadamente para permitir evolución sin romper clientes existentes.",
+        "en": "Design RESTful APIs that follow REST architectural principles. Use plural nouns for endpoints, appropriate HTTP verbs for operations (GET, POST, PUT, DELETE), implement proper HTTP status codes, maintain stateless APIs, and use consistent response formats. Version your APIs appropriately to allow evolution without breaking existing clients."
+      },
+      "importance": "high",
+      "category": "api_design",
+      "subcategory": "rest",
+      "tags": ["backend", "architecture", "http"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "API Design section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["web", "api"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de estructura de API RESTful para gestión de usuarios",
+            "en": "Example of RESTful API structure for user management"
+          },
+          "code": "// Estructura de endpoints REST para gestión de usuarios\n\n// Obtener todos los usuarios (con paginación)\n// GET /api/v1/users?page=1&limit=20\n\n// Obtener un usuario específico\n// GET /api/v1/users/{id}\n\n// Crear un nuevo usuario\n// POST /api/v1/users\n// Body: { \"name\": \"John Doe\", \"email\": \"john@example.com\", ... }\n\n// Actualizar un usuario\n// PUT /api/v1/users/{id}   (reemplazo completo)\n// Body: { \"name\": \"John Doe\", \"email\": \"john@example.com\", ... }\n\n// Actualizar parcialmente un usuario\n// PATCH /api/v1/users/{id}\n// Body: { \"email\": \"newemail@example.com\" }  // Solo campos a actualizar\n\n// Eliminar un usuario\n// DELETE /api/v1/users/{id}\n\n// Recursos anidados - Obtener pedidos de un usuario\n// GET /api/v1/users/{id}/orders\n\n// Respuestas con códigos HTTP apropiados\n// 200 OK - Petición exitosa\n// 201 Created - Recurso creado exitosamente\n// 204 No Content - Petición exitosa sin contenido para devolver\n// 400 Bad Request - Error en la petición del cliente\n// 401 Unauthorized - Autenticación requerida\n// 403 Forbidden - Cliente autenticado pero sin permisos\n// 404 Not Found - Recurso no encontrado\n// 422 Unprocessable Entity - Datos válidos pero incorrectos\n// 500 Internal Server Error - Error del servidor"
+        }
+      ],
+      "relatedInstructions": ["back002", "back005"]
+    },
+    {
+      "id": "back002",
+      "title": {
+        "es": "Documentar APIs adecuadamente",
+        "en": "Document APIs properly"
+      },
+      "description": {
+        "es": "Crear documentación clara y completa para APIs",
+        "en": "Create clear and comprehensive API documentation"
+      },
+      "text": {
+        "es": "Proporciona documentación clara, completa y actualizada para tus APIs. Utiliza herramientas como OpenAPI/Swagger para generar documentación interactiva. Incluye descripciones precisas de cada endpoint, parámetros requeridos y opcionales, formato de cuerpo y respuesta, códigos de estado posibles, y ejemplos de uso. La documentación debe mantenerse sincronizada con la implementación y servir como un contrato para los consumidores de la API.",
+        "en": "Provide clear, comprehensive, and up-to-date documentation for your APIs. Use tools like OpenAPI/Swagger to generate interactive documentation. Include accurate descriptions of each endpoint, required and optional parameters, request and response formats, possible status codes, and usage examples. Documentation should be kept in sync with the implementation and serve as a contract for API consumers."
+      },
+      "importance": "high",
+      "category": "api_design",
+      "subcategory": "documentation",
+      "tags": ["backend", "documentation", "communication"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Backend Development section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["api"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de documentación API con OpenAPI/Swagger",
+            "en": "Example of API documentation with OpenAPI/Swagger"
+          },
+          "code": "// Ejemplo de definición OpenAPI 3.0 para documentar una API REST\n\n{\n  \"openapi\": \"3.0.0\",\n  \"info\": {\n    \"title\": \"User Management API\",\n    \"description\": \"API para gestionar usuarios y sus recursos relacionados\",\n    \"version\": \"1.0.0\",\n    \"contact\": {\n      \"name\": \"API Support\",\n      \"email\": \"support@example.com\"\n    }\n  },\n  \"servers\": [\n    {\n      \"url\": \"https://api.example.com/v1\",\n      \"description\": \"Servidor de producción\"\n    },\n    {\n      \"url\": \"https://staging-api.example.com/v1\",\n      \"description\": \"Servidor de staging\"\n    }\n  ],\n  \"paths\": {\n    \"/users\": {\n      \"get\": {\n        \"summary\": \"Obtener lista de usuarios\",\n        \"description\": \"Retorna una lista paginada de usuarios.\",\n        \"parameters\": [\n          {\n            \"name\": \"page\",\n            \"in\": \"query\",\n            \"description\": \"Número de página para paginación\",\n            \"schema\": {\n              \"type\": \"integer\",\n              \"default\": 1,\n              \"minimum\": 1\n            }\n          },\n          {\n            \"name\": \"limit\",\n            \"in\": \"query\",\n            \"description\": \"Número de registros por página\",\n            \"schema\": {\n              \"type\": \"integer\",\n              \"default\": 20,\n              \"minimum\": 1,\n              \"maximum\": 100\n            }\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Lista de usuarios obtenida exitosamente\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"object\",\n                  \"properties\": {\n                    \"data\": {\n                      \"type\": \"array\",\n                      \"items\": {\n                        \"$ref\": \"#/components/schemas/User\"\n                      }\n                    },\n                    \"pagination\": {\n                      \"$ref\": \"#/components/schemas/Pagination\"\n                    }\n                  }\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Parámetros de solicitud inválidos\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Error\"\n                }\n              }\n            }\n          },\n          \"401\": {\n            \"description\": \"No autenticado\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Error\"\n                }\n              }\n            }\n          }\n        },\n        \"security\": [\n          {\n            \"BearerAuth\": []\n          }\n        ]\n      }\n    }\n  },\n  \"components\": {\n    \"schemas\": {\n      \"User\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"id\": {\n            \"type\": \"string\",\n            \"format\": \"uuid\",\n            \"example\": \"d290f1ee-6c54-4b01-90e6-d701748f0851\"\n          },\n          \"name\": {\n            \"type\": \"string\",\n            \"example\": \"Jane Doe\"\n          },\n          \"email\": {\n            \"type\": \"string\",\n            \"format\": \"email\",\n            \"example\": \"jane@example.com\"\n          },\n          \"created_at\": {\n            \"type\": \"string\",\n            \"format\": \"date-time\"\n          }\n        },\n        \"required\": [\"id\", \"name\", \"email\", \"created_at\"]\n      },\n      \"Pagination\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"total\": {\n            \"type\": \"integer\",\n            \"example\": 100\n          },\n          \"pages\": {\n            \"type\": \"integer\",\n            \"example\": 5\n          },\n          \"page\": {\n            \"type\": \"integer\",\n            \"example\": 1\n          },\n          \"limit\": {\n            \"type\": \"integer\",\n            \"example\": 20\n          }\n        }\n      },\n      \"Error\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"code\": {\n            \"type\": \"string\"\n          },\n          \"message\": {\n            \"type\": \"string\"\n          }\n        }\n      }\n    },\n    \"securitySchemes\": {\n      \"BearerAuth\": {\n        \"type\": \"http\",\n        \"scheme\": \"bearer\",\n        \"bearerFormat\": \"JWT\"\n      }\n    }\n  }\n}"
+        }
+      ],
+      "relatedInstructions": ["back001", "back008"]
+    },
+    {
+      "id": "back003",
+      "title": {
+        "es": "Implementar paginación y filtrado",
+        "en": "Implement pagination and filtering"
+      },
+      "description": {
+        "es": "Añadir soporte para paginación, filtrado y ordenación en APIs",
+        "en": "Add support for pagination, filtering and sorting in APIs"
+      },
+      "text": {
+        "es": "Implementa paginación, filtrado y ordenación eficientes en tus APIs para manejar grandes conjuntos de datos. Utiliza parámetros de consulta para controlar estas funcionalidades, devuelve metadatos de paginación (total, páginas, página actual), soporta filtros múltiples con operadores lógicos cuando sea necesario, y proporciona opciones de ordenación flexibles. Asegúrate de implementar límites razonables para evitar problemas de rendimiento.",
+        "en": "Implement efficient pagination, filtering, and sorting in your APIs to handle large datasets. Use query parameters to control these functionalities, return pagination metadata (total, pages, current page), support multiple filters with logical operators when necessary, and provide flexible sorting options. Ensure you implement reasonable limits to avoid performance issues."
+      },
+      "importance": "medium",
+      "category": "api_design",
+      "subcategory": "data_management",
+      "tags": ["backend", "performance", "database"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "API Design section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["api"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de implementación de paginación y filtrado en Express",
+            "en": "Example of pagination and filtering implementation in Express"
+          },
+          "code": "// Implementación de paginación, filtrado y ordenación en Express y Mongoose\n\nasync function getUsers(req, res) {\n  try {\n    // Parámetros de paginación con valores por defecto\n    const page = parseInt(req.query.page || '1', 10);\n    const limit = Math.min(\n      parseInt(req.query.limit || '20', 10),\n      100  // Límite máximo para prevenir consultas demasiado grandes\n    );\n    const skip = (page - 1) * limit;\n    \n    // Construir filtros desde parámetros de consulta\n    const filters = {};\n    \n    // Aplicar filtros si existen\n    if (req.query.name) {\n      filters.name = { $regex: req.query.name, $options: 'i' }; // Búsqueda insensible a mayúsculas\n    }\n    \n    if (req.query.email) {\n      filters.email = { $regex: req.query.email, $options: 'i' };\n    }\n    \n    if (req.query.role) {\n      filters.role = req.query.role;\n    }\n    \n    if (req.query.createdAfter) {\n      filters.created_at = { $gte: new Date(req.query.createdAfter) };\n    }\n    \n    if (req.query.createdBefore) {\n      filters.created_at = { ...filters.created_at, $lte: new Date(req.query.createdBefore) };\n    }\n    \n    // Construir opciones de ordenación\n    const sortField = req.query.sortBy || 'created_at';\n    const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1;\n    const sortOptions = { [sortField]: sortOrder };\n    \n    // Ejecutar consulta con paginación, filtrado y ordenación\n    const users = await User.find(filters)\n      .sort(sortOptions)\n      .skip(skip)\n      .limit(limit)\n      .select('-password'); // Excluir campos sensibles\n    \n    // Contar total de resultados para metadatos de paginación\n    const total = await User.countDocuments(filters);\n    \n    // Enviar respuesta con datos y metadatos de paginación\n    return res.json({\n      data: users,\n      pagination: {\n        total,\n        pages: Math.ceil(total / limit),\n        page,\n        limit\n      }\n    });\n  } catch (error) {\n    console.error('Error al obtener usuarios:', error);\n    return res.status(500).json({ \n      message: 'Error al obtener usuarios',\n      error: process.env.NODE_ENV === 'development' ? error.message : undefined\n    });\n  }\n}\n\n// Definir la ruta\napp.get('/api/users', getUsers);"
+        }
+      ],
+      "relatedInstructions": ["back001", "back007"]
+    }
+  ]
+}
