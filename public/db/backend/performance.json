@@ -1,0 +1,82 @@
+{
+  "instructions": [
+    {
+      "id": "back013",
+      "title": {
+        "es": "Optimizar rendimiento del servidor",
+        "en": "Optimize server performance"
+      },
+      "description": {
+        "es": "Implementar técnicas para mejorar la velocidad y eficiencia del servidor",
+        "en": "Implement techniques to improve server speed and efficiency"
+      },
+      "text": {
+        "es": "Optimiza el rendimiento del servidor implementando técnicas como compresión de respuestas HTTP, agrupación de consultas a bases de datos, procesamiento asíncrono para operaciones lentas, y uso eficiente de recursos del sistema. Configura correctamente los encabezados de caché HTTP, minimiza la carga de trabajo del servidor moviendo tareas intensivas al cliente cuando sea posible, y considera implementar procesamiento por lotes para operaciones múltiples. Monitorea y analiza regularmente el rendimiento para identificar cuellos de botella.",
+        "en": "Optimize server performance by implementing techniques such as HTTP response compression, database query batching, asynchronous processing for slow operations, and efficient use of system resources. Properly configure HTTP cache headers, minimize server workload by moving intensive tasks to the client when possible, and consider implementing batch processing for multiple operations. Regularly monitor and analyze performance to identify bottlenecks."
+      },
+      "importance": "high",
+      "category": "performance",
+      "subcategory": "server_optimization",
+      "tags": ["backend", "optimization", "scalability"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Performance Optimization section"
+      },
+      "compatibility": {
+        "frameworks": ["express", "nest", "django", "flask", "spring", "laravel"],
+        "languages": ["javascript", "typescript", "python", "java", "php"],
+        "environments": ["server", "api"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de optimizaciones de servidor en Express/Node.js",
+            "en": "Example of server optimizations in Express/Node.js"
+          },
+          "code": "// Optimizaciones de servidor en Express/Node.js\n\nconst express = require('express');\nconst compression = require('compression');\nconst helmet = require('helmet');\nconst cors = require('cors');\n\nconst app = express();\n\n// 1. Comprimir respuestas HTTP\napp.use(compression({\n  // Comprimir todas las respuestas con un tamaño superior a 1KB\n  threshold: 1024,\n  // Nivel de compresión (1-9, donde 9 es la máxima compresión pero más lenta)\n  level: 6,\n  // No comprimir activos ya comprimidos\n  filter: (req, res) => {\n    if (req.headers['x-no-compression']) {\n      return false;\n    }\n    // Comprimir por defecto\n    return compression.filter(req, res);\n  }\n}));\n\n// 2. Establecer encabezados de seguridad\napp.use(helmet());\n\n// 3. Configurar CORS\napp.use(cors({\n  origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',\n  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],\n  allowedHeaders: ['Content-Type', 'Authorization']\n}));\n\n// 4. Establecer encabezados de caché HTTP para activos estáticos\napp.use(express.static('public', {\n  maxAge: '1d', // 1 día de caché para archivos estáticos\n  setHeaders: (res, path) => {\n    // Caché más larga para assets que cambian con un hash (bundle.abc123.js)\n    if (path.includes('.') && path.match(/\\.[0-9a-f]{8,}\\./)) {\n      res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 año\n    }\n  }\n}));\n\n// 5. Evitar bloqueo de operaciones I/O usando promesas y async/await\napp.get('/api/users/:id', async (req, res, next) => {\n  try {\n    // Operaciones paralelas con Promise.all para reducir el tiempo total\n    const [user, posts, analytics] = await Promise.all([\n      User.findById(req.params.id),\n      Post.find({ author: req.params.id }).limit(5),\n      Analytics.findOne({ userId: req.params.id })\n    ]);\n    \n    if (!user) {\n      return res.status(404).json({ message: 'Usuario no encontrado' });\n    }\n    \n    return res.json({\n      user,\n      recentPosts: posts,\n      analytics\n    });\n  } catch (error) {\n    next(error);\n  }\n});"
+        }
+      ],
+      "relatedInstructions": ["back009", "back018"]
+    },
+    {
+      "id": "back014",
+      "title": {
+        "es": "Implementar paginación eficiente",
+        "en": "Implement efficient pagination"
+      },
+      "description": {
+        "es": "Técnicas para paginar grandes conjuntos de datos",
+        "en": "Techniques for paginating large data sets"
+      },
+      "text": {
+        "es": "Implementa paginación eficiente para grandes conjuntos de datos para mejorar el rendimiento y la experiencia del usuario. Utiliza límites en las consultas a la base de datos, implementa paginación basada en cursor para resultados consistentes, evita los problemas de rendimiento de paginación por offset en conjuntos de datos grandes, y proporciona metadatos de paginación claros en las respuestas de la API. La paginación debe ser fácil de usar tanto para clientes como para desarrolladores.",
+        "en": "Implement efficient pagination for large datasets to improve performance and user experience. Use limits in database queries, implement cursor-based pagination for consistent results, avoid the performance issues of offset-based pagination on large datasets, and provide clear pagination metadata in API responses. Pagination should be easy to use for both clients and developers."
+      },
+      "importance": "medium",
+      "category": "performance",
+      "subcategory": "data_fetching",
+      "tags": ["backend", "api", "database"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "API Design section"
+      },
+      "compatibility": {
+        "frameworks": ["express", "nest", "django", "flask", "spring", "laravel"],
+        "languages": ["javascript", "typescript", "python", "java", "php"],
+        "environments": ["api"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de paginación basada en cursor en Node.js con MongoDB",
+            "en": "Example of cursor-based pagination in Node.js with MongoDB"
+          },
+          "code": "// Implementación de paginación basada en cursor en Node.js con MongoDB\n\nconst express = require('express');\nconst mongoose = require('mongoose');\nconst router = express.Router();\n\n// Modelo de ejemplo\nconst Post = mongoose.model('Post', new mongoose.Schema({\n  title: String,\n  content: String,\n  authorId: mongoose.Schema.Types.ObjectId,\n  createdAt: { type: Date, default: Date.now },\n  updatedAt: { type: Date, default: Date.now },\n  viewCount: { type: Number, default: 0 }\n}));\n\n/**\n * Paginación basada en cursor para mejor rendimiento y consistencia\n * en grandes conjuntos de datos.\n */\nrouter.get('/api/posts', async (req, res) => {\n  try {\n    // Parámetros de paginación\n    const limit = Math.min(parseInt(req.query.limit || '20'), 100); // Máximo 100 items\n    const cursor = req.query.cursor; // Cursor de la última solicitud\n    const sortField = req.query.sortBy || 'createdAt'; // Campo para ordenar\n    const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1; // Dirección (desc por defecto)\n    \n    // Construir filtro base\n    const filter = {};\n    \n    // Añadir condición de cursor si existe\n    if (cursor) {\n      // Decodificar el cursor (Base64)\n      const decodedCursor = JSON.parse(Buffer.from(cursor, 'base64').toString('utf-8'));\n      \n      // Construir condición para continuar desde el cursor\n      if (sortOrder === -1) {\n        filter[sortField] = { $lt: decodedCursor.value };\n      } else {\n        filter[sortField] = { $gt: decodedCursor.value };\n      }\n    }\n    \n    // Ejecutar consulta con cursor\n    const posts = await Post.find(filter)\n      .sort({ [sortField]: sortOrder, _id: sortOrder })\n      .limit(limit + 1) // Pedir uno más para saber si hay más páginas\n      .select('title content authorId createdAt'); \n    \n    // Verificar si hay más resultados\n    const hasMore = posts.length > limit;\n    if (hasMore) {\n      posts.pop(); // Quitar el elemento extra\n    }\n    \n    // Generar cursor para la siguiente página\n    let nextCursor = null;\n    if (hasMore && posts.length > 0) {\n      const lastPost = posts[posts.length - 1];\n      const cursorData = {\n        value: lastPost[sortField],\n        id: lastPost._id.toString()\n      };\n      nextCursor = Buffer.from(JSON.stringify(cursorData)).toString('base64');\n    }\n    \n    return res.json({\n      data: posts,\n      pagination: { hasMore, nextCursor }\n    });\n  } catch (error) {\n    return res.status(500).json({ message: 'Error interno del servidor' });\n  }\n});"
+        }
+      ],
+      "relatedInstructions": ["back003", "back013"]
+    }
+  ]
+}
