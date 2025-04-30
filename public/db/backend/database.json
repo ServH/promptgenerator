@@ -1,0 +1,121 @@
+{
+  "instructions": [
+    {
+      "id": "back007",
+      "title": {
+        "es": "Diseñar y optimizar esquemas de bases de datos",
+        "en": "Design and optimize database schemas"
+      },
+      "description": {
+        "es": "Implementar esquemas eficientes y bien estructurados",
+        "en": "Implement efficient and well-structured schemas"
+      },
+      "text": {
+        "es": "Diseña esquemas de bases de datos eficientes y bien estructurados que modelen adecuadamente el dominio de la aplicación. Normaliza las tablas hasta la tercera forma normal (3NF) para reducir redundancia de datos, pero considera desnormalizar estratégicamente para optimizar consultas frecuentes. Define tipos de datos apropiados, establece relaciones con integridad referencial, implementa índices para campos frecuentemente consultados, y mantén documentación clara del esquema. Considera las particularidades del sistema de base de datos utilizado.",
+        "en": "Design efficient and well-structured database schemas that properly model the application domain. Normalize tables to third normal form (3NF) to reduce data redundancy, but consider strategic denormalization to optimize frequent queries. Define appropriate data types, establish relationships with referential integrity, implement indexes for frequently queried fields, and maintain clear schema documentation. Consider the specifics of the database system being used."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "schema_design",
+      "tags": ["backend", "data", "optimization"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Design section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de esquema SQL bien diseñado para una aplicación de blog",
+            "en": "Example of well-designed SQL schema for a blog application"
+          },
+          "code": "-- Esquema SQL bien diseñado para un sistema de blog\n\n-- Tabla de usuarios\nCREATE TABLE users (\n  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),\n  username VARCHAR(50) NOT NULL UNIQUE,\n  email VARCHAR(100) NOT NULL UNIQUE,\n  password_hash VARCHAR(100) NOT NULL,\n  full_name VARCHAR(100),\n  bio TEXT,\n  avatar_url VARCHAR(255),\n  is_admin BOOLEAN DEFAULT FALSE,\n  is_active BOOLEAN DEFAULT TRUE,\n  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP\n);\n\n-- Índices para búsquedas frecuentes\nCREATE INDEX idx_users_username ON users(username);\nCREATE INDEX idx_users_email ON users(email);\n\n-- Tabla de categorías de posts\nCREATE TABLE categories (\n  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),\n  name VARCHAR(50) NOT NULL UNIQUE,\n  slug VARCHAR(50) NOT NULL UNIQUE,\n  description TEXT,\n  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP\n);\n\n-- Tabla de posts\nCREATE TABLE posts (\n  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),\n  title VARCHAR(200) NOT NULL,\n  slug VARCHAR(200) NOT NULL UNIQUE,\n  content TEXT NOT NULL,\n  excerpt VARCHAR(500),\n  featured_image_url VARCHAR(255),\n  is_published BOOLEAN DEFAULT FALSE,\n  view_count INTEGER DEFAULT 0,\n  author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,\n  category_id UUID REFERENCES categories(id) ON DELETE SET NULL,\n  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,\n  published_at TIMESTAMP WITH TIME ZONE\n);\n\n-- Índices para posts\nCREATE INDEX idx_posts_author ON posts(author_id);\nCREATE INDEX idx_posts_category ON posts(category_id);\nCREATE INDEX idx_posts_created_at ON posts(created_at);\nCREATE INDEX idx_posts_published_at ON posts(published_at) WHERE is_published = TRUE;\n\n-- Tabla de tags\nCREATE TABLE tags (\n  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),\n  name VARCHAR(50) NOT NULL UNIQUE,\n  slug VARCHAR(50) NOT NULL UNIQUE\n);\n\n-- Tabla pivot para relación muchos a muchos entre posts y tags\nCREATE TABLE post_tags (\n  post_id UUID REFERENCES posts(id) ON DELETE CASCADE,\n  tag_id UUID REFERENCES tags(id) ON DELETE CASCADE,\n  PRIMARY KEY (post_id, tag_id)\n);\n\n-- Índice para mejorar búsquedas por tag\nCREATE INDEX idx_post_tags_tag ON post_tags(tag_id);\n\n-- Tabla de comentarios\nCREATE TABLE comments (\n  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),\n  content TEXT NOT NULL,\n  post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,\n  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,\n  parent_id UUID REFERENCES comments(id) ON DELETE CASCADE, -- Para comentarios anidados\n  is_approved BOOLEAN DEFAULT FALSE,\n  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP\n);\n\n-- Índices para comentarios\nCREATE INDEX idx_comments_post ON comments(post_id);\nCREATE INDEX idx_comments_user ON comments(user_id);\nCREATE INDEX idx_comments_parent ON comments(parent_id);\n\n-- Vista para contar comentarios por post\nCREATE VIEW post_comment_counts AS\nSELECT post_id, COUNT(*) as comment_count\nFROM comments\nWHERE is_approved = TRUE\nGROUP BY post_id;\n\n-- Trigger para actualizar el timestamp de actualización\nCREATE OR REPLACE FUNCTION update_timestamp()\nRETURNS TRIGGER AS $$\nBEGIN\n   NEW.updated_at = CURRENT_TIMESTAMP;\n   RETURN NEW;\nEND;\n$$ language 'plpgsql';\n\nCREATE TRIGGER update_users_timestamp BEFORE UPDATE ON users\n    FOR EACH ROW EXECUTE PROCEDURE update_timestamp();\n\nCREATE TRIGGER update_posts_timestamp BEFORE UPDATE ON posts\n    FOR EACH ROW EXECUTE PROCEDURE update_timestamp();\n\nCREATE TRIGGER update_comments_timestamp BEFORE UPDATE ON comments\n    FOR EACH ROW EXECUTE PROCEDURE update_timestamp();\n\n-- Trigger para establecer published_at al publicar\nCREATE OR REPLACE FUNCTION set_published_timestamp()\nRETURNS TRIGGER AS $$\nBEGIN\n   IF NEW.is_published = TRUE AND OLD.is_published = FALSE THEN\n     NEW.published_at = CURRENT_TIMESTAMP;\n   END IF;\n   RETURN NEW;\nEND;\n$$ language 'plpgsql';\n\nCREATE TRIGGER set_post_published_timestamp BEFORE UPDATE ON posts\n    FOR EACH ROW EXECUTE PROCEDURE set_published_timestamp();"
+        }
+      ],
+      "relatedInstructions": ["back008", "back010"]
+    },
+    {
+      "id": "back008",
+      "title": {
+        "es": "Implementar ORM/ODM eficientemente",
+        "en": "Implement ORM/ODM efficiently"
+      },
+      "description": {
+        "es": "Utilizar patrones de acceso a datos con ORM/ODM",
+        "en": "Use data access patterns with ORM/ODM"
+      },
+      "text": {
+        "es": "Utiliza un ORM (Object-Relational Mapping) o ODM (Object-Document Mapping) para abstraer la interacción con la base de datos y mejorar la productividad. Define modelos claros y bien estructurados, implementa validación a nivel de modelo, utiliza consultas optimizadas y carga diferida para evitar problemas de rendimiento, y sigue un patrón de repositorio para encapsular la lógica de acceso a datos. Ten cuidado con el problema N+1 y usa técnicas como carga ansiosa cuando sea apropiado.",
+        "en": "Use an ORM (Object-Relational Mapping) or ODM (Object-Document Mapping) to abstract database interaction and improve productivity. Define clear and well-structured models, implement model-level validation, use optimized queries and lazy loading to avoid performance issues, and follow a repository pattern to encapsulate data access logic. Be mindful of the N+1 problem and use techniques like eager loading when appropriate."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "data_access",
+      "tags": ["backend", "data", "patterns"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Access section"
+      },
+      "compatibility": {
+        "frameworks": ["express", "nest", "django", "flask", "spring", "laravel"],
+        "languages": ["javascript", "typescript", "python", "java", "php"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de implementación de modelos y repositorio con TypeORM",
+            "en": "Example of models and repository implementation with TypeORM"
+          },
+          "code": "// Implementación con TypeORM en TypeScript\n\n// Entidad User (modelo)\nimport { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';\nimport { Length, IsEmail } from 'class-validator';\nimport { Post } from './Post';\n\n@Entity('users')\nexport class User {\n  @PrimaryGeneratedColumn('uuid')\n  id: string;\n\n  @Column({ length: 50, unique: true })\n  @Length(3, 50, { message: 'El username debe tener entre 3 y 50 caracteres' })\n  username: string;\n\n  @Column({ length: 100, unique: true })\n  @IsEmail({}, { message: 'El email debe tener un formato válido' })\n  email: string;\n\n  @Column({ name: 'password_hash' })\n  passwordHash: string;\n\n  @Column({ name: 'full_name', length: 100, nullable: true })\n  fullName?: string;\n\n  @Column({ type: 'text', nullable: true })\n  bio?: string;\n\n  @Column({ name: 'avatar_url', length: 255, nullable: true })\n  avatarUrl?: string;\n\n  @Column({ name: 'is_admin', default: false })\n  isAdmin: boolean;\n\n  @Column({ name: 'is_active', default: true })\n  isActive: boolean;\n\n  @CreateDateColumn({ name: 'created_at' })\n  createdAt: Date;\n\n  @UpdateDateColumn({ name: 'updated_at' })\n  updatedAt: Date;\n\n  // Relaciones\n  @OneToMany(() => Post, post => post.author)\n  posts: Post[];\n}\n\n// Repositorio: Encapsula lógica de acceso a datos\nimport { EntityRepository, Repository } from 'typeorm';\nimport { User } from '../entities/User';\n\n@EntityRepository(User)\nexport class UserRepository extends Repository<User> {\n  // Métodos personalizados para operaciones comunes\n\n  async findByEmail(email: string): Promise<User | undefined> {\n    return this.findOne({ where: { email, isActive: true } });\n  }\n\n  async findByUsername(username: string): Promise<User | undefined> {\n    return this.findOne({ where: { username, isActive: true } });\n  }\n\n  // Método que incluye relaciones (carga ansiosa para evitar N+1)\n  async findByIdWithPosts(id: string): Promise<User | undefined> {\n    return this.findOne(id, {\n      relations: ['posts'],\n      where: { isActive: true }\n    });\n  }\n\n  // Búsqueda paginada de usuarios\n  async findAllPaginated(page: number = 1, limit: number = 10): Promise<[User[], number]> {\n    const skip = (page - 1) * limit;\n\n    return this.findAndCount({\n      where: { isActive: true },\n      order: { createdAt: 'DESC' },\n      skip,\n      take: limit\n    });\n  }\n\n  // Actualización parcial\n  async updateProfile(id: string, data: Partial<User>): Promise<User | undefined> {\n    // No permitir actualizar campos sensibles desde este método\n    delete data.passwordHash;\n    delete data.isAdmin;\n    delete data.isActive;\n    \n    await this.update(id, data);\n    return this.findOne(id);\n  }\n}\n\n// Servicio: Usa el repositorio y añade lógica de negocio\nimport { Injectable } from '@nestjs/common';\nimport { InjectRepository } from '@nestjs/typeorm';\nimport { UserRepository } from '../repositories/UserRepository';\nimport { User } from '../entities/User';\nimport { CreateUserDto, UpdateUserDto } from '../dto/user.dto';\nimport * as bcrypt from 'bcrypt';\n\n@Injectable()\nexport class UserService {\n  constructor(\n    @InjectRepository(UserRepository)\n    private userRepository: UserRepository\n  ) {}\n\n  async findAll(page: number = 1, limit: number = 10): Promise<[User[], number]> {\n    return this.userRepository.findAllPaginated(page, limit);\n  }\n\n  async findById(id: string): Promise<User | undefined> {\n    return this.userRepository.findOne(id);\n  }\n\n  async findByIdWithPosts(id: string): Promise<User | undefined> {\n    return this.userRepository.findByIdWithPosts(id);\n  }\n\n  async create(createUserDto: CreateUserDto): Promise<User> {\n    // Lógica de negocio: hash de contraseña\n    const passwordHash = await bcrypt.hash(createUserDto.password, 10);\n\n    // Crear instancia de entidad\n    const user = this.userRepository.create({\n      ...createUserDto,\n      passwordHash\n    });\n\n    // Guardar en base de datos\n    return this.userRepository.save(user);\n  }\n\n  async update(id: string, updateUserDto: UpdateUserDto): Promise<User | undefined> {\n    // Si hay contraseña, actualizarla con hash\n    if (updateUserDto.password) {\n      const passwordHash = await bcrypt.hash(updateUserDto.password, 10);\n      await this.userRepository.update(id, { passwordHash });\n      delete updateUserDto.password;\n    }\n\n    // Actualizar el resto de campos\n    if (Object.keys(updateUserDto).length > 0) {\n      await this.userRepository.updateProfile(id, updateUserDto);\n    }\n\n    return this.userRepository.findOne(id);\n  }\n\n  async delete(id: string): Promise<void> {\n    // Borrado lógico en lugar de físico\n    await this.userRepository.update(id, { isActive: false });\n  }\n}\n"
+        }
+      ],
+      "relatedInstructions": ["back007", "back009"]
+    },
+    {
+      "id": "back009",
+      "title": {
+        "es": "Optimizar consultas a la base de datos",
+        "en": "Optimize database queries"
+      },
+      "description": {
+        "es": "Mejorar el rendimiento de las operaciones de base de datos",
+        "en": "Improve database operation performance"
+      },
+      "text": {
+        "es": "Optimiza las consultas a la base de datos para mejorar el rendimiento de tu aplicación. Utiliza índices adecuados para consultas frecuentes, selecciona solo las columnas necesarias, implementa paginación para conjuntos de datos grandes, minimiza las subconsultas innecesarias, y evita el problema N+1 utilizando carga ansiosa o consultas por lotes. Analiza y optimiza consultas lentas mediante herramientas de perfil de base de datos, y considera implementar caché para consultas frecuentes e inmutables.",
+        "en": "Optimize database queries to improve your application's performance. Use appropriate indexes for frequent queries, select only necessary columns, implement pagination for large datasets, minimize unnecessary subqueries, and avoid the N+1 problem by using eager loading or batch queries. Analyze and optimize slow queries using database profiling tools, and consider implementing caching for frequent and immutable queries."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "performance",
+      "tags": ["backend", "optimization", "performance"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Optimization section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de optimización de consultas en SQL y con ORM",
+            "en": "Example of query optimization in SQL and with ORM"
+          },
+          "code": "-- Optimización de consultas SQL y ejemplos con ORM\n\n-- PROBLEMA: Consulta ineficiente que selecciona todas las columnas\n-- SELECT * FROM users WHERE last_login > '2025-01-01';\n\n-- OPTIMIZADO: Seleccionar solo columnas necesarias\nSELECT id, username, email, last_login FROM users WHERE last_login > '2025-01-01';\n\n-- PROBLEMA: Consulta sin índice en una tabla grande\n-- SELECT * FROM posts WHERE category_id = 5;\n\n-- SOLUCIÓN: Crear índice para mejorar rendimiento\nCREATE INDEX idx_posts_category ON posts(category_id);\n\n-- PROBLEMA: Consulta con JOIN ineficiente\n-- SELECT p.*, u.username FROM posts p JOIN users u ON p.author_id = u.id;\n\n-- OPTIMIZADO: JOIN con columnas específicas y filtro\nSELECT p.id, p.title, p.created_at, u.username \nFROM posts p \nJOIN users u ON p.author_id = u.id \nWHERE p.is_published = TRUE \nORDER BY p.created_at DESC \nLIMIT 20 OFFSET 0;\n\n-- PROBLEMA: Consulta con subconsulta ineficiente\n-- SELECT * FROM posts WHERE author_id IN (SELECT id FROM users WHERE is_admin = TRUE);\n\n-- OPTIMIZADO: Usar JOIN en lugar de subconsulta\nSELECT p.* \nFROM posts p \nJOIN users u ON p.author_id = u.id \nWHERE u.is_admin = TRUE;\n\n-- PROBLEMA: Consulta de conteo ineficiente\n-- SELECT COUNT(*) FROM comments WHERE post_id = 123;\n\n-- OPTIMIZADO: Consulta de estimación si la precisión exacta no es crítica\n-- (PostgreSQL específico)\nSELECT reltuples::bigint AS estimate FROM pg_class WHERE relname = 'comments';\n\n-- Ejemplos con ORM (Sequelize - Node.js)\n\n// PROBLEMA: N+1 queries al cargar relaciones\n// Primero carga todos los posts\nconst posts = await Post.findAll({ where: { isPublished: true } });\n// Luego por cada post hace una consulta para obtener el autor (N+1 problema)\nfor (const post of posts) {\n  const author = await User.findByPk(post.authorId);\n  console.log(`Post ${post.title} by ${author.username}`);\n}\n\n// SOLUCIÓN: Usar eager loading (incluir relacionados en una sola consulta)\nconst posts = await Post.findAll({\n  where: { isPublished: true },\n  include: [{\n    model: User,\n    as: 'author',\n    attributes: ['id', 'username'] // Solo columnas necesarias\n  }]\n});\n\nposts.forEach(post => {\n  console.log(`Post ${post.title} by ${post.author.username}`);\n});\n\n// PROBLEMA: Cargar todos los registros sin paginación\nconst allComments = await Comment.findAll();\n\n// SOLUCIÓN: Implementar paginación\nconst page = 1;\nconst pageSize = 20;\nconst offset = (page - 1) * pageSize;\n\nconst { rows: comments, count: totalComments } = await Comment.findAndCountAll({\n  limit: pageSize,\n  offset,\n  order: [['createdAt', 'DESC']],\n  where: { isApproved: true }\n});\n\n// PROBLEMA: Múltiples consultas para operaciones por lotes\nposts.forEach(async (post) => {\n  await post.update({ viewCount: post.viewCount + 1 });\n});\n\n// SOLUCIÓN: Usar operaciones por lotes\nawait Post.update(\n  { viewCount: sequelize.literal('view_count + 1') },\n  { where: { id: posts.map(post => post.id) } }\n);\n\n// Implementar caché para consultas frecuentes\nconst Redis = require('ioredis');\nconst redis = new Redis();\n\nasync function getCachedCategories() {\n  // Intentar obtener de caché primero\n  const cachedCategories = await redis.get('all_categories');\n  \n  if (cachedCategories) {\n    return JSON.parse(cachedCategories);\n  }\n  \n  // Si no está en caché, consultar base de datos\n  const categories = await Category.findAll({\n    attributes: ['id', 'name', 'slug'],\n    order: [['name', 'ASC']]\n  });\n  \n  // Guardar en caché (expiración: 1 hora)\n  await redis.set('all_categories', JSON.stringify(categories), 'EX', 3600);\n  \n  return categories;\n}\n\n// Actualización de caché cuando hay cambios\nasync function updateCategory(id, data) {\n  const category = await Category.findByPk(id);\n  await category.update(data);\n  \n  // Invalidar caché para forzar recarga\n  await redis.del('all_categories');\n  \n  return category;\n}"
+        }
+      ],
+      "relatedInstructions": ["back007", "back008"]
+    }
+  ]
+}
