@@ -1,0 +1,121 @@
+{
+  "instructions": [
+    {
+      "id": "sec004",
+      "title": {
+        "es": "Implementar autenticación segura",
+        "en": "Implement secure authentication"
+      },
+      "description": {
+        "es": "Utilizar mecanismos de autenticación robustos y seguros",
+        "en": "Use robust and secure authentication mechanisms"
+      },
+      "text": {
+        "es": "Implementa un sistema de autenticación robusto utilizando protocolos y bibliotecas probadas. Utiliza hashing de contraseñas con algoritmos fuertes como bcrypt con un factor de trabajo adecuado. Implementa límites de intentos fallidos, verificación en dos pasos cuando sea posible, y asegúrate de que todas las comunicaciones de autenticación ocurran sobre HTTPS.",
+        "en": "Implement a robust authentication system using proven protocols and libraries. Use password hashing with strong algorithms like bcrypt with an appropriate work factor. Implement rate limiting for failed attempts, two-factor verification when possible, and ensure all authentication communications occur over HTTPS."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "authentication",
+      "tags": ["security", "user_management", "data_protection"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Authentication Security section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["web", "mobile", "api"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de hashing de contraseñas con bcrypt en Node.js",
+            "en": "Example of password hashing with bcrypt in Node.js"
+          },
+          "code": "const bcrypt = require('bcrypt');\n\n// Al registrar un usuario nuevo\nasync function registerUser(email, password) {\n  // Generar un salt con factor de costo apropiado (12+)\n  const saltRounds = 12;\n  \n  try {\n    // Hash de contraseña con bcrypt\n    const hashedPassword = await bcrypt.hash(password, saltRounds);\n    \n    // Guardar email y contraseña hasheada en la base de datos\n    await db.users.insert({\n      email,\n      password: hashedPassword,\n      created_at: new Date()\n    });\n    \n    return { success: true };\n  } catch (error) {\n    console.error('Error al registrar usuario:', error);\n    throw new Error('No se pudo completar el registro');\n  }\n}"
+        }
+      ],
+      "relatedInstructions": ["sec001", "sec005"]
+    },
+    {
+      "id": "sec005",
+      "title": {
+        "es": "Gestionar sesiones de forma segura",
+        "en": "Manage sessions securely"
+      },
+      "description": {
+        "es": "Implementar manejo seguro de sesiones y tokens",
+        "en": "Implement secure handling of sessions and tokens"
+      },
+      "text": {
+        "es": "Maneja las sesiones de usuario de forma segura utilizando identificadores de sesión aleatorios, cookies con los atributos HttpOnly, Secure y SameSite apropiados, y tiempos de expiración razonables. Para APIs, utiliza tokens JWT con expiración adecuada, rotación segura y mecanismos para revocar accesos. Implementa la invalidación de sesión al cerrar sesión y considera la implementación de detección de robo de sesión.",
+        "en": "Handle user sessions securely using random session identifiers, cookies with appropriate HttpOnly, Secure, and SameSite attributes, and reasonable expiration times. For APIs, use JWT tokens with proper expiration, secure rotation, and mechanisms to revoke access. Implement session invalidation on logout and consider implementing session theft detection."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "authentication",
+      "tags": ["security", "web", "api"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Web Security section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["web", "api"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de configuración de cookies seguras en Express",
+            "en": "Example of secure cookie configuration in Express"
+          },
+          "code": "// Configurar cookies seguras en Express\napp.use(session({\n  secret: process.env.SESSION_SECRET,\n  name: 'sessionId',      // Evitar el nombre predeterminado (connect.sid)\n  cookie: {\n    httpOnly: true,       // Previene acceso desde JavaScript del cliente\n    secure: true,         // Requiere HTTPS\n    sameSite: 'strict',   // Controla cuando se envían cookies en solicitudes entre sitios\n    maxAge: 3600000       // Expiración de sesión (1 hora en milisegundos)\n  },\n  resave: false,\n  saveUninitialized: false,\n  // Usar un almacén de sesiones adecuado para producción, no MemoryStore\n  store: new RedisStore({\n    client: redisClient,\n    ttl: 86400           // TTL en Redis (un día)\n  })\n}));"
+        }
+      ],
+      "relatedInstructions": ["sec004", "sec006"]
+    },
+    {
+      "id": "sec006",
+      "title": {
+        "es": "Prevenir ataques de fuerza bruta",
+        "en": "Prevent brute force attacks"
+      },
+      "description": {
+        "es": "Implementar mecanismos para limitar intentos de autenticación fallidos",
+        "en": "Implement mechanisms to limit failed authentication attempts"
+      },
+      "text": {
+        "es": "Protege los puntos de autenticación contra ataques de fuerza bruta implementando limitación de intentos (rate limiting). Retrasa progresivamente las respuestas o bloquea temporalmente las cuentas después de múltiples intentos fallidos. Considera implementar un CAPTCHA después de cierto número de intentos fallidos. Registra los intentos de autenticación fallidos para análisis de seguridad.",
+        "en": "Protect authentication endpoints against brute force attacks by implementing rate limiting. Progressively delay responses or temporarily lock accounts after multiple failed attempts. Consider implementing CAPTCHA after a certain number of failed attempts. Log failed authentication attempts for security analysis."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "authentication",
+      "tags": ["security", "authentication", "brute_force"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Security Best Practices section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["web", "api", "mobile"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de implementación de rate limiting en Express",
+            "en": "Example of rate limiting implementation in Express"
+          },
+          "code": "const rateLimit = require('express-rate-limit');\n\n// Configurar limitador para rutas de autenticación\nconst loginLimiter = rateLimit({\n  windowMs: 15 * 60 * 1000, // 15 minutos\n  max: 5, // 5 intentos por ventana de 15 minutos\n  standardHeaders: true,\n  legacyHeaders: false,\n  skipSuccessfulRequests: true, // No contar intentos exitosos\n  message: {\n    status: 'error',\n    message: 'Demasiados intentos fallidos. Intente nuevamente más tarde.'\n  },\n  handler: (req, res, next, options) => {\n    // Registro de seguridad para múltiples intentos fallidos\n    console.warn(`[SECURITY] Multiple failed login attempts from IP ${req.ip}`);\n    res.status(429).json(options.message);\n  }\n});\n\n// Aplicar a rutas de autenticación\napp.use('/api/auth/login', loginLimiter);\napp.use('/api/auth/reset-password', loginLimiter);"
+        }
+      ],
+      "relatedInstructions": ["sec004", "sec005"]
+    }
+  ]
+}
