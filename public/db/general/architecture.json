@@ -1,0 +1,152 @@
+{
+  "instructions": [
+    {
+      "id": "gen009",
+      "title": {
+        "es": "Separación de responsabilidades",
+        "en": "Separation of concerns"
+      },
+      "description": {
+        "es": "Mantener clara la separación entre diferentes capas o responsabilidades del código",
+        "en": "Maintain clear separation between different layers or concerns of the code"
+      },
+      "text": {
+        "es": "Implementa una clara separación de responsabilidades entre la estructura, lógica y presentación del código. Esto facilita la mantenibilidad y permite que los cambios en una parte tengan un impacto mínimo en otras.",
+        "en": "Implement a clear separation of concerns between structure, logic, and presentation. This facilitates maintainability and allows changes in one area to have minimal impact on others."
+      },
+      "importance": "high",
+      "category": "architecture",
+      "subcategory": "design_principles",
+      "tags": ["universal", "architecture"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Coding Best Practices section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Separación de responsabilidades en una aplicación React",
+          "en": "Separation of concerns in a React application"
+        },
+        "code": "// Separación en componentes, hooks y servicios\n\n// 1. Componente (presentación)\nfunction UserProfile({ user, onUpdate }) {\n  return (\n    <div>\n      <h1>{user.name}</h1>\n      <button onClick={() => onUpdate(user.id)}>Actualizar</button>\n    </div>\n  );\n}\n\n// 2. Hook personalizado (lógica de estado)\nfunction useUserData(userId) {\n  const [user, setUser] = useState(null);\n  const [loading, setLoading] = useState(true);\n  \n  useEffect(() => {\n    // Obtener datos del usuario\n    userService.getUser(userId).then(data => {\n      setUser(data);\n      setLoading(false);\n    });\n  }, [userId]);\n  \n  return { user, loading };\n}\n\n// 3. Servicio (acceso a datos)\nconst userService = {\n  getUser: async (id) => {\n    const response = await fetch(`/api/users/${id}`);\n    return response.json();\n  }\n};"
+      }],
+      "relatedInstructions": ["gen010", "gen008"]
+    },
+    {
+      "id": "gen010",
+      "title": {
+        "es": "Principios SOLID",
+        "en": "SOLID principles"
+      },
+      "description": {
+        "es": "Seguir los principios SOLID para diseñar software orientado a objetos mantenible",
+        "en": "Follow SOLID principles for designing maintainable object-oriented software"
+      },
+      "text": {
+        "es": "Aplica los principios SOLID (Responsabilidad Única, Abierto/Cerrado, Sustitución de Liskov, Segregación de Interfaces, Inversión de Dependencias) en el diseño del software para crear sistemas más mantenibles, escalables y testables.",
+        "en": "Apply SOLID principles (Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion) in software design to create more maintainable, scalable, and testable systems."
+      },
+      "importance": "medium",
+      "category": "architecture",
+      "subcategory": "design_principles",
+      "tags": ["universal", "architecture"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Code Project section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Aplicación del Principio de Responsabilidad Única",
+          "en": "Applying the Single Responsibility Principle"
+        },
+        "code": "// Mal: Clase con múltiples responsabilidades\nclass User {\n  constructor(name, email) {\n    this.name = name;\n    this.email = email;\n  }\n  \n  save() {\n    // Lógica de persistencia en la base de datos\n    db.save({name: this.name, email: this.email});\n  }\n  \n  sendEmail(subject, body) {\n    // Lógica de envío de correo\n    emailService.send(this.email, subject, body);\n  }\n}\n\n// Mejor: Separación de responsabilidades\nclass User {\n  constructor(name, email) {\n    this.name = name;\n    this.email = email;\n  }\n}\n\nclass UserRepository {\n  save(user) {\n    // Lógica de persistencia en la base de datos\n    db.save({name: user.name, email: user.email});\n  }\n}\n\nclass EmailService {\n  sendToUser(user, subject, body) {\n    // Lógica de envío de correo\n    this.send(user.email, subject, body);\n  }\n  \n  send(email, subject, body) {\n    // Implementación del envío\n  }\n}"
+      }],
+      "relatedInstructions": ["gen009", "gen011"]
+    },
+    {
+      "id": "gen011",
+      "title": {
+        "es": "Patrones de diseño apropiados",
+        "en": "Appropriate design patterns"
+      },
+      "description": {
+        "es": "Utilizar patrones de diseño que resuelvan problemas comunes de manera eficiente",
+        "en": "Use design patterns that efficiently solve common problems"
+      },
+      "text": {
+        "es": "Utiliza patrones de diseño apropiados para resolver problemas recurrentes de manera eficiente. Escoge patrones que se alineen con las necesidades específicas del proyecto, evitando aplicarlos innecesariamente o de manera forzada.",
+        "en": "Use appropriate design patterns to efficiently solve recurring problems. Choose patterns that align with the specific needs of the project, avoiding unnecessary or forced application."
+      },
+      "importance": "medium",
+      "category": "architecture",
+      "subcategory": "design_patterns",
+      "tags": ["universal", "architecture"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Code Project section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Aplicación del patrón Observer",
+          "en": "Applying the Observer pattern"
+        },
+        "code": "// Implementación simple del patrón Observer\n\nclass Observable {\n  constructor() {\n    this.observers = [];\n  }\n  \n  subscribe(observer) {\n    this.observers.push(observer);\n  }\n  \n  unsubscribe(observer) {\n    this.observers = this.observers.filter(obs => obs !== observer);\n  }\n  \n  notify(data) {\n    this.observers.forEach(observer => observer.update(data));\n  }\n}\n\nclass Observer {\n  update(data) {\n    // Implementación específica en cada observador\n    console.log('Datos actualizados:', data);\n  }\n}\n\n// Uso\nclass DataStore extends Observable {\n  constructor() {\n    super();\n    this.data = {};\n  }\n  \n  updateData(key, value) {\n    this.data[key] = value;\n    this.notify(this.data);\n  }\n}\n\n// Componente que muestra UI\nclass UIComponent extends Observer {\n  update(data) {\n    // Actualizar interfaz con nuevos datos\n    renderUI(data);\n  }\n}"
+      }],
+      "relatedInstructions": ["gen010", "gen012"]
+    },
+    {
+      "id": "gen012",
+      "title": {
+        "es": "Evitar sobre-ingeniería",
+        "en": "Avoid over-engineering"
+      },
+      "description": {
+        "es": "Mantener la solución tan simple como sea posible para los requisitos actuales",
+        "en": "Keep the solution as simple as possible for the current requirements"
+      },
+      "text": {
+        "es": "Evita la sobre-ingeniería implementando la solución más simple que satisfaga los requisitos actuales. Añade complejidad solo cuando sea necesario y esté justificado por requisitos reales, no por necesidades anticipadas que podrían no materializarse.",
+        "en": "Avoid over-engineering by implementing the simplest solution that satisfies the current requirements. Add complexity only when necessary and justified by real requirements, not anticipated needs that may never materialize."
+      },
+      "importance": "medium",
+      "category": "architecture",
+      "subcategory": "design_principles",
+      "tags": ["universal", "planning"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Coding Best Practices section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Solución simple vs. sobre-ingenierizada",
+          "en": "Simple solution vs. over-engineered"
+        },
+        "code": "// Sobre-ingenierizado: Sistema complejo de plugins para algo simple\nclass UserValidator {\n  constructor() {\n    this.validators = [];\n  }\n  \n  registerValidator(validator) {\n    this.validators.push(validator);\n  }\n  \n  validate(user) {\n    return this.validators.reduce((result, validator) => {\n      return result && validator.validate(user);\n    }, true);\n  }\n}\n\nclass EmailValidator {\n  validate(user) {\n    return user.email.includes('@');\n  }\n}\n\n// Simple: Directo y adecuado para necesidades actuales\nfunction validateUser(user) {\n  if (!user.email || !user.email.includes('@')) {\n    return false;\n  }\n  return true;\n}"
+      }],
+      "relatedInstructions": ["gen013", "gen010"]
+    }
+  ]
+}

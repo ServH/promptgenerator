@@ -1,0 +1,152 @@
+{
+  "instructions": [
+    {
+      "id": "gen013",
+      "title": {
+        "es": "Tests unitarios para funcionalidad crítica",
+        "en": "Unit tests for critical functionality"
+      },
+      "description": {
+        "es": "Escribir tests unitarios para la funcionalidad más importante y crítica",
+        "en": "Write unit tests for the most important and critical functionality"
+      },
+      "text": {
+        "es": "Escribe tests unitarios para la funcionalidad crítica de la aplicación. Prioriza testear componentes complejos, lógica de negocio esencial y funciones propensas a errores para garantizar su correcto funcionamiento.",
+        "en": "Write unit tests for critical application functionality. Prioritize testing complex components, essential business logic, and error-prone functions to ensure they work correctly."
+      },
+      "importance": "high",
+      "category": "testing",
+      "subcategory": "unit_testing",
+      "tags": ["universal", "quality_assurance"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Approach to Work section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Test unitario para función de autenticación",
+          "en": "Unit test for authentication function"
+        },
+        "code": "// Función a testear\nfunction validatePassword(password) {\n  return password.length >= 8 && \n         /[A-Z]/.test(password) && \n         /[a-z]/.test(password) && \n         /[0-9]/.test(password);\n}\n\n// Tests unitarios (con Jest)\ndescribe('validatePassword', () => {\n  test('returns true for valid passwords', () => {\n    expect(validatePassword('Abc12345')).toBe(true);\n    expect(validatePassword('StrongPass123')).toBe(true);\n  });\n  \n  test('returns false if password is too short', () => {\n    expect(validatePassword('Abc123')).toBe(false);\n  });\n  \n  test('returns false if password has no uppercase letters', () => {\n    expect(validatePassword('abc12345')).toBe(false);\n  });\n  \n  test('returns false if password has no lowercase letters', () => {\n    expect(validatePassword('ABC12345')).toBe(false);\n  });\n  \n  test('returns false if password has no numbers', () => {\n    expect(validatePassword('AbcDefghi')).toBe(false);\n  });\n});"
+      }],
+      "relatedInstructions": ["gen014", "gen015"]
+    },
+    {
+      "id": "gen014",
+      "title": {
+        "es": "No modificar tests existentes",
+        "en": "Don't modify existing tests"
+      },
+      "description": {
+        "es": "Respetar los tests existentes y hacer que el código los pase",
+        "en": "Respect existing tests and make code pass them"
+      },
+      "text": {
+        "es": "Cuando tengas dificultades para pasar tests existentes, nunca modifiques los tests en sí, a menos que tu tarea específicamente lo requiera. Siempre considera primero que la causa raíz podría estar en el código que estás probando, no en el test.",
+        "en": "When struggling to pass existing tests, never modify the tests themselves, unless your task explicitly asks you to modify the tests. Always first consider that the root cause might be in the code you are testing rather than the test itself."
+      },
+      "importance": "high",
+      "category": "testing",
+      "subcategory": "test_discipline",
+      "tags": ["universal", "quality_assurance"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Approach to Work section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Abordaje correcto al enfrentar tests fallidos",
+          "en": "Correct approach when facing failing tests"
+        },
+        "code": "// Test fallando\ntest('calculateTotal calcula correctamente con impuestos', () => {\n  expect(calculateTotal(100, 0.21)).toBe(121);\n});\n\n// ❌ INCORRECTO: Modificar el test para que pase\n// test('calculateTotal calcula correctamente con impuestos', () => {\n//   expect(calculateTotal(100, 0.21)).toBe(120); // Cambiar la expectativa\n// });\n\n// ✅ CORRECTO: Arreglar la implementación\n// Antes (incorrecto)\nfunction calculateTotal(amount, taxRate) {\n  return amount + amount * Math.floor(taxRate * 100) / 100;\n}\n\n// Después (correcto)\nfunction calculateTotal(amount, taxRate) {\n  return amount + amount * taxRate;\n}"
+      }],
+      "relatedInstructions": ["gen013", "gen015"]
+    },
+    {
+      "id": "gen015",
+      "title": {
+        "es": "Tests para casos límite",
+        "en": "Tests for edge cases"
+      },
+      "description": {
+        "es": "Asegurar que la funcionalidad sigue funcionando en casos límite o inusuales",
+        "en": "Ensure functionality still works in edge cases or unusual scenarios"
+      },
+      "text": {
+        "es": "Escribe tests que cubran casos límite y escenarios inusuales, no solo el camino feliz. Considera entradas vacías, valores nulos, entradas malformadas, listas vacías, valores extremos y condiciones límite para garantizar que el código sea robusto.",
+        "en": "Write tests that cover edge cases and unusual scenarios, not just the happy path. Consider empty inputs, null values, malformed inputs, empty lists, extreme values, and boundary conditions to ensure the code is robust."
+      },
+      "importance": "medium",
+      "category": "testing",
+      "subcategory": "test_coverage",
+      "tags": ["universal", "quality_assurance"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Approach to Work section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Tests para casos límite en una función de búsqueda",
+          "en": "Edge case tests for a search function"
+        },
+        "code": "// Función a testear\nfunction findUserByEmail(users, email) {\n  return users.find(user => user.email === email) || null;\n}\n\n// Tests que cubren casos límite\ndescribe('findUserByEmail', () => {\n  const users = [\n    { id: 1, email: 'user1@example.com' },\n    { id: 2, email: 'user2@example.com' }\n  ];\n  \n  test('devuelve usuario cuando el email existe', () => {\n    expect(findUserByEmail(users, 'user1@example.com')).toEqual({ id: 1, email: 'user1@example.com' });\n  });\n  \n  test('devuelve null cuando el email no existe', () => {\n    expect(findUserByEmail(users, 'nonexistent@example.com')).toBeNull();\n  });\n  \n  // Casos límite\n  test('funciona con array vacío de usuarios', () => {\n    expect(findUserByEmail([], 'user1@example.com')).toBeNull();\n  });\n  \n  test('maneja búsqueda de email vacío', () => {\n    expect(findUserByEmail(users, '')).toBeNull();\n  });\n  \n  test('maneja búsqueda de email null', () => {\n    expect(findUserByEmail(users, null)).toBeNull();\n  });\n  \n  test('maneja array de usuarios null', () => {\n    expect(() => findUserByEmail(null, 'user1@example.com')).toThrow();\n  });\n});"
+      }],
+      "relatedInstructions": ["gen013", "gen014"]
+    },
+    {
+      "id": "gen016",
+      "title": {
+        "es": "Validación de dependencias externas",
+        "en": "Validation of external dependencies"
+      },
+      "description": {
+        "es": "Validar las dependencias externas antes de asumirlas como disponibles",
+        "en": "Validate external dependencies before assuming they are available"
+      },
+      "text": {
+        "es": "Antes de utilizar cualquier API, servicio o dependencia externa, verifica explícitamente su disponibilidad y comportamiento esperado. Implementa estrategias robustas para manejar casos de fallo o indisponibilidad de estas dependencias.",
+        "en": "Before using any API, service, or external dependency, explicitly verify its availability and expected behavior. Implement robust strategies to handle failure cases or unavailability of these dependencies."
+      },
+      "importance": "high",
+      "category": "testing",
+      "subcategory": "external_dependencies",
+      "tags": ["universal", "robustness"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Coding Best Practices section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Verificación robusta de API externa",
+          "en": "Robust verification of external API"
+        },
+        "code": "// Verificación robusta de una API externa\nasync function fetchUserData(userId) {\n  try {\n    // Primero verificamos si la API está disponible\n    const healthCheck = await fetch('/api/health').then(res => res.ok).catch(() => false);\n    \n    if (!healthCheck) {\n      console.error('API health check failed');\n      return { error: 'Service unavailable', data: null };\n    }\n    \n    // Luego intentamos obtener los datos\n    const response = await fetch(`/api/users/${userId}`);\n    \n    if (!response.ok) {\n      // Manejar específicamente diferentes tipos de errores HTTP\n      if (response.status === 404) {\n        return { error: 'User not found', data: null };\n      }\n      return { error: `Service error: ${response.status}`, data: null };\n    }\n    \n    const data = await response.json();\n    return { error: null, data };\n  } catch (error) {\n    console.error('Error fetching user data:', error);\n    return { error: 'Request failed', data: null };\n  }\n}"
+      }],
+      "relatedInstructions": ["gen003", "gen015"]
+    }
+  ]
+}
