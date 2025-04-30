@@ -1,0 +1,121 @@
+{
+  "instructions": [
+    {
+      "id": "sec001",
+      "title": {
+        "es": "Validación completa de entradas",
+        "en": "Complete input validation"
+      },
+      "description": {
+        "es": "Validar todas las entradas de usuario y datos externos",
+        "en": "Validate all user inputs and external data"
+      },
+      "text": {
+        "es": "Siempre implementa validación para datos de entrada, especialmente los que provienen del usuario o fuentes externas. Verifica tipos, formatos, rangos y posibles valores nulos. Esto previene errores inesperados y potenciales vulnerabilidades de seguridad como inyecciones de código.",
+        "en": "Always implement validation for input data, especially data that comes from users or external sources. Check types, formats, ranges, and potential null values. This prevents unexpected errors and potential security vulnerabilities like code injections."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "input_validation",
+      "tags": ["security", "robustness", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Security and Validation section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de validación de entrada en JavaScript",
+            "en": "Example of input validation in JavaScript"
+          },
+          "code": "// Validación básica de un campo email\nfunction validateEmail(email) {\n  if (!email) {\n    return 'El email es requerido';\n  }\n  \n  const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n  if (!emailRegex.test(email)) {\n    return 'El formato de email no es válido';\n  }\n  \n  return null; // Sin errores\n}"
+        }
+      ],
+      "relatedInstructions": ["sec002"]
+    },
+    {
+      "id": "sec002",
+      "title": {
+        "es": "Manejar errores apropiadamente",
+        "en": "Handle errors appropriately"
+      },
+      "description": {
+        "es": "Implementar manejo de errores consistente y granular",
+        "en": "Implement consistent and granular error handling"
+      },
+      "text": {
+        "es": "Implementa manejo de errores centralizado con mensajes de error apropiados y códigos de estado HTTP. Usa bloques try-catch para capturar excepciones, registra los errores relevantes para depuración, pero no expongas información sensible en mensajes de error entregados al usuario.",
+        "en": "Implement centralized error handling with appropriate error messages and HTTP status codes. Use try-catch blocks to capture exceptions, log relevant errors for debugging, but do not expose sensitive information in error messages delivered to the user."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "error_management",
+      "tags": ["robustness", "user_experience", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Backend Instructions section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de manejo de errores en una API",
+            "en": "Example of error handling in an API"
+          },
+          "code": "// Manejador de errores centralizado\napp.use((err, req, res, next) => {\n  // Log detallado interno para debugging\n  console.error(`[ERROR] ${err.stack || err}`);\n  \n  // Respuesta al usuario\n  const statusCode = err.statusCode || 500;\n  const message = statusCode === 500 \n    ? 'Error interno del servidor' // Ocultar detalles de errores internos\n    : err.message;\n    \n  res.status(statusCode).json({\n    status: 'error',\n    message\n  });\n});"
+        }
+      ],
+      "relatedInstructions": ["sec001"]
+    },
+    {
+      "id": "sec003",
+      "title": {
+        "es": "Evitar vulnerabilidades de inyección",
+        "en": "Prevent injection vulnerabilities"
+      },
+      "description": {
+        "es": "Protegerse contra ataques de inyección de código y SQL",
+        "en": "Guard against code and SQL injection attacks"
+      },
+      "text": {
+        "es": "Protege tu aplicación contra vulnerabilidades de inyección (SQL, NoSQL, comandos, XSS) utilizando consultas parametrizadas, ORM, escape apropiado de datos y validación estricta de entradas. Nunca concatenes directamente datos de usuario en consultas de base de datos o comandos del sistema. Esta es una de las vulnerabilidades más comunes y peligrosas.",
+        "en": "Protect your application against injection vulnerabilities (SQL, NoSQL, Command, XSS) by using parameterized queries, ORMs, proper data escaping, and strict input validation. Never directly concatenate user data into database queries or system commands. This is one of the most common and dangerous vulnerabilities."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "injection_prevention",
+      "tags": ["security", "database", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Data Security section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de prevención de inyección SQL",
+            "en": "Example of SQL injection prevention"
+          },
+          "code": "// MAL: Concatenación directa susceptible a inyección SQL\n// const query = `SELECT * FROM users WHERE username = '${username}'`;\n\n// BIEN: Uso de consultas parametrizadas (Node.js + MySQL)\nconst mysql = require('mysql2/promise');\n\nasync function getUserByUsername(username) {\n  const connection = await mysql.createConnection({\n    host: 'localhost',\n    user: 'dbuser',\n    password: 'dbpassword',\n    database: 'myapp'\n  });\n  \n  try {\n    // Consulta parametrizada segura\n    const [rows] = await connection.execute(\n      'SELECT * FROM users WHERE username = ?', \n      [username]\n    );\n    return rows[0];\n  } finally {\n    connection.end();\n  }\n}\n\n// BIEN: Uso de ORM (Sequelize)\nconst { User } = require('./models');\n\nasync function getUserByUsername(username) {\n  return User.findOne({ where: { username } });\n}"
+        }
+      ],
+      "relatedInstructions": ["sec001", "sec002"]
+    }
+  ]
+}
