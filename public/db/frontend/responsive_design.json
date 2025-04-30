@@ -1,0 +1,160 @@
+{
+  "instructions": [
+    {
+      "id": "fe009",
+      "title": {
+        "es": "Adoptar enfoque mobile-first",
+        "en": "Adopt mobile-first approach"
+      },
+      "description": {
+        "es": "Diseñar primero para dispositivos móviles y luego escalar hacia arriba",
+        "en": "Design for mobile devices first, then scale up"
+      },
+      "text": {
+        "es": "Adopta un enfoque mobile-first donde diseñas primero para dispositivos móviles y luego escalas hacia arriba para pantallas más grandes. Esto ayuda a enfocarse en el contenido esencial y garantiza una experiencia robusta en todos los dispositivos. Utiliza media queries para adaptar el diseño a tamaños de pantalla más grandes de manera progresiva.",
+        "en": "Adopt a mobile-first approach where you design for mobile devices first and then scale up for larger screens. This helps focus on essential content and ensures a robust experience across all devices. Use media queries to progressively adapt the layout to larger screen sizes."
+      },
+      "importance": "high",
+      "category": "responsive_design",
+      "subcategory": "design_approach",
+      "tags": ["frontend", "mobile", "ux"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Styling section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["html", "css", "javascript", "typescript"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de CSS con enfoque mobile-first",
+            "en": "Example of mobile-first CSS"
+          },
+          "code": "/* Estilos base para móviles */\n.container {\n  width: 100%;\n  padding: 1rem;\n}\n\n.card {\n  display: block;\n  margin-bottom: 1rem;\n}\n\n/* Media queries para pantallas más grandes */\n@media (min-width: 768px) {\n  .container {\n    max-width: 720px;\n    margin: 0 auto;\n    padding: 2rem;\n  }\n  \n  .card {\n    display: flex;\n    margin-bottom: 2rem;\n  }\n}\n\n@media (min-width: 1024px) {\n  .container {\n    max-width: 960px;\n  }\n  \n  /* Más adaptaciones para desktop */\n}"
+        }
+      ],
+      "relatedInstructions": ["fe010"]
+    },
+    {
+      "id": "fe010",
+      "title": {
+        "es": "Utilizar unidades relativas en CSS",
+        "en": "Use relative units in CSS"
+      },
+      "description": {
+        "es": "Preferir unidades relativas como rem, em y porcentajes sobre píxeles fijos",
+        "en": "Prefer relative units like rem, em, and percentages over fixed pixels"
+      },
+      "text": {
+        "es": "Utiliza unidades relativas (rem, em, %, vh/vw) en lugar de píxeles fijos siempre que sea posible. Las unidades relativas escalan mejor en diferentes tamaños de pantalla y respetan la configuración de accesibilidad del usuario, como el tamaño de fuente del navegador. Usa 'rem' para tamaños consistentes basados en la configuración del usuario y 'em' para escalado relativo al elemento padre.",
+        "en": "Use relative units (rem, em, %, vh/vw) instead of fixed pixels whenever possible. Relative units scale better across different screen sizes and respect user accessibility settings like browser font size. Use 'rem' for consistent sizing based on user settings and 'em' for scaling relative to the parent element."
+      },
+      "importance": "medium",
+      "category": "responsive_design",
+      "subcategory": "css_best_practices",
+      "tags": ["frontend", "css", "accessibility"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Styling section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["css", "scss", "less"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de uso de unidades relativas en CSS",
+            "en": "Example of using relative units in CSS"
+          },
+          "code": "/* MAL: Usar unidades absolutas */\nbody {\n  font-size: 16px;\n}\n\nh1 {\n  font-size: 24px;\n  margin-bottom: 20px;\n}\n\n.container {\n  width: 960px;\n  padding: 30px;\n}\n\n/* MEJOR: Usar unidades relativas */\n:root {\n  font-size: 16px; /* Base para cálculos rem */\n}\n\nbody {\n  font-size: 1rem;\n}\n\nh1 {\n  font-size: 1.5rem;\n  margin-bottom: 1.25rem;\n}\n\n.container {\n  width: 100%;\n  max-width: 60rem; /* 960px / 16px = 60rem */\n  padding: 1.875rem; /* 30px / 16px = 1.875rem */\n}"
+        }
+      ],
+      "relatedInstructions": ["fe009", "fe011"]
+    },
+    {
+      "id": "fe011",
+      "title": {
+        "es": "Utilizar flexbox y grid para layouts complejos",
+        "en": "Use flexbox and grid for complex layouts"
+      },
+      "description": {
+        "es": "Preferir flexbox y CSS Grid sobre técnicas de posicionamiento antiguas",
+        "en": "Prefer flexbox and CSS Grid over older positioning techniques"
+      },
+      "text": {
+        "es": "Utiliza Flexbox y CSS Grid para crear layouts complejos y responsivos en lugar de técnicas antiguas como floats, tablas o posicionamiento absoluto. Flexbox es excelente para alinear elementos en una sola dimensión (fila o columna), mientras que CSS Grid es ideal para layouts bidimensionales. Estas técnicas modernas simplifican el código, mejoran la accesibilidad y facilitan la creación de interfaces responsivas.",
+        "en": "Use Flexbox and CSS Grid to create complex, responsive layouts instead of older techniques like floats, tables, or absolute positioning. Flexbox is great for aligning items in a single dimension (row or column), while CSS Grid is ideal for two-dimensional layouts. These modern techniques simplify code, improve accessibility, and make it easier to create responsive interfaces."
+      },
+      "importance": "high",
+      "category": "responsive_design",
+      "subcategory": "layout_techniques",
+      "tags": ["frontend", "css", "modern"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Styling section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["css", "scss", "less"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Comparación de técnicas de layout con Flexbox y Grid",
+            "en": "Comparison of layout techniques with Flexbox and Grid"
+          },
+          "code": "/* Enfoque antiguo: Float */\n.old-container {\n  overflow: hidden; /* Clearfix */\n}\n.old-sidebar {\n  float: left;\n  width: 30%;\n}\n.old-main {\n  float: right;\n  width: 70%;\n}\n\n/* Enfoque moderno: Flexbox (unidimensional) */\n.flex-container {\n  display: flex;\n  gap: 1rem;\n  flex-wrap: wrap; /* Para responsive */\n}\n.flex-item {\n  flex: 1 1 200px; /* grow, shrink, basis */\n}\n.flex-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n/* Enfoque moderno: CSS Grid (bidimensional) */\n.grid-layout {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));\n  grid-gap: 1rem;\n}\n\n/* Grid complejo para layout de página */\n.page-layout {\n  display: grid;\n  grid-template-areas:\n    \"header header\"\n    \"sidebar main\"\n    \"footer footer\";\n  grid-template-columns: 250px 1fr;\n  grid-template-rows: auto 1fr auto;\n  min-height: 100vh;\n}\n\n.page-header { grid-area: header; }\n.page-sidebar { grid-area: sidebar; }\n.page-main { grid-area: main; }\n.page-footer { grid-area: footer; }\n\n/* Responsive: cambiar a una columna en dispositivos pequeños */\n@media (max-width: 768px) {\n  .page-layout {\n    grid-template-areas:\n      \"header\"\n      \"main\"\n      \"sidebar\"\n      \"footer\";\n    grid-template-columns: 1fr;\n  }\n}"
+        }
+      ],
+      "relatedInstructions": ["fe010", "fe012"]
+    },
+    {
+      "id": "fe012",
+      "title": {
+        "es": "Probar en múltiples dispositivos y navegadores",
+        "en": "Test on multiple devices and browsers"
+      },
+      "description": {
+        "es": "Verificar que el diseño responsivo funciona en diferentes dispositivos y navegadores",
+        "en": "Verify that responsive design works across different devices and browsers"
+      },
+      "text": {
+        "es": "Siempre prueba tus diseños responsivos en múltiples dispositivos, tamaños de pantalla y navegadores para garantizar una experiencia consistente. Utiliza herramientas de desarrollo del navegador, dispositivos físicos y servicios de prueba de compatibilidad. Presta especial atención a iOS/Safari y navegadores móviles Android, ya que pueden tener comportamientos diferentes a sus equivalentes de escritorio.",
+        "en": "Always test your responsive designs on multiple devices, screen sizes, and browsers to ensure a consistent experience. Use browser developer tools, physical devices, and compatibility testing services. Pay special attention to iOS/Safari and Android mobile browsers, as they may have different behaviors from their desktop counterparts."
+      },
+      "importance": "high",
+      "category": "responsive_design",
+      "subcategory": "testing",
+      "tags": ["frontend", "quality_assurance", "ux"],
+      "source": {
+        "agentType": "windsurf",
+        "repository": "Windsurf/Windsurf.txt",
+        "context": "Web Development section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Lista de verificación para testing de diseño responsivo",
+            "en": "Checklist for responsive design testing"
+          },
+          "code": "// Lista de Verificación para Testing Responsivo\n\n// 1. Dispositivos y tamaños de pantalla a probar\n// - Móviles pequeños: 320px (ej. iPhone SE)\n// - Móviles: 375px - 414px (ej. iPhone X, Samsung Galaxy)\n// - Tablets: 768px (ej. iPad) y 1024px (ej. iPad Pro)\n// - Laptops: 1366px y 1440px\n// - Monitores grandes: 1920px y más\n\n// 2. Navegadores a probar\n// - Chrome (Windows, macOS, Android)\n// - Safari (iOS, macOS)\n// - Firefox (todas las plataformas)\n// - Edge (Windows)\n// - Samsung Internet (dispositivos Android Samsung)\n\n// 3. Aspectos a verificar\n// - Todo el contenido es visible y legible\n// - La navegación funciona correctamente (menús desplegables, etc.)\n// - Elementos interactivos (botones, enlaces) tienen tamaño adecuado y espaciado para táctil\n// - Las imágenes se ajustan correctamente y no distorsionan el layout\n// - Los formularios son usables en dispositivos móviles\n// - La performance es adecuada (tiempos de carga, animaciones)\n// - La orientación funciona (rotación de vertical a horizontal)\n\n// 4. Herramientas útiles\n// - DevTools de navegadores (modo responsivo)\n// - BrowserStack o LambdaTest (para probar en dispositivos reales)\n// - Lighthouse (para auditar performance en móviles)\n// - can I use (https://caniuse.com/) para verificar soporte de características CSS\n\n// 5. Código de ejemplo para detectar resoluciones problemáticas\nfunction logBreakpoints() {\n  console.log(`Viewport ancho: ${window.innerWidth}px, alto: ${window.innerHeight}px`);\n  console.log(`Proporción de pantalla: ${(window.innerWidth / window.innerHeight).toFixed(2)}`);\n  console.log(`Densidad de píxeles: ${window.devicePixelRatio}x`);\n}\n\nwindow.addEventListener('resize', logBreakpoints);\nlogBreakpoints(); // Log inicial\n\n// 6. CSS para solucionar problemas comunes\n/* Evitar que el texto sea demasiado pequeño en iOS */\nbody {\n  -webkit-text-size-adjust: 100%;\n}\n\n/* Corregir problemas de overflow en horizontal */\nhtml, body {\n  width: 100%;\n  overflow-x: hidden;\n}\n\n/* Asegurar que las imágenes sean responsivas */\nimg {\n  max-width: 100%;\n  height: auto;\n}"
+        }
+      ],
+      "relatedInstructions": ["fe009", "fe011"]
+    }
+  ]
+}
