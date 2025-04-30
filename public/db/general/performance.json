@@ -1,0 +1,152 @@
+{
+  "instructions": [
+    {
+      "id": "gen021",
+      "title": {
+        "es": "Optimización prematura",
+        "en": "Premature optimization"
+      },
+      "description": {
+        "es": "Evitar optimizaciones prematuras que compliquen el código sin necesidad probada",
+        "en": "Avoid premature optimizations that unnecessarily complicate the code"
+      },
+      "text": {
+        "es": "Evita las optimizaciones prematuras que compliquen el código sin necesidad comprobada. Primero asegúrate de que el código sea correcto y claro, luego identifica cuellos de botella reales mediante pruebas de rendimiento antes de optimizar.",
+        "en": "Avoid premature optimizations that unnecessarily complicate the code without proven need. First ensure that the code is correct and clear, then identify real bottlenecks through performance testing before optimizing."
+      },
+      "importance": "medium",
+      "category": "performance",
+      "subcategory": "optimization_strategy",
+      "tags": ["universal", "implementation"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Coding Best Practices section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Optimización prematura vs. enfoque razonable",
+          "en": "Premature optimization vs. reasonable approach"
+        },
+        "code": "// Optimización prematura: complicando el código sin necesidad\nfunction getActiveUsers(users) {\n  // Pre-alocar el array exacto (innecesariamente complejo sin evidencia de problemas)\n  let count = 0;\n  for (let i = 0; i < users.length; i++) {\n    if (users[i].status === 'active') count++;\n  }\n  \n  const activeUsers = new Array(count);\n  let index = 0;\n  \n  for (let i = 0; i < users.length; i++) {\n    if (users[i].status === 'active') {\n      activeUsers[index++] = users[i];\n    }\n  }\n  \n  return activeUsers;\n}\n\n// Enfoque razonable: código claro y suficientemente eficiente\nfunction getActiveUsers(users) {\n  return users.filter(user => user.status === 'active');\n  \n  // Nota: Si las pruebas de rendimiento revelaran que esta función\n  // es un cuello de botella real, entonces considera optimizarla.\n}"
+      }],
+      "relatedInstructions": ["gen022", "gen012"]
+    },
+    {
+      "id": "gen022",
+      "title": {
+        "es": "Operaciones costosas",
+        "en": "Expensive operations"
+      },
+      "description": {
+        "es": "Ser consciente de operaciones costosas y utilizarlas con prudencia",
+        "en": "Be aware of expensive operations and use them judiciously"
+      },
+      "text": {
+        "es": "Identifica y utiliza con prudencia operaciones computacionalmente costosas como manipulación del DOM, acceso a red, operaciones I/O síncronas, o algoritmos con complejidad O(n²) o superior. Considera técnicas como caché, memoización, o carga diferida para mejorar el rendimiento.",
+        "en": "Identify and judiciously use computationally expensive operations such as DOM manipulation, network access, synchronous I/O operations, or algorithms with O(n²) or higher complexity. Consider techniques such as caching, memoization, or lazy loading to improve performance."
+      },
+      "importance": "high",
+      "category": "performance",
+      "subcategory": "resource_usage",
+      "tags": ["universal", "implementation"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Code Project section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Optimización de operaciones costosas",
+          "en": "Optimization of expensive operations"
+        },
+        "code": "// Ejemplo de memoización para optimizar cálculos costosos\nfunction createMemoizedFunction(fn) {\n  const cache = new Map();\n  \n  return function(...args) {\n    // Crear una clave única basada en los argumentos\n    const key = JSON.stringify(args);\n    \n    // Devolver resultado cacheado si existe\n    if (cache.has(key)) {\n      return cache.get(key);\n    }\n    \n    // Calcular y cachear el resultado para futuras llamadas\n    const result = fn(...args);\n    cache.set(key, result);\n    return result;\n  };\n}\n\n// Función costosa: calcular el n-ésimo número de Fibonacci recursivamente\nfunction fibonacci(n) {\n  if (n <= 1) return n;\n  return fibonacci(n - 1) + fibonacci(n - 2);\n}\n\n// Versión optimizada con memoización\nconst memoizedFibonacci = createMemoizedFunction(function(n) {\n  if (n <= 1) return n;\n  return memoizedFibonacci(n - 1) + memoizedFibonacci(n - 2);\n});\n\n// La diferencia de rendimiento es enorme para valores grandes de n\nconsole.time('Sin memoización');\nfibonacci(40); // Muy lento, complejidad O(2^n)\nconsole.timeEnd('Sin memoización');\n\nconsole.time('Con memoización');\nmemoizedFibonacci(40); // Muy rápido, complejidad O(n)\nconsole.timeEnd('Con memoización');"
+      }],
+      "relatedInstructions": ["gen021", "gen023"]
+    },
+    {
+      "id": "gen023",
+      "title": {
+        "es": "Optimización para producción",
+        "en": "Production optimization"
+      },
+      "description": {
+        "es": "Configurar correctamente las optimizaciones para entornos de producción",
+        "en": "Properly configure optimizations for production environments"
+      },
+      "text": {
+        "es": "Configura correctamente las optimizaciones para entornos de producción, incluyendo minificación, tree-shaking, code-splitting, compresión de assets, y caché adecuada. Estas optimizaciones pueden mejorar significativamente el rendimiento sin necesidad de cambiar el código base.",
+        "en": "Properly configure optimizations for production environments, including minification, tree-shaking, code-splitting, asset compression, and appropriate caching. These optimizations can significantly improve performance without needing to change the codebase."
+      },
+      "importance": "high",
+      "category": "performance",
+      "subcategory": "build_optimization",
+      "tags": ["universal", "deployment"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Code Project section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Configuración de webpack para entorno de producción",
+          "en": "Webpack configuration for production environment"
+        },
+        "code": "// webpack.config.js para entorno de producción\nconst path = require('path');\nconst TerserPlugin = require('terser-webpack-plugin');\nconst CssMinimizerPlugin = require('css-minimizer-webpack-plugin');\nconst CompressionPlugin = require('compression-webpack-plugin');\n\nmodule.exports = {\n  mode: 'production',\n  entry: './src/index.js',\n  output: {\n    path: path.resolve(__dirname, 'dist'),\n    filename: '[name].[contenthash].js', // Uso de hashes para control de caché\n    chunkFilename: '[name].[contenthash].chunk.js'\n  },\n  optimization: {\n    minimize: true,\n    minimizer: [\n      new TerserPlugin(), // Minificación de JavaScript\n      new CssMinimizerPlugin() // Minificación de CSS\n    ],\n    splitChunks: {\n      chunks: 'all', // Separar código común en chunks compartidos\n      automaticNameDelimiter: '.'\n    }\n  },\n  plugins: [\n    new CompressionPlugin({ // Generar archivos .gz para servir con compresión\n      algorithm: 'gzip',\n      test: /\\.(js|css|html|svg)$/,\n      threshold: 10240,\n      minRatio: 0.8\n    })\n  ],\n  performance: {\n    hints: 'warning', // Advertir sobre archivos demasiado grandes\n    maxAssetSize: 250000, // Tamaño en bytes\n    maxEntrypointSize: 400000 // Tamaño total de entrypoint\n  }\n};"
+      }],
+      "relatedInstructions": ["gen022", "gen024"]
+    },
+    {
+      "id": "gen024",
+      "title": {
+        "es": "Rendimiento percibido",
+        "en": "Perceived performance"
+      },
+      "description": {
+        "es": "Optimizar la percepción de rendimiento mediante técnicas de UX",
+        "en": "Optimize perceived performance through UX techniques"
+      },
+      "text": {
+        "es": "Optimiza la percepción de rendimiento mediante técnicas de UX como carga progresiva, esqueletos de carga, precarga de datos, y feedback visual inmediato. A menudo, mejorar cómo los usuarios perciben el rendimiento es tan importante como las optimizaciones técnicas reales.",
+        "en": "Optimize perceived performance through UX techniques such as progressive loading, loading skeletons, data preloading, and immediate visual feedback. Often, improving how users perceive performance is as important as actual technical optimizations."
+      },
+      "importance": "medium",
+      "category": "performance",
+      "subcategory": "user_experience",
+      "tags": ["frontend", "implementation"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Code Project section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "vue", "angular", "nextjs"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Implementación de esqueletos de carga",
+          "en": "Implementation of loading skeletons"
+        },
+        "code": "// Componente de esqueleto de carga en React\nimport React from 'react';\n\nfunction SkeletonCard() {\n  return (\n    <div className=\"card skeleton-card\">\n      <div className=\"skeleton skeleton-img\"></div>\n      <div className=\"skeleton-content\">\n        <div className=\"skeleton skeleton-title\"></div>\n        <div className=\"skeleton skeleton-text\"></div>\n        <div className=\"skeleton skeleton-text\"></div>\n      </div>\n    </div>\n  );\n}\n\nfunction ProductList({ loading, products }) {\n  // Mostrar esqueletos durante la carga\n  if (loading) {\n    return (\n      <div className=\"product-grid\">\n        {Array(6).fill().map((_, index) => (\n          <SkeletonCard key={`skeleton-${index}`} />\n        ))}\n      </div>\n    );\n  }\n  \n  // Mostrar datos reales cuando estén disponibles\n  return (\n    <div className=\"product-grid\">\n      {products.map(product => (\n        <ProductCard key={product.id} product={product} />\n      ))}\n    </div>\n  );\n}\n\n// CSS para los esqueletos\n/*\n.skeleton {\n  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);\n  background-size: 200% 100%;\n  animation: loading 1.5s infinite;\n  border-radius: 4px;\n}\n\n.skeleton-img {\n  height: 200px;\n  margin-bottom: 15px;\n}\n\n.skeleton-title {\n  height: 20px;\n  margin-bottom: 15px;\n  width: 80%;\n}\n\n.skeleton-text {\n  height: 10px;\n  margin-bottom: 10px;\n  width: 100%;\n}\n\n@keyframes loading {\n  0% { background-position: 200% 0; }\n  100% { background-position: -200% 0; }\n}\n*/"
+      }],
+      "relatedInstructions": ["gen022", "gen023"]
+    }
+  ]
+}
