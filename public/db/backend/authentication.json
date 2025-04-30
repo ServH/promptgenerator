@@ -1,0 +1,121 @@
+{
+  "instructions": [
+    {
+      "id": "back004",
+      "title": {
+        "es": "Implementar autenticación JWT",
+        "en": "Implement JWT authentication"
+      },
+      "description": {
+        "es": "Utilizar JSON Web Tokens para autenticación de API",
+        "en": "Use JSON Web Tokens for API authentication"
+      },
+      "text": {
+        "es": "Implementa autenticación basada en JSON Web Tokens (JWT) para APIs sin estado. Configura tokens de acceso de corta duración junto con tokens de refresco para mayor seguridad, incluye solo la información necesaria en el payload, firma los tokens con un algoritmo seguro (como RS256), y establece políticas adecuadas de expiración. Asegúrate de implementar revocación de tokens para casos de cierre de sesión o compromiso de seguridad.",
+        "en": "Implement JSON Web Token (JWT) based authentication for stateless APIs. Set up short-lived access tokens along with refresh tokens for enhanced security, include only necessary information in the payload, sign tokens with a secure algorithm (like RS256), and establish appropriate expiration policies. Make sure to implement token revocation for logout cases or security compromises."
+      },
+      "importance": "high",
+      "category": "authentication",
+      "subcategory": "tokens",
+      "tags": ["backend", "security", "api"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Authentication section"
+      },
+      "compatibility": {
+        "frameworks": ["express", "nest", "django", "flask", "spring", "laravel"],
+        "languages": ["javascript", "typescript", "python", "java", "php"],
+        "environments": ["api"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de implementación JWT con Node.js",
+            "en": "Example of JWT implementation with Node.js"
+          },
+          "code": "// Implementación JWT en Node.js con Express\nconst express = require('express');\nconst jwt = require('jsonwebtoken');\nconst bcrypt = require('bcrypt');\n\nconst app = express();\napp.use(express.json());\n\n// Configuración de JWT\nconst JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;\nconst JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;\nconst JWT_ACCESS_EXPIRATION = '15m';        // Token de acceso expira en 15 minutos\nconst JWT_REFRESH_EXPIRATION = '7d';         // Token de refresco expira en 7 días\n\n// Endpoint de inicio de sesión\napp.post('/api/auth/login', async (req, res) => {\n  try {\n    const { email, password } = req.body;\n    \n    // Buscar usuario en base de datos\n    const user = await User.findOne({ email });\n    if (!user) {\n      return res.status(401).json({ message: 'Credenciales incorrectas' });\n    }\n    \n    // Verificar contraseña\n    const isValid = await bcrypt.compare(password, user.password);\n    if (!isValid) {\n      return res.status(401).json({ message: 'Credenciales incorrectas' });\n    }\n    \n    // Generar tokens\n    const accessToken = generateAccessToken(user);\n    const refreshToken = generateRefreshToken(user);\n    \n    // Guardar token de refresco en base de datos\n    await saveRefreshToken(user.id, refreshToken);\n    \n    // Enviar respuesta con tokens\n    return res.json({\n      accessToken,\n      refreshToken,\n      user: {\n        id: user.id,\n        name: user.name,\n        email: user.email\n      }\n    });\n  } catch (error) {\n    console.error('Error de autenticación:', error);\n    return res.status(500).json({ message: 'Error interno del servidor' });\n  }\n});\n\n// Endpoint para refrescar token\napp.post('/api/auth/refresh', async (req, res) => {\n  try {\n    const { refreshToken } = req.body;\n    \n    if (!refreshToken) {\n      return res.status(400).json({ message: 'Token de refresco requerido' });\n    }\n    \n    // Verificar token de refresco\n    let payload;\n    try {\n      payload = jwt.verify(refreshToken, JWT_REFRESH_SECRET);\n    } catch (err) {\n      return res.status(401).json({ message: 'Token de refresco inválido' });\n    }\n    \n    // Verificar si el token está en la base de datos y es válido\n    const isTokenValid = await validateRefreshToken(payload.userId, refreshToken);\n    if (!isTokenValid) {\n      return res.status(401).json({ message: 'Token de refresco inválido o expirado' });\n    }\n    \n    // Obtener usuario\n    const user = await User.findById(payload.userId);\n    if (!user) {\n      return res.status(401).json({ message: 'Usuario no encontrado' });\n    }\n    \n    // Generar nuevo token de acceso\n    const accessToken = generateAccessToken(user);\n    \n    return res.json({ accessToken });\n  } catch (error) {\n    console.error('Error al refrescar token:', error);\n    return res.status(500).json({ message: 'Error interno del servidor' });\n  }\n});\n\n// Middleware para verificar autenticación\nfunction authenticateToken(req, res, next) {\n  const authHeader = req.headers.authorization;\n  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN\n  \n  if (!token) {\n    return res.status(401).json({ message: 'Token de acceso requerido' });\n  }\n  \n  try {\n    const payload = jwt.verify(token, JWT_ACCESS_SECRET);\n    req.user = payload;\n    next();\n  } catch (error) {\n    if (error.name === 'TokenExpiredError') {\n      return res.status(401).json({ message: 'Token de acceso expirado' });\n    }\n    return res.status(403).json({ message: 'Token inválido' });\n  }\n}\n\n// Utilizar middleware en rutas protegidas\napp.get('/api/users/profile', authenticateToken, async (req, res) => {\n  // La ruta está protegida, solo usuarios autenticados pueden acceder\n  // req.user contiene la información del usuario autenticado\n  try {\n    const user = await User.findById(req.user.userId).select('-password');\n    return res.json(user);\n  } catch (error) {\n    console.error('Error al obtener perfil:', error);\n    return res.status(500).json({ message: 'Error interno del servidor' });\n  }\n});\n\n// Funciones auxiliares\nfunction generateAccessToken(user) {\n  const payload = {\n    userId: user.id,\n    email: user.email,\n    role: user.role\n  };\n  \n  return jwt.sign(payload, JWT_ACCESS_SECRET, { expiresIn: JWT_ACCESS_EXPIRATION });\n}\n\nfunction generateRefreshToken(user) {\n  const payload = {\n    userId: user.id,\n    tokenVersion: user.tokenVersion || 0 // Para revocación de tokens\n  };\n  \n  return jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_EXPIRATION });\n}\n\nasync function saveRefreshToken(userId, token) {\n  await RefreshToken.create({\n    user: userId,\n    token,\n    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 días\n  });\n}\n\nasync function validateRefreshToken(userId, token) {\n  const tokenDoc = await RefreshToken.findOne({\n    user: userId,\n    token,\n    expires: { $gt: new Date() }\n  });\n  \n  return !!tokenDoc;\n}"
+        }
+      ],
+      "relatedInstructions": ["sec004", "back005"]
+    },
+    {
+      "id": "back005",
+      "title": {
+        "es": "Implementar autorización basada en roles",
+        "en": "Implement role-based authorization"
+      },
+      "description": {
+        "es": "Configurar sistema de control de acceso basado en roles para APIs",
+        "en": "Configure role-based access control system for APIs"
+      },
+      "text": {
+        "es": "Diseña e implementa un sistema de autorización basado en roles (RBAC) para controlar el acceso a recursos y operaciones en tu API. Define roles claros con conjuntos específicos de permisos, implementa middleware para verificar autorizaciones en cada endpoint, y sigue el principio de privilegio mínimo. Almacena la información de roles y permisos de forma segura y asegúrate de verificar las autorizaciones tanto para acciones a nivel de recurso como a nivel de campo cuando sea necesario.",
+        "en": "Design and implement a role-based authorization (RBAC) system to control access to resources and operations in your API. Define clear roles with specific sets of permissions, implement middleware to check authorizations at each endpoint, and follow the principle of least privilege. Store role and permission information securely and make sure to verify authorizations for both resource-level and field-level actions when necessary."
+      },
+      "importance": "high",
+      "category": "authentication",
+      "subcategory": "authorization",
+      "tags": ["backend", "security", "access_control"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Authorization section"
+      },
+      "compatibility": {
+        "frameworks": ["express", "nest", "django", "flask", "spring", "laravel"],
+        "languages": ["javascript", "typescript", "python", "java", "php"],
+        "environments": ["api"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de sistema RBAC en Express",
+            "en": "Example of RBAC system in Express"
+          },
+          "code": "// Ejemplo de sistema RBAC en Express\nconst express = require('express');\nconst jwt = require('jsonwebtoken');\n\nconst app = express();\napp.use(express.json());\n\n// Middleware de autenticación (verifica el token JWT)\nfunction authenticate(req, res, next) {\n  // Implementación del middleware de autenticación\n  // (similar al código en el ejemplo anterior)\n  // ...\n}\n\n// Middleware de autorización basado en roles\nfunction authorize(requiredRoles) {\n  return (req, res, next) => {\n    // El middleware 'authenticate' ya debe haber sido ejecutado\n    // y debe haber añadido la info del usuario a req.user\n    if (!req.user) {\n      return res.status(401).json({ message: 'No autenticado' });\n    }\n    \n    // Si no se requieren roles específicos, cualquier usuario autenticado puede acceder\n    if (!requiredRoles || requiredRoles.length === 0) {\n      return next();\n    }\n    \n    // Verificar si el usuario tiene alguno de los roles requeridos\n    const hasRequiredRole = requiredRoles.some(role => req.user.role === role);\n    \n    if (!hasRequiredRole) {\n      return res.status(403).json({ message: 'Acceso denegado: permisos insuficientes' });\n    }\n    \n    next();\n  };\n}\n\n// Middleware de autorización basado en permisos más granular\nfunction checkPermission(requiredPermission) {\n  return async (req, res, next) => {\n    if (!req.user) {\n      return res.status(401).json({ message: 'No autenticado' });\n    }\n    \n    try {\n      // Obtener permisos del usuario desde la base de datos\n      // Esta es una implementación más avanzada que el simple rol\n      const userPermissions = await Permission.find({\n        role: req.user.role\n      });\n      \n      // Convertir resultados a un array de strings de permisos\n      const permissions = userPermissions.map(p => p.name);\n      \n      // Verificar si el usuario tiene el permiso requerido\n      if (!permissions.includes(requiredPermission) && !permissions.includes('admin:all')) {\n        return res.status(403).json({ message: 'Acceso denegado: permiso requerido: ' + requiredPermission });\n      }\n      \n      next();\n    } catch (error) {\n      console.error('Error al verificar permisos:', error);\n      return res.status(500).json({ message: 'Error interno del servidor' });\n    }\n  };\n}\n\n// Middleware para verificar propiedad de recursos\nfunction checkOwnership(resourceType) {\n  return async (req, res, next) => {\n    try {\n      const resourceId = req.params.id;\n      const userId = req.user.userId;\n      \n      // Si el usuario es admin, permitir acceso sin verificar propiedad\n      if (req.user.role === 'admin') {\n        return next();\n      }\n      \n      let resource;\n      \n      // Determinar qué tipo de recurso verificar\n      switch (resourceType) {\n        case 'post':\n          resource = await Post.findById(resourceId);\n          break;\n        case 'comment':\n          resource = await Comment.findById(resourceId);\n          break;\n        case 'profile':\n          // Para perfiles, verificar directamente el ID\n          if (resourceId === userId) {\n            return next();\n          }\n          return res.status(403).json({ message: 'No autorizado para acceder a este perfil' });\n        default:\n          return res.status(500).json({ message: 'Tipo de recurso no soportado' });\n      }\n      \n      // Verificar si el recurso existe\n      if (!resource) {\n        return res.status(404).json({ message: `${resourceType} no encontrado` });\n      }\n      \n      // Verificar propiedad (asumiendo que el recurso tiene un campo 'user' o 'userId')\n      if (resource.user?.toString() === userId || resource.userId?.toString() === userId) {\n        return next();\n      }\n      \n      // Si el recurso no pertenece al usuario, denegar acceso\n      return res.status(403).json({ message: 'No autorizado para acceder a este recurso' });\n    } catch (error) {\n      console.error('Error al verificar propiedad:', error);\n      return res.status(500).json({ message: 'Error interno del servidor' });\n    }\n  };\n}\n\n// Ejemplos de uso en rutas\n\n// Ruta que requiere autenticación\napp.get('/api/user/profile', authenticate, (req, res) => {\n  // Cualquier usuario autenticado puede acceder\n});\n\n// Ruta que requiere rol específico\napp.get('/api/admin/stats', authenticate, authorize(['admin']), (req, res) => {\n  // Solo usuarios con rol 'admin' pueden acceder\n});\n\n// Ruta que requiere múltiples roles posibles\napp.get('/api/reports', authenticate, authorize(['admin', 'manager']), (req, res) => {\n  // Usuarios con rol 'admin' o 'manager' pueden acceder\n});\n\n// Ruta que requiere permiso específico\napp.post('/api/users', authenticate, checkPermission('create:users'), (req, res) => {\n  // Solo usuarios con permiso 'create:users' pueden acceder\n});\n\n// Ruta que verifica propiedad del recurso\napp.put('/api/posts/:id', authenticate, checkOwnership('post'), (req, res) => {\n  // Solo el propietario del post puede actualizar\n});\n\n// Ruta que combina verificaciones\napp.delete('/api/posts/:id', authenticate, \n  (req, res, next) => {\n    // Permitir borrado si el usuario es admin o el propietario\n    if (req.user.role === 'admin') {\n      return next(); // Los admins pueden borrar cualquier post\n    }\n    // Si no es admin, verificar propiedad\n    return checkOwnership('post')(req, res, next);\n  }, \n  (req, res) => {\n    // Lógica de borrado aquí\n  }\n);"
+        }
+      ],
+      "relatedInstructions": ["back004", "sec007"]
+    },
+    {
+      "id": "back006",
+      "title": {
+        "es": "Implementar autenticación OAuth/OpenID",
+        "en": "Implement OAuth/OpenID authentication"
+      },
+      "description": {
+        "es": "Integrar autenticación con proveedores de identidad externos usando OAuth",
+        "en": "Integrate authentication with external identity providers using OAuth"
+      },
+      "text": {
+        "es": "Implementa autenticación mediante OAuth 2.0 y/o OpenID Connect para permitir a los usuarios iniciar sesión utilizando proveedores de identidad externos como Google, Facebook, GitHub, etc. Configura el flujo de autenticación adecuado (Authorization Code, Implicit, etc.) según las necesidades de tu aplicación, verifica correctamente tokens y claims, y almacena la información de usuario de forma segura. Implementa correctamente el manejo de callback URL y estado para prevenir ataques CSRF durante el flujo de autenticación.",
+        "en": "Implement authentication using OAuth 2.0 and/or OpenID Connect to allow users to sign in using external identity providers like Google, Facebook, GitHub, etc. Configure the appropriate authentication flow (Authorization Code, Implicit, etc.) based on your application's needs, properly verify tokens and claims, and store user information securely. Correctly implement callback URL and state handling to prevent CSRF attacks during the authentication flow."
+      },
+      "importance": "medium",
+      "category": "authentication",
+      "subcategory": "social_login",
+      "tags": ["backend", "security", "integration"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Authentication section"
+      },
+      "compatibility": {
+        "frameworks": ["express", "nest", "django", "flask", "spring", "laravel"],
+        "languages": ["javascript", "typescript", "python", "java", "php"],
+        "environments": ["web", "api"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de integración de OAuth con Google en Express",
+            "en": "Example of OAuth integration with Google in Express"
+          },
+          "code": "// Implementación de OAuth 2.0 con Google en Express\nconst express = require('express');\nconst passport = require('passport');\nconst GoogleStrategy = require('passport-google-oauth20').Strategy;\nconst session = require('express-session');\nconst jwt = require('jsonwebtoken');\n\nconst app = express();\n\n// Configuración de session\napp.use(session({\n  secret: process.env.SESSION_SECRET,\n  resave: false,\n  saveUninitialized: false,\n  cookie: {\n    secure: process.env.NODE_ENV === 'production',\n    httpOnly: true,\n    maxAge: 24 * 60 * 60 * 1000 // 24 horas\n  }\n}));\n\n// Inicializar Passport\napp.use(passport.initialize());\napp.use(passport.session());\n\n// Serialización de usuario para session\npassport.serializeUser((user, done) => {\n  done(null, user.id);\n});\n\npassport.deserializeUser(async (id, done) => {\n  try {\n    const user = await User.findById(id);\n    done(null, user);\n  } catch (error) {\n    done(error, null);\n  }\n});\n\n// Configurar estrategia de Google OAuth\npassport.use(new GoogleStrategy({\n  clientID: process.env.GOOGLE_CLIENT_ID,\n  clientSecret: process.env.GOOGLE_CLIENT_SECRET,\n  callbackURL: 'https://yourdomain.com/api/auth/google/callback',\n  scope: ['profile', 'email']\n}, async (accessToken, refreshToken, profile, done) => {\n  try {\n    // Buscar si el usuario ya existe en la base de datos\n    let user = await User.findOne({\n      'oauth.google.id': profile.id\n    });\n    \n    if (user) {\n      // Actualizar información si es necesario\n      if (user.email !== profile.emails[0].value) {\n        user.email = profile.emails[0].value;\n        await user.save();\n      }\n      return done(null, user);\n    }\n    \n    // Si no existe, crear nuevo usuario\n    user = new User({\n      name: profile.displayName,\n      email: profile.emails[0].value,\n      avatar: profile.photos[0].value,\n      oauth: {\n        google: {\n          id: profile.id,\n          token: accessToken\n        }\n      },\n      // Asignar rol por defecto para nuevos usuarios\n      role: 'user'\n    });\n    \n    await user.save();\n    return done(null, user);\n  } catch (error) {\n    return done(error, null);\n  }\n}));\n\n// Iniciar flujo de autenticación con Google\napp.get('/api/auth/google', \n  // Generar estado CSRF para prevenir ataques\n  (req, res, next) => {\n    req.session.oauthState = Math.random().toString(36).substring(2);\n    next();\n  },\n  passport.authenticate('google', { \n    scope: ['profile', 'email'],\n    state: req.session.oauthState\n  })\n);\n\n// Callback URL después de autenticación con Google\napp.get('/api/auth/google/callback', \n  // Verificar estado CSRF\n  (req, res, next) => {\n    if (req.query.state !== req.session.oauthState) {\n      return res.status(403).json({ message: 'Estado de OAuth inválido' });\n    }\n    next();\n  },\n  passport.authenticate('google', { \n    failureRedirect: '/login',\n    session: false // No usar sesión si usamos JWT\n  }),\n  (req, res) => {\n    // Generar token JWT para el usuario autenticado\n    const token = jwt.sign(\n      { \n        userId: req.user.id,\n        email: req.user.email,\n        role: req.user.role\n      }, \n      process.env.JWT_SECRET,\n      { expiresIn: '1h' }\n    );\n    \n    // Redirigir a la aplicación frontend con el token\n    // Para aplicaciones SPA, es útil redirigir a una ruta con el token como parámetro o hash\n    res.redirect(`${process.env.FRONTEND_URL}/auth-callback#token=${token}`);\n  }\n);\n\n// Endpoint para obtener el usuario actual con el token JWT\napp.get('/api/auth/user', authenticate, (req, res) => {\n  res.json({\n    id: req.user.userId,\n    email: req.user.email,\n    role: req.user.role\n  });\n});\n\n// Desconexión\napp.get('/api/auth/logout', (req, res) => {\n  req.logout();\n  res.json({ message: 'Sesión cerrada correctamente' });\n});"
+        }
+      ],
+      "relatedInstructions": ["back004", "sec004"]
+    }
+  ]
+}
