@@ -1,0 +1,121 @@
+{
+  "instructions": [
+    {
+      "id": "sec010",
+      "title": {
+        "es": "Encriptar datos sensibles",
+        "en": "Encrypt sensitive data"
+      },
+      "description": {
+        "es": "Implementar encriptación para proteger información sensible",
+        "en": "Implement encryption to protect sensitive information"
+      },
+      "text": {
+        "es": "Encripta siempre los datos sensibles, tanto en tránsito como en reposo. Utiliza HTTPS/TLS para todas las comunicaciones, encriptación de base de datos para datos en reposo, y considera la encriptación a nivel de campo para información especialmente sensible. Utiliza algoritmos de encriptación estándar y bien probados, y gestiona las claves de encriptación de forma segura manteniéndolas fuera del código fuente y utilizando servicios de gestión de secretos cuando sea posible.",
+        "en": "Always encrypt sensitive data, both in transit and at rest. Use HTTPS/TLS for all communications, database encryption for data at rest, and consider field-level encryption for especially sensitive information. Use standard, well-tested encryption algorithms, and manage encryption keys securely by keeping them out of source code and using secret management services when possible."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "data_protection",
+      "tags": ["security", "encryption", "data_privacy"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Data Protection section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de encriptación de datos sensibles en Node.js",
+            "en": "Example of sensitive data encryption in Node.js"
+          },
+          "code": "const crypto = require('crypto');\n\n// Configuración de encriptación (en producción, almacenar estas claves en variables de entorno)\nconst ENCRYPTION_KEY = process.env.ENCRYPTION_KEY; // Debe ser 32 bytes (256 bits)\nconst IV_LENGTH = 16; // Para AES, es siempre 16 bytes\n\n// Función para encriptar datos\nfunction encrypt(text) {\n  // Generar un vector de inicialización aleatorio\n  const iv = crypto.randomBytes(IV_LENGTH);\n  \n  // Crear cipher con algoritmo AES-256-CBC\n  const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);\n  \n  // Encriptar los datos\n  let encrypted = cipher.update(text, 'utf8', 'hex');\n  encrypted += cipher.final('hex');\n  \n  // Devolver IV + datos encriptados como un solo string\n  // El IV no necesita ser secreto, pero debe ser aleatorio para cada encriptación\n  return `${iv.toString('hex')}:${encrypted}`;\n}\n\n// Función para desencriptar datos\nfunction decrypt(text) {\n  // Separar IV y datos encriptados\n  const parts = text.split(':');\n  const iv = Buffer.from(parts[0], 'hex');\n  const encryptedText = parts[1];\n  \n  // Crear decipher\n  const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);\n  \n  // Desencriptar\n  let decrypted = decipher.update(encryptedText, 'hex', 'utf8');\n  decrypted += decipher.final('utf8');\n  \n  return decrypted;\n}\n\n// Ejemplo de uso con datos sensibles\nasync function saveUserPaymentInfo(userId, cardNumber) {\n  // Encriptar el número de tarjeta antes de almacenarlo\n  const encryptedCardNumber = encrypt(cardNumber);\n  \n  // Guardar en base de datos solo la versión encriptada\n  await db.users.updateOne(\n    { _id: userId },\n    { $set: { paymentInfo: encryptedCardNumber }}\n  );\n}"
+        }
+      ],
+      "relatedInstructions": ["sec011", "sec013"]
+    },
+    {
+      "id": "sec011",
+      "title": {
+        "es": "Gestionar secretos de forma segura",
+        "en": "Manage secrets securely"
+      },
+      "description": {
+        "es": "Implementar prácticas seguras para gestión de claves y secretos",
+        "en": "Implement secure practices for key and secret management"
+      },
+      "text": {
+        "es": "Gestiona los secretos de la aplicación (claves API, credenciales de bases de datos, claves de encriptación) de forma segura. Nunca almacenes secretos en el código fuente o archivos de configuración versionados. Utiliza variables de entorno o, mejor aún, servicios especializados de gestión de secretos como AWS Secrets Manager, Azure Key Vault o HashiCorp Vault. Implementa rotación periódica de secretos y acceso con privilegios mínimos a las credenciales.",
+        "en": "Manage application secrets (API keys, database credentials, encryption keys) securely. Never store secrets in source code or versioned configuration files. Use environment variables or, better yet, specialized secret management services like AWS Secrets Manager, Azure Key Vault, or HashiCorp Vault. Implement periodic secret rotation and least-privilege access to credentials."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "data_protection",
+      "tags": ["security", "devops", "credentials"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Application Security section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de gestión de secretos con dotenv en Node.js",
+            "en": "Example of secret management with dotenv in Node.js"
+          },
+          "code": "// Instalar: npm install dotenv\n\n// En la raíz del proyecto: archivo .env (añadir a .gitignore)\n// DB_USER=admin\n// DB_PASSWORD=my-secure-password\n// API_KEY=1234567890abcdef\n// JWT_SECRET=random-secure-string\n\n// En tu aplicación: config.js\nrequire('dotenv').config();\n\nmodule.exports = {\n  database: {\n    user: process.env.DB_USER,\n    password: process.env.DB_PASSWORD,\n    host: process.env.DB_HOST || 'localhost',\n    port: parseInt(process.env.DB_PORT || '5432', 10),\n    name: process.env.DB_NAME || 'myapp'\n  },\n  api: {\n    key: process.env.API_KEY,\n    url: process.env.API_URL || 'https://api.example.com'\n  },\n  jwt: {\n    secret: process.env.JWT_SECRET,\n    expiresIn: process.env.JWT_EXPIRES_IN || '24h'\n  }\n};"
+        }
+      ],
+      "relatedInstructions": ["sec010", "sec012"]
+    },
+    {
+      "id": "sec012",
+      "title": {
+        "es": "Minimizar la exposición de datos sensibles",
+        "en": "Minimize sensitive data exposure"
+      },
+      "description": {
+        "es": "Reducir al mínimo la recopilación y exposición de información sensible",
+        "en": "Reduce collection and exposure of sensitive information to minimum"
+      },
+      "text": {
+        "es": "Minimiza la recopilación y exposición de datos sensibles. Solo almacena lo que realmente necesitas (principio de minimización de datos), implementa políticas de retención adecuadas para eliminar datos cuando ya no sean necesarios, y asegúrate de que los registros de aplicación no contengan información sensible como contraseñas o tokens. Enmascara información sensible en respuestas API y establece encabezados de seguridad apropiados para prevenir el almacenamiento en caché de datos sensibles.",
+        "en": "Minimize collection and exposure of sensitive data. Only store what you truly need (data minimization principle), implement proper retention policies to remove data when no longer needed, and ensure application logs don't contain sensitive information like passwords or tokens. Mask sensitive information in API responses and set appropriate security headers to prevent caching of sensitive data."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "data_protection",
+      "tags": ["security", "data_privacy", "compliance"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Data Protection section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de sanitización de datos en respuestas API",
+            "en": "Example of data sanitization in API responses"
+          },
+          "code": "// Función para sanitizar datos de usuario antes de enviarlos al cliente\nfunction sanitizeUserData(user) {\n  // Crear copia para no modificar el objeto original\n  const sanitizedUser = { ...user };\n  \n  // Eliminar campos sensibles\n  delete sanitizedUser.password;\n  delete sanitizedUser.passwordResetToken;\n  delete sanitizedUser.passwordResetExpires;\n  \n  // Enmascarar información sensible\n  if (sanitizedUser.email) {\n    const [username, domain] = sanitizedUser.email.split('@');\n    sanitizedUser.email = `${username.substring(0, 3)}***@${domain}`;\n  }\n  \n  if (sanitizedUser.phoneNumber) {\n    sanitizedUser.phoneNumber = sanitizedUser.phoneNumber.replace(\n      /^(\\d{3})(\\d{4})(\\d+)$/,\n      '$1-****-$3'\n    );\n  }\n  \n  // Eliminar datos que no necesita el cliente\n  delete sanitizedUser.loginAttempts;\n  delete sanitizedUser.lastLoginIp;\n  \n  return sanitizedUser;\n}\n\n// Uso en una ruta API\napp.get('/api/users/:id', authenticateUser, async (req, res) => {\n  try {\n    const user = await User.findById(req.params.id);\n    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });\n    \n    // Sanitizar datos antes de enviar\n    const sanitizedData = sanitizeUserData(user.toObject());\n    \n    // Establecer encabezados para prevenir caché\n    res.setHeader('Cache-Control', 'no-store');\n    res.setHeader('Pragma', 'no-cache');\n    \n    return res.json(sanitizedData);\n  } catch (error) {\n    console.error('Error al obtener usuario:', error);\n    return res.status(500).json({ message: 'Error interno del servidor' });\n  }\n});"
+        }
+      ],
+      "relatedInstructions": ["sec010", "sec011"]
+    }
+  ]
+}
