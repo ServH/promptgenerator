@@ -1,0 +1,160 @@
+{
+  "instructions": [
+    {
+      "id": "fe001",
+      "title": {
+        "es": "Componentizar interfaces de usuario",
+        "en": "Componentize user interfaces"
+      },
+      "description": {
+        "es": "Dividir interfaces en componentes reutilizables y modulares",
+        "en": "Break interfaces into reusable, modular components"
+      },
+      "text": {
+        "es": "Divide las interfaces de usuario en componentes pequeños, reutilizables y con un solo propósito. Esto mejora la mantenibilidad, facilita las pruebas y permite una mayor reutilización de código. Sigue una estructura jerárquica clara y evita componentes excesivamente grandes con demasiadas responsabilidades.",
+        "en": "Break user interfaces into small, reusable, single-purpose components. This improves maintainability, simplifies testing, and allows for greater code reuse. Follow a clear hierarchical structure and avoid overly large components with too many responsibilities."
+      },
+      "importance": "high",
+      "category": "components",
+      "subcategory": "component_design",
+      "tags": ["frontend", "organization", "reusability"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Code Project section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "vue", "angular", "svelte", "nextjs"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web", "mobile"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de componentización en React",
+            "en": "Example of componentization in React"
+          },
+          "code": "// En lugar de un componente grande\nfunction UserDashboard() {\n  // ... mucho código aquí\n  return (\n    <div>\n      {/* Muchos elementos UI aquí */}\n    </div>\n  );\n}\n\n// Mejor: Dividir en componentes más pequeños\nfunction UserDashboard() {\n  return (\n    <div className=\"dashboard\">\n      <UserProfile />\n      <ActivityFeed />\n      <StatisticsSummary />\n      <RecentNotifications />\n    </div>\n  );\n}"
+        }
+      ],
+      "relatedInstructions": ["fe002", "fe003"]
+    },
+    {
+      "id": "fe002",
+      "title": {
+        "es": "Utilizar props con valores por defecto",
+        "en": "Use props with default values"
+      },
+      "description": {
+        "es": "Proporcionar valores por defecto para las props de componentes",
+        "en": "Provide default values for component props"
+      },
+      "text": {
+        "es": "Siempre proporciona valores por defecto para las props de componentes cuando sea posible. Esto mejora la robustez del componente, facilita su uso y evita errores inesperados cuando no se proporcionan ciertos valores. Además, documenta claramente el propósito de cada prop y su tipo esperado.",
+        "en": "Always provide default values for component props when possible. This improves component robustness, makes them easier to use, and prevents unexpected errors when certain values are not provided. Additionally, clearly document the purpose of each prop and its expected type."
+      },
+      "importance": "medium",
+      "category": "components",
+      "subcategory": "props_management",
+      "tags": ["frontend", "robustness", "usability"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Working in Next Lite section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "vue", "svelte", "nextjs"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web", "mobile"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de props con valores por defecto en React",
+            "en": "Example of props with default values in React"
+          },
+          "code": "// React con JavaScript\nfunction Button({ text = 'Click me', type = 'primary', onClick = () => {} }) {\n  return (\n    <button\n      className={`btn btn-${type}`}\n      onClick={onClick}\n    >\n      {text}\n    </button>\n  );\n}\n\n// React con TypeScript\ntype ButtonProps = {\n  text?: string;\n  type?: 'primary' | 'secondary' | 'danger';\n  onClick?: () => void;\n};\n\nfunction Button({ text = 'Click me', type = 'primary', onClick = () => {} }: ButtonProps) {\n  return (\n    <button\n      className={`btn btn-${type}`}\n      onClick={onClick}\n    >\n      {text}\n    </button>\n  );\n}"
+        }
+      ],
+      "relatedInstructions": ["fe001", "fe003"]
+    },
+    {
+      "id": "fe003",
+      "title": {
+        "es": "Usar componentes funcionales con hooks en React",
+        "en": "Use functional components with hooks in React"
+      },
+      "description": {
+        "es": "Preferir componentes funcionales con hooks sobre componentes de clase",
+        "en": "Prefer functional components with hooks over class components"
+      },
+      "text": {
+        "es": "Utiliza componentes funcionales con hooks en lugar de componentes de clase en React. Los componentes funcionales son más concisos, más fáciles de probar y permiten una mejor reutilización de la lógica a través de hooks personalizados.",
+        "en": "Use functional components with hooks instead of class components in React. Functional components are more concise, easier to test, and allow for better logic reuse through custom hooks."
+      },
+      "importance": "high",
+      "category": "components",
+      "subcategory": "react",
+      "tags": ["react", "modern", "frontend"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "React Component section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "nextjs"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de componente funcional con hooks",
+            "en": "Example of functional component with hooks"
+          },
+          "code": "// Componente funcional con hooks\nfunction UserProfile({ userId }) {\n  const [user, setUser] = useState(null);\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    async function fetchUser() {\n      try {\n        setLoading(true);\n        const userData = await api.getUser(userId);\n        setUser(userData);\n      } catch (error) {\n        console.error('Error fetching user:', error);\n      } finally {\n        setLoading(false);\n      }\n    }\n    \n    fetchUser();\n  }, [userId]);\n\n  if (loading) return <Spinner />;\n  if (!user) return <NotFound />;\n  \n  return (\n    <div className=\"profile\">\n      <h1>{user.name}</h1>\n      <p>{user.bio}</p>\n    </div>\n  );\n}"
+        }
+      ],
+      "relatedInstructions": ["fe001", "fe002", "fe004"]
+    },
+    {
+      "id": "fe004",
+      "title": {
+        "es": "Evitar prop drilling",
+        "en": "Avoid prop drilling"
+      },
+      "description": {
+        "es": "Minimizar el paso de props a través de múltiples componentes",
+        "en": "Minimize passing props through multiple component levels"
+      },
+      "text": {
+        "es": "Minimiza el prop drilling (pasar props a través de múltiples niveles de componentes) utilizando Context API, composición de componentes u otras soluciones de gestión de estado cuando sea apropiado. Esto hace que el código sea más mantenible y reduce el acoplamiento entre componentes.",
+        "en": "Minimize prop drilling (passing props through multiple component levels) by using Context API, component composition, or other state management solutions when appropriate. This makes the code more maintainable and reduces coupling between components."
+      },
+      "importance": "medium",
+      "category": "components",
+      "subcategory": "react",
+      "tags": ["react", "state_management", "frontend"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "React Component section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "nextjs"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de uso de Context API para evitar prop drilling",
+            "en": "Example of using Context API to avoid prop drilling"
+          },
+          "code": "// Crear un contexto\nconst UserContext = React.createContext();\n\n// Proveedor en un componente superior\nfunction App() {\n  const userData = { /* ... */ };\n  return (\n    <UserContext.Provider value={userData}>\n      <MainContent />\n    </UserContext.Provider>\n  );\n}\n\n// Componente intermedio que no necesita los datos\nfunction MainContent() {\n  return (\n    <div>\n      <Header />\n      <UserProfile />\n      <Footer />\n    </div>\n  );\n}\n\n// Consumir en un componente profundo sin prop drilling\nfunction UserProfile() {\n  const userData = React.useContext(UserContext);\n  // Usar userData directamente\n  return <div>{userData.name}</div>;\n}"
+        }
+      ],
+      "relatedInstructions": ["fe003"]
+    }
+  ]
+}
