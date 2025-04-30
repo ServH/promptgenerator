@@ -1,0 +1,82 @@
+{
+  "instructions": [
+    {
+      "id": "scal010",
+      "title": {
+        "es": "Implementar circuit breakers",
+        "en": "Implement circuit breakers"
+      },
+      "description": {
+        "es": "Usar circuit breakers para prevenir cascadas de fallos",
+        "en": "Use circuit breakers to prevent cascading failures"
+      },
+      "text": {
+        "es": "Implementa el patrón de circuit breaker para prevenir que fallos en servicios dependientes causen fallos en cascada a través del sistema. Este patrón detecta fallos y rechaza peticiones durante un período específico, permitiendo que los servicios dependientes se recuperen y evitando sobrecarga en sistemas ya comprometidos.",
+        "en": "Implement the circuit breaker pattern to prevent failures in dependent services from causing cascading failures throughout the system. This pattern detects failures and rejects requests for a specific period, allowing dependent services to recover and preventing overload on already compromised systems."
+      },
+      "importance": "medium",
+      "category": "scalability",
+      "subcategory": "resilience",
+      "tags": ["microservices", "resilience", "architecture"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Resilience Patterns"
+      },
+      "compatibility": {
+        "frameworks": ["resilience4j", "hystrix", "polly", "sentinel"],
+        "languages": ["java", "dotnet", "nodejs", "go"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Circuit breaker en Java con Resilience4j",
+            "en": "Circuit breaker in Java with Resilience4j"
+          },
+          "code": "import io.github.resilience4j.circuitbreaker.CircuitBreaker;\nimport io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;\nimport io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;\n\nimport java.time.Duration;\nimport java.util.function.Supplier;\n\npublic class PaymentService {\n\n    private final ExternalPaymentGateway paymentGateway;\n    private final CircuitBreaker circuitBreaker;\n\n    public PaymentService(ExternalPaymentGateway paymentGateway) {\n        this.paymentGateway = paymentGateway;\n        \n        // Define circuit breaker configuration\n        CircuitBreakerConfig config = CircuitBreakerConfig.custom()\n            .failureRateThreshold(50)  // 50% failure rate to open circuit\n            .waitDurationInOpenState(Duration.ofSeconds(30))  // Wait 30s in OPEN state\n            .permittedNumberOfCallsInHalfOpenState(5)  // Allow 5 calls in HALF-OPEN\n            .slidingWindowSize(10)  // Look at last 10 calls to calculate failure rate\n            .recordExceptions(TimeoutException.class, IOException.class) // Which exceptions count as failures\n            .build();\n            \n        // Create the circuit breaker\n        CircuitBreakerRegistry registry = CircuitBreakerRegistry.of(config);\n        this.circuitBreaker = registry.circuitBreaker(\"paymentService\");\n    }\n\n    public PaymentResult processPayment(Payment payment) {\n        // Decorate the function call with circuit breaker\n        Supplier<PaymentResult> decoratedSupplier = CircuitBreaker\n            .decorateSupplier(circuitBreaker, () -> paymentGateway.processPayment(payment));\n            \n        try {\n            // Execute the decorated function\n            return decoratedSupplier.get();\n        } catch (Exception e) {\n            // Handle the exception (circuit open or actual failure)\n            return new PaymentResult(PaymentStatus.FAILED, \"Payment service unavailable\");\n        }\n    }\n}"
+        }
+      ],
+      "relatedInstructions": ["scal011", "ms004", "api005"]
+    },
+    {
+      "id": "scal011",
+      "title": {
+        "es": "Implementar retry con backoff exponencial",
+        "en": "Implement retry with exponential backoff"
+      },
+      "description": {
+        "es": "Utilizar reintentos inteligentes para mejorar resiliencia sin sobrecargar",
+        "en": "Use smart retries to improve resilience without overloading"
+      },
+      "text": {
+        "es": "Implementa un patrón de reintento con backoff exponencial para operaciones que pueden fallar transitoriamente. Aumenta progresivamente el tiempo entre reintentos para reducir la carga en sistemas estresados y mejorar las posibilidades de éxito eventual sin contribuir a problemas de sobrecarga.",
+        "en": "Implement a retry pattern with exponential backoff for operations that may fail transiently. Progressively increase the time between retries to reduce load on stressed systems and improve chances of eventual success without contributing to overload problems."
+      },
+      "importance": "medium",
+      "category": "scalability",
+      "subcategory": "resilience",
+      "tags": ["microservices", "resilience", "best_practices"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Resilience Patterns"
+      },
+      "compatibility": {
+        "frameworks": ["resilience4j", "retry", "polly", "spring-retry"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementación de retry con backoff exponencial en Node.js",
+            "en": "Implementing retry with exponential backoff in Node.js"
+          },
+          "code": "// Retry function with exponential backoff\nasync function retryWithExponentialBackoff(operation, maxRetries = 5, baseDelay = 300) {\n  let retries = 0;\n  \n  while (true) {\n    try {\n      return await operation();\n    } catch (error) {\n      // If we've used all retries, or if error is not retryable, throw\n      if (retries >= maxRetries || !isRetryable(error)) {\n        throw error;\n      }\n      \n      // Calculate delay with exponential backoff and jitter\n      const delay = baseDelay * Math.pow(2, retries) + Math.random() * 100;\n      console.log(`Operation failed. Retrying in ${delay}ms. Retry ${retries + 1}/${maxRetries}`);\n      \n      // Wait before retrying\n      await new Promise(resolve => setTimeout(resolve, delay));\n      retries++;\n    }\n  }\n}\n\n// Determine if an error is retryable\nfunction isRetryable(error) {\n  // Network errors and certain HTTP status codes are often retryable\n  return error.code === 'ECONNRESET' || \n         error.code === 'ETIMEDOUT' || \n         (error.response && (error.response.status === 429 || \n                             error.response.status === 503 || \n                             error.response.status >= 500));\n}\n\n// Example usage\nasync function fetchDataWithRetry() {\n  try {\n    const result = await retryWithExponentialBackoff(\n      () => axios.get('https://api.example.com/data'),\n      3,  // max 3 retries\n      500 // start with 500ms delay\n    );\n    return result.data;\n  } catch (error) {\n    console.error('Failed after multiple retries', error);\n    throw error;\n  }\n}"
+        }
+      ],
+      "relatedInstructions": ["scal010", "ms004", "api005"]
+    }
+  ]
+}
