@@ -1,0 +1,355 @@
+{
+  "instructions": [
+    {
+      "id": "scal001",
+      "title": {
+        "es": "Diseñar para escalabilidad horizontal",
+        "en": "Design for horizontal scalability"
+      },
+      "description": {
+        "es": "Priorizar la escalabilidad horizontal sobre la vertical cuando sea posible",
+        "en": "Prioritize horizontal scaling over vertical scaling when possible"
+      },
+      "text": {
+        "es": "Diseña la arquitectura para favorecer la escalabilidad horizontal (añadir más instancias) sobre la escalabilidad vertical (aumentar recursos de instancias existentes). Esto permite una mejor tolerancia a fallos y facilita el crecimiento bajo demanda.",
+        "en": "Design the architecture to favor horizontal scaling (adding more instances) over vertical scaling (increasing resources of existing instances). This allows for better fault tolerance and facilitates growth on demand."
+      },
+      "importance": "high",
+      "category": "scalability",
+      "subcategory": "architecture_patterns",
+      "tags": ["architecture", "cloud", "performance"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Cloud Architecture Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["kubernetes", "docker-swarm", "aws-ecs"],
+        "languages": ["all"],
+        "environments": ["cloud", "hybrid"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementación de un servicio web escalable horizontalmente",
+            "en": "Implementation of a horizontally scalable web service"
+          },
+          "code": "# Kubernetes Deployment example\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: web-service\nspec:\n  replicas: 3  # Start with multiple replicas\n  selector:\n    matchLabels:\n      app: web-service\n  template:\n    metadata:\n      labels:\n        app: web-service\n    spec:\n      containers:\n      - name: web-service\n        image: web-service:latest\n        resources:\n          limits:\n            cpu: \"500m\"  # Limit resources per instance\n            memory: \"512Mi\"\n  strategy:\n    type: RollingUpdate  # Support seamless scaling"
+        }
+      ],
+      "relatedInstructions": ["scal002", "scal005", "infra003"]
+    },
+    {
+      "id": "scal002",
+      "title": {
+        "es": "Implementar auto-escalado",
+        "en": "Implement auto-scaling"
+      },
+      "description": {
+        "es": "Configurar auto-escalado basado en métricas para manejar cargas variables",
+        "en": "Configure metrics-based auto-scaling to handle variable loads"
+      },
+      "text": {
+        "es": "Implementa mecanismos de auto-escalado que ajusten automáticamente el número de instancias según las métricas relevantes (CPU, memoria, colas, latencia, etc.). Define tanto escalado horizontal (más instancias) como vertical (más recursos) cuando sea aplicable.",
+        "en": "Implement auto-scaling mechanisms that automatically adjust the number of instances based on relevant metrics (CPU, memory, queues, latency, etc.). Define both horizontal scaling (more instances) and vertical scaling (more resources) where applicable."
+      },
+      "importance": "high",
+      "category": "scalability",
+      "subcategory": "auto_scaling",
+      "tags": ["operations", "cloud", "performance"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Cloud Operations"
+      },
+      "compatibility": {
+        "frameworks": ["kubernetes", "aws-auto-scaling", "azure-vmss", "gcp-instance-groups"],
+        "languages": ["all"],
+        "environments": ["cloud"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Configuración de HPA en Kubernetes",
+            "en": "Kubernetes HPA configuration"
+          },
+          "code": "apiVersion: autoscaling/v2\nkind: HorizontalPodAutoscaler\nmetadata:\n  name: web-service-hpa\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: web-service\n  minReplicas: 2\n  maxReplicas: 10\n  metrics:\n  - type: Resource\n    resource:\n      name: cpu\n      target:\n        type: Utilization\n        averageUtilization: 70\n  - type: Resource\n    resource:\n      name: memory\n      target:\n        type: Utilization\n        averageUtilization: 80"
+        }
+      ],
+      "relatedInstructions": ["scal001", "scal008", "mon003"]
+    },
+    {
+      "id": "scal003",
+      "title": {
+        "es": "Diseñar componentes sin estado",
+        "en": "Design stateless components"
+      },
+      "description": {
+        "es": "Crear componentes sin estado que puedan escalarse fácilmente",
+        "en": "Create stateless components that can be easily scaled"
+      },
+      "text": {
+        "es": "Diseña los componentes de aplicación para ser sin estado siempre que sea posible. Los servicios sin estado pueden escalarse horizontalmente con mayor facilidad, ya que cualquier instancia puede manejar cualquier solicitud sin dependencia de solicitudes anteriores o estados almacenados localmente.",
+        "en": "Design application components to be stateless whenever possible. Stateless services can be horizontally scaled more easily since any instance can handle any request without dependency on previous requests or locally stored state."
+      },
+      "importance": "high",
+      "category": "scalability",
+      "subcategory": "architecture_patterns",
+      "tags": ["architecture", "cloud_native", "best_practices"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Cloud Native Design Patterns"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Convertir un servicio con estado a sin estado",
+            "en": "Converting a stateful service to stateless"
+          },
+          "code": "// Before: Stateful service with session stored in memory\napp.get('/user', (req, res) => {\n  const user = req.session.user; // Session stored locally\n  res.json(user);\n});\n\n// After: Stateless service with external session store\napp.get('/user', (req, res) => {\n  const sessionId = req.cookies.sessionId;\n  redisClient.get(`session:${sessionId}`, (err, user) => {\n    res.json(JSON.parse(user));\n  });\n});"
+        }
+      ],
+      "relatedInstructions": ["scal001", "scal004", "infra007"]
+    },
+    {
+      "id": "scal004",
+      "title": {
+        "es": "Externalizar el estado",
+        "en": "Externalize state"
+      },
+      "description": {
+        "es": "Almacenar datos de estado en servicios externos para permitir escalabilidad",
+        "en": "Store state data in external services to enable scalability"
+      },
+      "text": {
+        "es": "Externaliza cualquier estado o información persistente a servicios dedicados y escalables como bases de datos, caches distribuidos o almacenes clave-valor. Esto permite que los componentes de la aplicación sean verdaderamente sin estado y puedan escalarse independientemente de los datos.",
+        "en": "Externalize any state or persistent information to dedicated and scalable services like databases, distributed caches, or key-value stores. This allows application components to be truly stateless and scale independently from the data."
+      },
+      "importance": "high",
+      "category": "scalability",
+      "subcategory": "state_management",
+      "tags": ["architecture", "best_practices", "cloud_native"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Cloud Native Design Patterns"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Externalizar sesiones web a Redis",
+            "en": "Externalizing web sessions to Redis"
+          },
+          "code": "// Node.js with Express and Redis-based sessions\nconst session = require('express-session');\nconst RedisStore = require('connect-redis')(session);\nconst redis = require('redis');\nconst client = redis.createClient({\n  host: process.env.REDIS_HOST,\n  port: process.env.REDIS_PORT\n});\n\napp.use(session({\n  store: new RedisStore({ client }),\n  secret: process.env.SESSION_SECRET,\n  resave: false,\n  saveUninitialized: false\n}));"
+        }
+      ],
+      "relatedInstructions": ["scal003", "scal007", "db002"]
+    },
+    {
+      "id": "scal005",
+      "title": {
+        "es": "Implementar particionamiento de datos",
+        "en": "Implement data partitioning"
+      },
+      "description": {
+        "es": "Dividir datos en múltiples particiones para habilitar escalado",
+        "en": "Split data across multiple partitions to enable scaling"
+      },
+      "text": {
+        "es": "Implementa estrategias de particionamiento de datos (sharding) para distribuir grandes volúmenes de datos entre múltiples instancias o nodos de almacenamiento. Selecciona claves de partición apropiadas basadas en patrones de acceso para evitar hotspots y garantizar una distribución equilibrada.",
+        "en": "Implement data partitioning (sharding) strategies to distribute large volumes of data across multiple storage instances or nodes. Select appropriate partition keys based on access patterns to avoid hotspots and ensure balanced distribution."
+      },
+      "importance": "medium",
+      "category": "scalability",
+      "subcategory": "data_scaling",
+      "tags": ["database", "architecture", "performance"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Database Scaling Patterns"
+      },
+      "compatibility": {
+        "frameworks": ["mongodb", "cassandra", "dynamodb", "couchbase"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Configuración de sharding en MongoDB",
+            "en": "MongoDB sharding configuration"
+          },
+          "code": "// Enable sharding for a database\nsh.enableSharding(\"myDatabase\")\n\n// Create an index on the shard key\ndb.users.createIndex({ \"location\": 1 })\n\n// Shard the collection using the location field\nsh.shardCollection(\"myDatabase.users\", { \"location\": 1 })\n\n// When adding data, the shard key helps distribute data across shards\ndb.users.insertOne({\n  \"name\": \"Alice\",\n  \"location\": \"west\",  // Shard key determines which shard receives this\n  \"data\": { /* other user data */ }\n})"
+        }
+      ],
+      "relatedInstructions": ["scal007", "db004", "perf002"]
+    },
+    {
+      "id": "scal006",
+      "title": {
+        "es": "Utilizar caché distribuido",
+        "en": "Utilize distributed caching"
+      },
+      "description": {
+        "es": "Implementar caché distribuido para reducir latencia y mejorar escalabilidad",
+        "en": "Implement distributed caching to reduce latency and improve scalability"
+      },
+      "text": {
+        "es": "Implementa soluciones de caché distribuido para almacenar resultados de operaciones costosas, datos frecuentemente accedidos o respuestas HTTP. Esto reduce la carga en los servicios principales y mejora los tiempos de respuesta, permitiendo mayor capacidad de escala para el sistema en general.",
+        "en": "Implement distributed caching solutions to store results of expensive operations, frequently accessed data, or HTTP responses. This reduces load on core services and improves response times, allowing for greater scaling capacity for the overall system."
+      },
+      "importance": "high",
+      "category": "scalability",
+      "subcategory": "performance_optimization",
+      "tags": ["performance", "architecture", "cloud_native"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Performance Optimization Patterns"
+      },
+      "compatibility": {
+        "frameworks": ["redis", "memcached", "hazelcast", "elasticache"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementación de caché distribuido con Redis",
+            "en": "Implementing distributed cache with Redis"
+          },
+          "code": "// Function with Redis caching\nasync function getProductDetails(productId) {\n  const cacheKey = `product:${productId}`;\n  \n  // Try to get from cache first\n  const cachedData = await redisClient.get(cacheKey);\n  if (cachedData) {\n    return JSON.parse(cachedData);\n  }\n  \n  // If not in cache, get from database\n  const product = await database.products.findOne({ id: productId });\n  \n  // Store in cache for future requests with 1 hour expiration\n  await redisClient.set(cacheKey, JSON.stringify(product), 'EX', 3600);\n  \n  return product;\n}"
+        }
+      ],
+      "relatedInstructions": ["scal004", "perf001", "perf003"]
+    },
+    {
+      "id": "scal007",
+      "title": {
+        "es": "Diseñar para alta disponibilidad",
+        "en": "Design for high availability"
+      },
+      "description": {
+        "es": "Eliminar puntos únicos de fallo para habilitar escalabilidad real",
+        "en": "Eliminate single points of failure to enable true scalability"
+      },
+      "text": {
+        "es": "Diseña todos los componentes del sistema para alta disponibilidad, eliminando puntos únicos de fallo. Esto no solo mejora la resiliencia, sino que también es un prerrequisito para la escalabilidad real, ya que permite que componentes individuales escalen sin comprometer el sistema completo.",
+        "en": "Design all system components for high availability by eliminating single points of failure. This not only improves resilience but is also a prerequisite for true scalability, as it allows individual components to scale without compromising the entire system."
+      },
+      "importance": "high",
+      "category": "scalability",
+      "subcategory": "high_availability",
+      "tags": ["architecture", "reliability", "cloud"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Cloud Architecture Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Diseño de arquitectura de alta disponibilidad",
+            "en": "High availability architecture design"
+          },
+          "code": "# AWS Infrastructure as Code example with redundancy\nresource \"aws_lb\" \"app_lb\" {\n  name               = \"app-lb\"\n  internal           = false\n  load_balancer_type = \"application\"\n  security_groups    = [aws_security_group.lb_sg.id]\n  subnets            = aws_subnet.public.*.id  # Multiple subnets across AZs\n}\n\nresource \"aws_autoscaling_group\" \"app_asg\" {\n  name                 = \"app-asg\"\n  min_size             = 2  # Minimum of 2 instances for HA\n  max_size             = 10\n  desired_capacity     = 2\n  vpc_zone_identifier  = aws_subnet.private.*.id  # Multiple AZs\n  health_check_type    = \"ELB\"\n  target_group_arns    = [aws_lb_target_group.app_tg.arn]\n  # ... other configurations\n}\n\n# Primary database\nresource \"aws_rds_cluster\" \"database\" {\n  cluster_identifier  = \"app-db-cluster\"\n  engine              = \"aurora-mysql\"\n  database_name       = \"appdb\"\n  master_username     = \"admin\"\n  master_password     = var.db_password\n  availability_zones  = [\"us-west-2a\", \"us-west-2b\", \"us-west-2c\"]  # Multi-AZ\n  backup_retention_period = 7\n  preferred_backup_window = \"07:00-09:00\"\n}"
+        }
+      ],
+      "relatedInstructions": ["scal001", "infra001", "infra005"]
+    },
+    {
+      "id": "scal008",
+      "title": {
+        "es": "Implementar pruebas de carga",
+        "en": "Implement load testing"
+      },
+      "description": {
+        "es": "Ejecutar pruebas de carga para validar estrategias de escalabilidad",
+        "en": "Run load tests to validate scalability strategies"
+      },
+      "text": {
+        "es": "Implementa pruebas de carga regulares para validar las estrategias de escalabilidad. Simula patrones de tráfico realistas, incluyendo picos repentinos, y verifica que los componentes escalen según lo esperado sin degradación de rendimiento o fallos. Utiliza los resultados para ajustar los parámetros de auto-escalado.",
+        "en": "Implement regular load testing to validate scalability strategies. Simulate realistic traffic patterns, including sudden spikes, and verify that components scale as expected without performance degradation or failures. Use the results to tune auto-scaling parameters."
+      },
+      "importance": "medium",
+      "category": "scalability",
+      "subcategory": "testing",
+      "tags": ["testing", "performance", "operations"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Performance Testing Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["jmeter", "locust", "gatling", "k6"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Script de prueba de carga con k6",
+            "en": "Load testing script with k6"
+          },
+          "code": "import http from 'k6/http';\nimport { sleep, check } from 'k6';\nimport { Rate } from 'k6/metrics';\n\nconst failRate = new Rate('failed_requests');\n\nexport const options = {\n  stages: [\n    { duration: '2m', target: 100 },    // Ramp up to 100 users\n    { duration: '5m', target: 100 },    // Stay at 100 for 5 minutes\n    { duration: '2m', target: 200 },    // Ramp up to 200 users\n    { duration: '5m', target: 200 },    // Stay at 200 for 5 minutes\n    { duration: '2m', target: 300 },    // Ramp up to 300 users for stress test\n    { duration: '5m', target: 300 },    // Stay at 300 for 5 minutes\n    { duration: '2m', target: 0 },      // Ramp down to 0 users\n  ],\n  thresholds: {\n    http_req_duration: ['p(95)<500'],   // 95% of requests must finish within 500ms\n    'failed_requests': ['rate<0.1'],    // Error rate must be less than 10%\n  },\n};\n\nexport default function () {\n  const res = http.get('https://api.example.com/products');\n  \n  // Check if response is successful\n  const success = check(res, {\n    'status is 200': (r) => r.status === 200,\n    'response time < 200ms': (r) => r.timings.duration < 200,\n  });\n  \n  // Record failed requests\n  if (!success) {\n    failRate.add(1);\n  }\n  \n  sleep(Math.random() * 3 + 1); // Random sleep between 1-4 seconds\n}"
+        }
+      ],
+      "relatedInstructions": ["scal002", "test003", "mon006"]
+    },
+    {
+      "id": "scal009",
+      "title": {
+        "es": "Implementar patrones de limitación de tasa",
+        "en": "Implement rate limiting patterns"
+      },
+      "description": {
+        "es": "Proteger servicios contra sobrecargas mediante limitación de tasa",
+        "en": "Protect services from overload with rate limiting"
+      },
+      "text": {
+        "es": "Implementa patrones de limitación de tasa (rate limiting) para proteger tus servicios contra sobrecargas y potenciales ataques de denegación de servicio. Aplica límites por cliente, por API key o por IP, y proporciona respuestas apropiadas con cabeceras que indiquen límites y tiempo de refresco.",
+        "en": "Implement rate limiting patterns to protect your services against overload and potential denial of service attacks. Apply limits per client, per API key, or per IP, and provide appropriate responses with headers indicating limits and reset times."
+      },
+      "importance": "medium",
+      "category": "scalability",
+      "subcategory": "protection",
+      "tags": ["security", "api", "resilience"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "API Gateway Patterns"
+      },
+      "compatibility": {
+        "frameworks": ["nginx", "express", "spring", "django"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementación de rate limiting con Express",
+            "en": "Rate limiting implementation with Express"
+          },
+          "code": "const express = require('express');\nconst rateLimit = require('express-rate-limit');\nconst RedisStore = require('rate-limit-redis');\nconst Redis = require('ioredis');\n\nconst app = express();\nconst redis = new Redis({\n  host: process.env.REDIS_HOST,\n  port: process.env.REDIS_PORT\n});\n\n// Create rate limiter middleware\nconst apiLimiter = rateLimit({\n  store: new RedisStore({\n    // Use Redis as a store to share rate limits across multiple servers\n    sendCommand: (...args) => redis.call(...args)\n  }),\n  windowMs: 15 * 60 * 1000, // 15 minute window\n  max: 100, // limit each IP to 100 requests per window\n  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers\n  legacyHeaders: false, // Disable the `X-RateLimit-*` headers\n  message: {\n    status: 429,\n    message: 'Too many requests, please try again later.'\n  }\n});\n\n// Apply the rate limiting middleware to API calls\napp.use('/api/', apiLimiter);\n\n// You can also create specific limiters for different endpoints\nconst loginLimiter = rateLimit({\n  windowMs: 60 * 60 * 1000, // 1 hour window\n  max: 5, // limit each IP to 5 login requests per hour\n  message: 'Too many login attempts, please try again later.'\n});\n\napp.post('/api/login', loginLimiter, (req, res) => {\n  // Login logic\n});"
+        }
+      ],
+      "relatedInstructions": ["sec005", "api002", "perf004"]
+    }
+  ]
+}
