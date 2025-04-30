@@ -1,0 +1,121 @@
+{
+  "instructions": [
+    {
+      "id": "devops010",
+      "title": {
+        "es": "Implementar monitoreo y observabilidad",
+        "en": "Implement monitoring and observability"
+      },
+      "description": {
+        "es": "Configurar sistemas para monitoreo completo de aplicaciones e infraestructura",
+        "en": "Configure systems for comprehensive application and infrastructure monitoring"
+      },
+      "text": {
+        "es": "Implementa un sistema completo de monitoreo y observabilidad para tener visibilidad sobre el rendimiento y estado de tus aplicaciones e infraestructura. Configura recopilación de métricas para recursos clave (CPU, memoria, disco, red), establece paneles de control para visualizar tendencias, configura alertas proactivas basadas en umbrales y anomalías, implementa logging centralizado con búsqueda y filtrado, y añade trazabilidad distribuida para microservicios. Sigue el principio de las señales de oro (latencia, tráfico, errores, saturación) y automatiza respuestas a alertas comunes. Un buen sistema de observabilidad permite diagnosticar y resolver problemas rápidamente.",
+        "en": "Implement a comprehensive monitoring and observability system to gain visibility into the performance and health of your applications and infrastructure. Configure metrics collection for key resources (CPU, memory, disk, network), set up dashboards to visualize trends, configure proactive alerts based on thresholds and anomalies, implement centralized logging with search and filtering, and add distributed tracing for microservices. Follow the golden signals principle (latency, traffic, errors, saturation) and automate responses to common alerts. A good observability system allows you to diagnose and solve problems quickly."
+      },
+      "importance": "high",
+      "category": "monitoring",
+      "subcategory": "observability",
+      "tags": ["devops", "operations", "reliability"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Monitoring section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de configuración de Prometheus y Grafana con Docker Compose",
+            "en": "Example of Prometheus and Grafana configuration with Docker Compose"
+          },
+          "code": "# docker-compose.yml para stack de monitoreo con Prometheus y Grafana\nversion: '3.8'\n\nnetworks:\n  monitoring:\n    driver: bridge\n\nvolumes:\n  prometheus_data: {}\n  grafana_data: {}\n\nservices:\n  # Prometheus - Sistema de monitoreo y base de datos de series temporales\n  prometheus:\n    image: prom/prometheus:v2.42.0\n    container_name: prometheus\n    volumes:\n      - ./prometheus/:/etc/prometheus/\n      - prometheus_data:/prometheus\n    command:\n      - '--config.file=/etc/prometheus/prometheus.yml'\n      - '--storage.tsdb.path=/prometheus'\n      - '--storage.tsdb.retention.time=15d'\n      - '--web.console.libraries=/etc/prometheus/console_libraries'\n      - '--web.console.templates=/etc/prometheus/consoles'\n      - '--web.enable-lifecycle'\n    ports:\n      - \"9090:9090\"\n    restart: unless-stopped\n    networks:\n      - monitoring\n    labels:\n      org.label-schema.group: \"monitoring\"\n\n  # Node Exporter - Exporta métricas del sistema host\n  node-exporter:\n    image: prom/node-exporter:v1.5.0\n    container_name: node-exporter\n    volumes:\n      - /proc:/host/proc:ro\n      - /sys:/host/sys:ro\n      - /:/rootfs:ro\n    command:\n      - '--path.procfs=/host/proc'\n      - '--path.rootfs=/rootfs'\n      - '--path.sysfs=/host/sys'\n      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'\n    ports:\n      - \"9100:9100\"\n    restart: unless-stopped\n    networks:\n      - monitoring\n    labels:\n      org.label-schema.group: \"monitoring\"\n\n  # Cadvisor - Exporta métricas de contenedores\n  cadvisor:\n    image: gcr.io/cadvisor/cadvisor:v0.47.0\n    container_name: cadvisor\n    volumes:\n      - /:/rootfs:ro\n      - /var/run:/var/run:ro\n      - /sys:/sys:ro\n      - /var/lib/docker:/var/lib/docker:ro\n      - /dev/disk/:/dev/disk:ro\n    ports:\n      - \"8080:8080\"\n    restart: unless-stopped\n    networks:\n      - monitoring\n    labels:\n      org.label-schema.group: \"monitoring\"\n\n  # Grafana - Visualización y dashboards\n  grafana:\n    image: grafana/grafana:9.4.7\n    container_name: grafana\n    volumes:\n      - grafana_data:/var/lib/grafana\n      - ./grafana/provisioning:/etc/grafana/provisioning\n    environment:\n      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}\n      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}\n      - GF_USERS_ALLOW_SIGN_UP=false\n    ports:\n      - \"3000:3000\"\n    restart: unless-stopped\n    networks:\n      - monitoring\n    labels:\n      org.label-schema.group: \"monitoring\"\n\n  # AlertManager - Gestión de alertas\n  alertmanager:\n    image: prom/alertmanager:v0.25.0\n    container_name: alertmanager\n    volumes:\n      - ./alertmanager/:/etc/alertmanager/\n    command:\n      - '--config.file=/etc/alertmanager/alertmanager.yml'\n      - '--storage.path=/alertmanager'\n    ports:\n      - \"9093:9093\"\n    restart: unless-stopped\n    networks:\n      - monitoring\n    labels:\n      org.label-schema.group: \"monitoring\"\n\n  # Loki - Sistema de logging\n  loki:\n    image: grafana/loki:2.8.2\n    container_name: loki\n    volumes:\n      - ./loki/:/etc/loki/\n    ports:\n      - \"3100:3100\"\n    command: -config.file=/etc/loki/loki-config.yml\n    restart: unless-stopped\n    networks:\n      - monitoring\n\n  # Promtail - Agente para enviar logs a Loki\n  promtail:\n    image: grafana/promtail:2.8.2\n    container_name: promtail\n    volumes:\n      - ./promtail/:/etc/promtail/\n      - /var/log:/var/log\n    command: -config.file=/etc/promtail/promtail-config.yml\n    restart: unless-stopped\n    networks:\n      - monitoring\n\n# Archivo prometheus.yml\n# global:\n#   scrape_interval: 15s\n#   evaluation_interval: 15s\n#   scrape_timeout: 10s\n#\n# alerting:\n#   alertmanagers:\n#     - static_configs:\n#       - targets: ['alertmanager:9093']\n#\n# rule_files:\n#   - 'rules/*.yml'\n#\n# scrape_configs:\n#   - job_name: 'prometheus'\n#     static_configs:\n#       - targets: ['localhost:9090']\n#\n#   - job_name: 'node-exporter'\n#     static_configs:\n#       - targets: ['node-exporter:9100']\n#\n#   - job_name: 'cadvisor'\n#     static_configs:\n#       - targets: ['cadvisor:8080']\n#\n#   - job_name: 'app'\n#     metrics_path: '/metrics'\n#     static_configs:\n#       - targets: ['app:8000']"
+        }
+      ],
+      "relatedInstructions": ["devops008", "devops011"]
+    },
+    {
+      "id": "devops011",
+      "title": {
+        "es": "Implementar gestión centralizada de logs",
+        "en": "Implement centralized log management"
+      },
+      "description": {
+        "es": "Configurar un sistema para recopilar, almacenar y analizar logs de todas las aplicaciones",
+        "en": "Configure a system to collect, store, and analyze logs from all applications"
+      },
+      "text": {
+        "es": "Implementa un sistema de gestión centralizada de logs para agregar, almacenar y analizar los registros de todas tus aplicaciones e infraestructura. Configura agentes de recolección en cada servidor o contenedor, establece un formato de log estructurado y consistente, implementa agregación en tiempo real hacia un almacenamiento central, habilita búsqueda y filtrado rápido para depuración, y configura retención y políticas de archivado. Además, configura dashboards para visualizar tendencias y alertas para patrones de error. Un sistema centralizado de logs mejora significativamente la capacidad para diagnosticar problemas y responder rápidamente a incidentes.",
+        "en": "Implement a centralized log management system to aggregate, store, and analyze logs from all your applications and infrastructure. Configure collection agents on each server or container, establish a structured and consistent log format, implement real-time aggregation to a central storage, enable quick search and filtering for debugging, and configure retention and archiving policies. Additionally, set up dashboards to visualize trends and alerts for error patterns. A centralized logging system significantly improves your ability to diagnose issues and respond quickly to incidents."
+      },
+      "importance": "high",
+      "category": "monitoring",
+      "subcategory": "logging",
+      "tags": ["devops", "operations", "troubleshooting"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Logging section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de configuración de ELK Stack (Elasticsearch, Logstash, Kibana)",
+            "en": "Example of ELK Stack configuration (Elasticsearch, Logstash, Kibana)"
+          },
+          "code": "# docker-compose.yml para ELK Stack (Elasticsearch, Logstash, Kibana)\nversion: '3.8'\n\nservices:\n  # Elasticsearch - Almacenamiento y búsqueda de logs\n  elasticsearch:\n    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.0\n    container_name: elasticsearch\n    environment:\n      - node.name=elasticsearch\n      - cluster.name=es-docker-cluster\n      - discovery.type=single-node\n      - bootstrap.memory_lock=true\n      - \"ES_JAVA_OPTS=-Xms512m -Xmx512m\"\n      - xpack.security.enabled=false\n    ulimits:\n      memlock:\n        soft: -1\n        hard: -1\n    volumes:\n      - elasticsearch-data:/usr/share/elasticsearch/data\n    ports:\n      - \"9200:9200\"\n    networks:\n      - elk\n    restart: unless-stopped\n\n  # Logstash - Procesamiento de logs\n  logstash:\n    image: docker.elastic.co/logstash/logstash:8.7.0\n    container_name: logstash\n    volumes:\n      - ./logstash/pipeline:/usr/share/logstash/pipeline\n      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml\n    ports:\n      - \"5044:5044\"\n      - \"5000:5000/tcp\"\n      - \"5000:5000/udp\"\n      - \"9600:9600\"\n    environment:\n      LS_JAVA_OPTS: \"-Xmx256m -Xms256m\"\n    networks:\n      - elk\n    depends_on:\n      - elasticsearch\n    restart: unless-stopped\n\n  # Kibana - Visualización de logs\n  kibana:\n    image: docker.elastic.co/kibana/kibana:8.7.0\n    container_name: kibana\n    environment:\n      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200\n    ports:\n      - \"5601:5601\"\n    networks:\n      - elk\n    depends_on:\n      - elasticsearch\n    restart: unless-stopped\n\n  # Filebeat - Agente de recolección para logs de archivos\n  filebeat:\n    image: docker.elastic.co/beats/filebeat:8.7.0\n    container_name: filebeat\n    user: root\n    volumes:\n      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro\n      - /var/lib/docker/containers:/var/lib/docker/containers:ro\n      - /var/log:/var/log:ro\n      - /var/run/docker.sock:/var/run/docker.sock:ro\n    command: [\"--strict.perms=false\"]\n    networks:\n      - elk\n    depends_on:\n      - elasticsearch\n      - logstash\n    restart: unless-stopped\n\nnetworks:\n  elk:\n    driver: bridge\n\nvolumes:\n  elasticsearch-data:\n    driver: local\n\n# Archivo logstash/pipeline/logstash.conf\n# input {\n#   beats {\n#     port => 5044\n#   }\n#   tcp {\n#     port => 5000\n#     codec => \"json\"\n#   }\n#   udp {\n#     port => 5000\n#     codec => \"json\"\n#   }\n# }\n#\n# filter {\n#   if [message] =~ /^\\{.*\\}$/ {\n#     json {\n#       source => \"message\"\n#     }\n#   }\n#\n#   if [type] == \"app_logs\" {\n#     grok {\n#       match => { \"message\" => \"%{TIMESTAMP_ISO8601:timestamp} %{LOGLEVEL:log_level} %{DATA:service} %{DATA:trace_id} - %{GREEDYDATA:message_content}\" }\n#     }\n#     date {\n#       match => [ \"timestamp\", \"ISO8601\" ]\n#       target => \"@timestamp\"\n#     }\n#   }\n#\n#   # Enriquecimiento de datos\n#   if [status_code] {\n#     if [status_code] >= 400 {\n#       mutate {\n#         add_field => { \"error\" => true }\n#       }\n#     }\n#   }\n# }\n#\n# output {\n#   elasticsearch {\n#     hosts => \"elasticsearch:9200\"\n#     index => \"%{[type]}-%{+YYYY.MM.dd}\"\n#   }\n#   # Salida opcional a consola para depuración\n#   # stdout { codec => rubydebug }\n# }\n\n# Archivo filebeat/filebeat.yml\n# filebeat.inputs:\n# - type: container\n#   paths:\n#     - /var/lib/docker/containers/*/*.log\n#   json.keys_under_root: true\n#   json.message_key: log\n#   processors:\n#     - add_docker_metadata:\n#         host: \"unix:///var/run/docker.sock\"\n#     - add_tags:\n#         tags: [\"docker-container\"]\n#\n# - type: log\n#   enabled: true\n#   paths:\n#     - /var/log/application/*.log\n#   tags: [\"application\"]\n#   fields:\n#     type: app_logs\n#   fields_under_root: true\n#\n# processors:\n#   - add_host_metadata: ~\n#   - add_cloud_metadata: ~\n#\n# output.logstash:\n#   hosts: [\"logstash:5044\"]\n\n# Ejemplo de formato de log JSON en aplicación Node.js:\n# const winston = require('winston');\n# const { format } = require('winston');\n#\n# const logger = winston.createLogger({\n#   level: process.env.LOG_LEVEL || 'info',\n#   format: format.combine(\n#     format.timestamp(),\n#     format.json()\n#   ),\n#   defaultMeta: { service: 'user-service' },\n#   transports: [\n#     new winston.transports.Console(),\n#     new winston.transports.File({ filename: '/var/log/application/user-service.log' })\n#   ]\n# });\n#\n# // Ejemplo de uso\n# logger.info('Usuario creado', { userId: 123, username: 'ejemplo' });\n# logger.error('Error al procesar pago', { userId: 123, error: 'Tarjeta rechazada' });"
+        }
+      ],
+      "relatedInstructions": ["devops010", "devops012"]
+    },
+    {
+      "id": "devops012",
+      "title": {
+        "es": "Implementar rastreo distribuido",
+        "en": "Implement distributed tracing"
+      },
+      "description": {
+        "es": "Configurar un sistema para seguir solicitudes a través de servicios distribuidos",
+        "en": "Configure a system to track requests across distributed services"
+      },
+      "text": {
+        "es": "Implementa un sistema de rastreo distribuido para monitorear y depurar aplicaciones basadas en microservicios. Instrumenta servicios con IDs únicos para cada solicitud, propaga esta información entre servicios, registra cada operación como un span para construir un árbol de trazas completo, e implementa un backend para almacenar y visualizar estas trazas. El rastreo distribuido permite ver el flujo de una solicitud a través de múltiples servicios, identificar cuellos de botella de rendimiento, y localizar rápidamente la fuente de los errores. Herramientas como Jaeger, Zipkin, o AWS X-Ray facilitan la implementación de estas capacidades en arquitecturas complejas.",
+        "en": "Implement a distributed tracing system to monitor and debug microservice-based applications. Instrument services with unique IDs for each request, propagate this information between services, record each operation as a span to build a complete trace tree, and implement a backend to store and visualize these traces. Distributed tracing allows you to see the flow of a request through multiple services, identify performance bottlenecks, and quickly locate the source of errors. Tools like Jaeger, Zipkin, or AWS X-Ray make it easier to implement these capabilities in complex architectures."
+      },
+      "importance": "medium",
+      "category": "monitoring",
+      "subcategory": "tracing",
+      "tags": ["devops", "microservices", "debugging"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Observability section"
+      },
+      "compatibility": {
+        "frameworks": ["spring-boot", "express", "django", "fastapi"],
+        "languages": ["java", "javascript", "python", "go"],
+        "environments": ["kubernetes", "aws", "azure", "gcp"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de implementación de Jaeger para trazabilidad distribuida",
+            "en": "Example of Jaeger implementation for distributed tracing"
+          },
+          "code": "# docker-compose.yml para Jaeger y aplicación de ejemplo\nversion: '3.8'\n\nservices:\n  # Jaeger - Sistema de rastreo distribuido\n  jaeger:\n    image: jaegertracing/all-in-one:1.41\n    container_name: jaeger\n    ports:\n      - \"6831:6831/udp\" # Puerto para agente Jaeger (formato Thrift compact)\n      - \"6832:6832/udp\" # Puerto para agente Jaeger (formato Thrift binary)\n      - \"5778:5778\"     # Puerto para configuraciones\n      - \"16686:16686\"   # Puerto para UI\n      - \"14268:14268\"   # Puerto para colector (ingesta HTTP)\n      - \"14250:14250\"   # Puerto para colector (ingesta gRPC)\n    environment:\n      - COLLECTOR_ZIPKIN_HOST_PORT=9411\n    networks:\n      - tracing-net\n\n  # Servicio de API Gateway (Node.js/Express)\n  api-gateway:\n    build: ./api-gateway\n    container_name: api-gateway\n    ports:\n      - \"3000:3000\"\n    environment:\n      - NODE_ENV=production\n      - PORT=3000\n      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces\n      - SERVICE_NAME=api-gateway\n      - ORDER_SERVICE_URL=http://order-service:3001\n      - PRODUCT_SERVICE_URL=http://product-service:3002\n      - USER_SERVICE_URL=http://user-service:3003\n    depends_on:\n      - jaeger\n      - order-service\n      - product-service\n      - user-service\n    networks:\n      - tracing-net\n\n  # Servicio de Órdenes (Node.js/Express)\n  order-service:\n    build: ./order-service\n    container_name: order-service\n    environment:\n      - NODE_ENV=production\n      - PORT=3001\n      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces\n      - SERVICE_NAME=order-service\n      - PRODUCT_SERVICE_URL=http://product-service:3002\n      - DB_HOST=mongodb:27017\n      - DB_NAME=orders\n    depends_on:\n      - jaeger\n      - mongodb\n    networks:\n      - tracing-net\n\n  # Servicio de Productos (Node.js/Express)\n  product-service:\n    build: ./product-service\n    container_name: product-service\n    environment:\n      - NODE_ENV=production\n      - PORT=3002\n      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces\n      - SERVICE_NAME=product-service\n      - DB_HOST=mongodb:27017\n      - DB_NAME=products\n    depends_on:\n      - jaeger\n      - mongodb\n    networks:\n      - tracing-net\n\n  # Servicio de Usuarios (Node.js/Express)\n  user-service:\n    build: ./user-service\n    container_name: user-service\n    environment:\n      - NODE_ENV=production\n      - PORT=3003\n      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces\n      - SERVICE_NAME=user-service\n      - DB_HOST=mongodb:27017\n      - DB_NAME=users\n    depends_on:\n      - jaeger\n      - mongodb\n    networks:\n      - tracing-net\n\n  # MongoDB para persistencia\n  mongodb:\n    image: mongo:5.0\n    container_name: mongodb\n    volumes:\n      - mongodb_data:/data/db\n    networks:\n      - tracing-net\n\nnetworks:\n  tracing-net:\n    driver: bridge\n\nvolumes:\n  mongodb_data:\n\n# Configuración de trazabilidad en Node.js/Express (api-gateway)\n# Archivo: api-gateway/tracer.js\n\n# const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');\n# const { SimpleSpanProcessor } = require('@opentelemetry/sdk-trace-base');\n# const { NodeTracerProvider } = require('@opentelemetry/sdk-trace-node');\n# const { registerInstrumentations } = require('@opentelemetry/instrumentation');\n# const { ExpressInstrumentation } = require('@opentelemetry/instrumentation-express');\n# const { HttpInstrumentation } = require('@opentelemetry/instrumentation-http');\n# const { Resource } = require('@opentelemetry/resources');\n# const { SemanticResourceAttributes } = require('@opentelemetry/semantic-conventions');\n# const opentelemetry = require('@opentelemetry/api');\n# \n# module.exports = (serviceName) => {\n#   const provider = new NodeTracerProvider({\n#     resource: new Resource({\n#       [SemanticResourceAttributes.SERVICE_NAME]: serviceName,\n#     }),\n#   });\n# \n#   // Configurar exportador Jaeger\n#   const jaegerExporter = new JaegerExporter({\n#     endpoint: process.env.JAEGER_ENDPOINT || 'http://localhost:14268/api/traces',\n#   });\n# \n#   // Añadir el procesador y exportador\n#   provider.addSpanProcessor(new SimpleSpanProcessor(jaegerExporter));\n# \n#   // Registrar el proveedor de trazas\n#   provider.register();\n# \n#   // Instrumentar automáticamente Express y HTTP\n#   registerInstrumentations({\n#     instrumentations: [\n#       new HttpInstrumentation(),\n#       new ExpressInstrumentation(),\n#     ],\n#   });\n# \n#   // Obtener un tracer para su uso en la aplicación\n#   return opentelemetry.trace.getTracer(serviceName);\n# };\n\n# Uso en api-gateway/index.js\n\n# const express = require('express');\n# const axios = require('axios');\n# const tracer = require('./tracer')(process.env.SERVICE_NAME || 'api-gateway');\n# \n# const app = express();\n# app.use(express.json());\n# \n# // Middleware para propagar contexto de traza en solicitudes HTTP\n# app.use((req, res, next) => {\n#   const currentSpan = tracer.getCurrentSpan();\n#   if (currentSpan) {\n#     const traceId = currentSpan.spanContext().traceId;\n#     res.setHeader('X-Trace-ID', traceId);\n#   }\n#   next();\n# });\n# \n# // Endpoint para obtener una orden con productos\n# app.get('/api/orders/:id', async (req, res) => {\n#   const { id } = req.params;\n#   \n#   const span = tracer.startSpan('get_order_with_products');\n#   try {\n#     span.setAttribute('order.id', id);\n#     \n#     // Llamar al servicio de órdenes\n#     const orderResponse = await axios.get(`${process.env.ORDER_SERVICE_URL}/orders/${id}`);\n#     const order = orderResponse.data;\n#     \n#     // Para cada producto en la orden, obtener detalles\n#     const productSpan = tracer.startSpan('get_products_details', {\n#       parent: span\n#     });\n#     \n#     try {\n#       const productPromises = order.items.map(item => \n#         axios.get(`${process.env.PRODUCT_SERVICE_URL}/products/${item.productId}`)\n#       );\n#       \n#       const productResponses = await Promise.all(productPromises);\n#       const products = productResponses.map(response => response.data);\n#       \n#       // Enriquecer la respuesta con datos de productos\n#       order.items = order.items.map(item => {\n#         const product = products.find(p => p.id === item.productId);\n#         return {\n#           ...item,\n#           product\n#         };\n#       });\n#       \n#       productSpan.end();\n#       res.json(order);\n#     } catch (error) {\n#       productSpan.recordException(error);\n#       productSpan.end();\n#       throw error;\n#     }\n#   } catch (error) {\n#     span.recordException(error);\n#     console.error('Error fetching order:', error.message);\n#     res.status(500).json({ error: 'Error fetching order details' });\n#   } finally {\n#     span.end();\n#   }\n# });\n# \n# const PORT = process.env.PORT || 3000;\n# app.listen(PORT, () => {\n#   console.log(`API Gateway listening on port ${PORT}`);\n# });"
+        }
+      ],
+      "relatedInstructions": ["devops010", "devops011"]
+    }
+  ]
+}
