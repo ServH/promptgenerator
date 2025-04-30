@@ -1,0 +1,121 @@
+{
+  "instructions": [
+    {
+      "id": "sec013",
+      "title": {
+        "es": "Prevenir ataques XSS",
+        "en": "Prevent XSS attacks"
+      },
+      "description": {
+        "es": "Implementar protecciones contra ataques de scripting entre sitios",
+        "en": "Implement protections against cross-site scripting attacks"
+      },
+      "text": {
+        "es": "Protege tu aplicación contra ataques de Cross-Site Scripting (XSS) que permiten a los atacantes inyectar scripts maliciosos en páginas web vistas por otros usuarios. Utiliza escapado de datos contextual, sanitización de entradas, implementa políticas de Content Security Policy (CSP), utiliza bibliotecas de plantillas que escapan automáticamente la salida, y adopta cookies con marcas HttpOnly para prevenir el robo de sesiones mediante scripts del lado del cliente.",
+        "en": "Protect your application against Cross-Site Scripting (XSS) attacks that allow attackers to inject malicious scripts into web pages viewed by other users. Use contextual data escaping, input sanitization, implement Content Security Policy (CSP), use templating libraries that automatically escape output, and adopt HttpOnly flags for cookies to prevent session theft via client-side scripts."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "vulnerabilities",
+      "tags": ["security", "web", "frontend"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Frontend Security section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["javascript", "typescript", "php", "python", "ruby"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de implementación de Content Security Policy",
+            "en": "Example of Content Security Policy implementation"
+          },
+          "code": "// Configurar CSP en una aplicación Express\napp.use((req, res, next) => {\n  // Definir una política restrictiva de CSP\n  res.setHeader(\n    'Content-Security-Policy',\n    \"default-src 'self'; \" +                 // Por defecto, solo permitir del mismo origen\n    \"script-src 'self' https://trusted-cdn.com; \" + // Scripts solo del mismo origen y CDN de confianza\n    \"style-src 'self' https://trusted-cdn.com; \" +  // Estilos solo del mismo origen y CDN de confianza\n    \"img-src 'self' data: https:; \" +         // Imágenes de mismo origen, data URIs y cualquier HTTPS\n    \"font-src 'self' https://trusted-cdn.com; \" +  // Fuentes solo del mismo origen y CDN de confianza\n    \"connect-src 'self' https://api.example.com; \" + // Conexiones solo a mismo origen y API específica\n    \"frame-src 'none'; \" +                     // No permitir iframes\n    \"object-src 'none'; \" +                    // No permitir <object>, <embed> o <applet>\n    \"base-uri 'self'; \" +                       // Restringir <base> al mismo origen\n    \"form-action 'self'; \" +                    // Restringir envíos de formularios al mismo origen\n    \"frame-ancestors 'none'; \" +                // No permitir que el sitio sea embebido\n    \"upgrade-insecure-requests; \" +             // Actualizar HTTP a HTTPS\n    \"block-all-mixed-content;\"\n  );\n  \n  // Encabezado adicional para navegadores antiguos\n  res.setHeader('X-XSS-Protection', '1; mode=block');\n  \n  next();\n});\n\n// En React/Vue/Angular, también usar bibliotecas seguras y sanitización\n// Por ejemplo en React:\nimport DOMPurify from 'dompurify';\n\nfunction Comment({ comment }) {\n  // MAL: Inserción peligrosa de HTML\n  // return <div dangerouslySetInnerHTML={{ __html: comment }} />;\n  \n  // BIEN: Sanitizar el HTML con DOMPurify si realmente necesitas insertar HTML\n  return <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(comment) }} />;\n  \n  // MEJOR AÚN: Evitar por completo dangerouslySetInnerHTML si es posible\n  // return <div>{comment}</div>; // React escapa automáticamente\n}"
+        }
+      ],
+      "relatedInstructions": ["sec001", "sec014"]
+    },
+    {
+      "id": "sec014",
+      "title": {
+        "es": "Prevenir vulnerabilidades de deserialización",
+        "en": "Prevent deserialization vulnerabilities"
+      },
+      "description": {
+        "es": "Implementar protecciones contra ataques de deserialización insegura",
+        "en": "Implement protections against insecure deserialization attacks"
+      },
+      "text": {
+        "es": "Protege tu aplicación contra vulnerabilidades de deserialización insegura que pueden llevar a ejecución remota de código. Evita deserializar datos no confiables o provenientes del usuario, utiliza formatos de serialización que no permitan objetos arbitrarios (como JSON), implementa verificaciones de integridad para datos serializados, y considera utilizar bibliotecas de deserialización endurecidas con listas blancas de clases permitidas.",
+        "en": "Protect your application against insecure deserialization vulnerabilities that can lead to remote code execution. Avoid deserializing untrusted or user-provided data, use serialization formats that don't allow arbitrary objects (like JSON), implement integrity checks for serialized data, and consider using hardened deserialization libraries with whitelists of allowed classes."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "vulnerabilities",
+      "tags": ["security", "backend", "data"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Backend Security section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["java", "php", "python", "ruby", "node"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de deserialización segura en Java",
+            "en": "Example of secure deserialization in Java"
+          },
+          "code": "import java.io.ByteArrayInputStream;\nimport java.io.ObjectInputStream;\nimport java.io.Serializable;\nimport java.util.HashSet;\nimport java.util.Set;\n\n// Una clase de filtro personalizada para limitar qué clases pueden ser deserializadas\nclass SafeObjectInputFilter implements ObjectInputFilter {\n    private final Set<String> allowedClasses = new HashSet<>();\n    \n    public SafeObjectInputFilter() {\n        // Solo permitir deserializar estas clases específicas\n        allowedClasses.add(\"com.example.SafeClass1\");\n        allowedClasses.add(\"com.example.SafeClass2\");\n        allowedClasses.add(\"java.util.ArrayList\");\n        allowedClasses.add(\"java.lang.String\");\n        // Añadir otras clases seguras según sea necesario\n    }\n    \n    @Override\n    public Status checkInput(FilterInfo filterInfo) {\n        Class<?> clazz = filterInfo.serialClass();\n        if (clazz != null) {\n            String className = clazz.getName();\n            if (!allowedClasses.contains(className)) {\n                System.err.println(\"Deserialización bloqueada para: \" + className);\n                return Status.REJECTED;\n            }\n        }\n        return Status.ALLOWED;\n    }\n}\n\n// Uso de la deserialización segura\npublic byte[] deserializeData(byte[] serializedData) {\n    try (ByteArrayInputStream bis = new ByteArrayInputStream(serializedData);\n         ObjectInputStream ois = new ObjectInputStream(bis)) {\n        \n        // Establecer el filtro de seguridad\n        ois.setObjectInputFilter(new SafeObjectInputFilter());\n        \n        // Ahora la deserialización está limitada a clases permitidas\n        Object result = ois.readObject();\n        \n        // Procesamiento adicional...\n        return processResult(result);\n    } catch (Exception e) {\n        // Log detallado del error\n        System.err.println(\"Error en deserialización: \" + e.getMessage());\n        throw new SecurityException(\"Error al procesar datos serializados\");\n    }\n}\n\n// MEJOR ALTERNATIVA: Si es posible, usar formatos que no permitan código arbitrario\nimport com.fasterxml.jackson.databind.ObjectMapper;\nimport com.fasterxml.jackson.databind.json.JsonMapper;\nimport com.fasterxml.jackson.databind.DeserializationFeature;\n\npublic SafeClass deserializeFromJson(String json) {\n    ObjectMapper mapper = JsonMapper.builder()\n        .disable(DeserializationFeature.ACCEPT_JAVA_OBJECT_AS_DEFAULT_TYPE)\n        .build();\n    \n    try {\n        // Más seguro que la deserialización Java nativa\n        return mapper.readValue(json, SafeClass.class);\n    } catch (Exception e) {\n        System.err.println(\"Error en deserialización JSON: \" + e.getMessage());\n        throw new SecurityException(\"Error al procesar datos JSON\");\n    }\n}"
+        }
+      ],
+      "relatedInstructions": ["sec001", "sec013"]
+    },
+    {
+      "id": "sec015",
+      "title": {
+        "es": "Proteger contra ataques de falsificación de solicitudes entre sitios",
+        "en": "Protect against request forgeries"
+      },
+      "description": {
+        "es": "Prevenir ataques CSRF y falsificaciones de solicitudes",
+        "en": "Prevent CSRF and request forgery attacks"
+      },
+      "text": {
+        "es": "Implementa protecciones contra falsificación de solicitudes entre sitios (CSRF) que engañan a los usuarios para ejecutar acciones no deseadas en aplicaciones donde están autenticados. Utiliza tokens anti-CSRF para todas las solicitudes que modifican estado (POST, PUT, DELETE), verifica el encabezado Origin/Referer para peticiones sensibles, y configura las cookies con el atributo SameSite para limitar las solicitudes entre sitios.",
+        "en": "Implement protections against Cross-Site Request Forgery (CSRF) that trick users into executing unwanted actions on applications where they are authenticated. Use anti-CSRF tokens for all state-changing requests (POST, PUT, DELETE), verify the Origin/Referer header for sensitive requests, and configure cookies with the SameSite attribute to limit cross-site requests."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "vulnerabilities",
+      "tags": ["security", "web"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Web Security section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de implementación de protección CSRF en frameworks web",
+            "en": "Example of CSRF protection implementation in web frameworks"
+          },
+          "code": "// Express.js con csurf\nconst csrf = require('csurf');\n\n// Configurar middleware CSRF\nconst csrfProtection = csrf({ cookie: { sameSite: 'strict', secure: true } });\n\n// Aplicar a rutas que modifican datos\napp.post('/api/user/update', csrfProtection, (req, res) => {\n  // El token CSRF ya ha sido validado por el middleware\n  // Proceder con la actualización\n});\n\n// Ruta para obtener token CSRF (para aplicaciones SPA)\napp.get('/api/csrf-token', csrfProtection, (req, res) => {\n  res.json({ csrfToken: req.csrfToken() });\n});\n\n// === Ejemplo con Django (Python) ===\n\n# Django incluye protección CSRF por defecto\n# En templates:\n{% csrf_token %}\n\n# En vistas:\nfrom django.views.decorators.csrf import csrf_protect\n\n@csrf_protect\ndef my_view(request):\n    # Vista protegida contra CSRF\n    pass\n\n# === Ejemplo con Laravel (PHP) ===\n\n// En formularios Blade:\n<form method=\"POST\" action=\"/profile\">\n    @csrf\n    ...\n</form>\n\n// En rutas:\nRoute::post('/profile', function () {\n    // Laravel verifica automáticamente el token CSRF\n});\n\n// === Ejemplo con React (cliente) ===\nimport { useState, useEffect } from 'react';\n\nfunction UpdateProfileForm() {\n  const [csrfToken, setCsrfToken] = useState('');\n  \n  // Obtener token CSRF al cargar el componente\n  useEffect(() => {\n    fetch('/api/csrf-token')\n      .then(response => response.json())\n      .then(data => setCsrfToken(data.csrfToken));\n  }, []);\n  \n  const handleSubmit = async (event) => {\n    event.preventDefault();\n    const formData = new FormData(event.target);\n    \n    try {\n      const response = await fetch('/api/user/update', {\n        method: 'POST',\n        headers: {\n          'Content-Type': 'application/json',\n          'CSRF-Token': csrfToken // Incluir token en encabezado\n        },\n        body: JSON.stringify(Object.fromEntries(formData))\n      });\n      \n      if (response.ok) {\n        // Actualización exitosa\n      }\n    } catch (error) {\n      console.error('Error:', error);\n    }\n  };\n  \n  return (\n    <form onSubmit={handleSubmit}>\n      {/* Campo oculto para token CSRF */}\n      <input type=\"hidden\" name=\"_csrf\" value={csrfToken} />\n      {/* Resto del formulario */}\n    </form>\n  );\n}"
+        }
+      ],
+      "relatedInstructions": ["sec009", "sec013"]
+    }
+  ]
+}
