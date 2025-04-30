@@ -77,6 +77,123 @@
         }
       ],
       "relatedInstructions": ["scal010", "ms004", "api005"]
+    },
+    {
+      "id": "scal012",
+      "title": {
+        "es": "Implementar bulkheads",
+        "en": "Implement bulkheads"
+      },
+      "description": {
+        "es": "Aislar componentes críticos para evitar que fallos se propaguen",
+        "en": "Isolate critical components to prevent failure propagation"
+      },
+      "text": {
+        "es": "Implementa el patrón de bulkhead para aislar partes de la aplicación, previniendo que los fallos en un componente afecten a otros. Asigna pools de recursos separados (como hilos, conexiones o memoria) a diferentes componentes para que la saturación de uno no impacte en la disponibilidad de los demás.",
+        "en": "Implement the bulkhead pattern to isolate parts of your application, preventing failures in one component from affecting others. Allocate separate resource pools (such as threads, connections, or memory) to different components so that saturation of one doesn't impact the availability of others."
+      },
+      "importance": "medium",
+      "category": "scalability",
+      "subcategory": "resilience",
+      "tags": ["microservices", "resilience", "architecture"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Resilience Patterns"
+      },
+      "compatibility": {
+        "frameworks": ["resilience4j", "hystrix", "istio", "envoy"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementación de bulkheads en Java con ThreadPoolExecutor",
+            "en": "Implementing bulkheads in Java with ThreadPoolExecutor"
+          },
+          "code": "import java.util.concurrent.ArrayBlockingQueue;\nimport java.util.concurrent.ThreadPoolExecutor;\nimport java.util.concurrent.TimeUnit;\n\npublic class ServiceRegistry {\n\n    // Separate thread pools for different service categories\n    private final ThreadPoolExecutor criticalServicePool;\n    private final ThreadPoolExecutor nonCriticalServicePool;\n    \n    public ServiceRegistry() {\n        // Pool for critical services - small queue to fail fast, more threads\n        criticalServicePool = new ThreadPoolExecutor(\n            10,                       // Core pool size\n            20,                       // Max pool size\n            60, TimeUnit.SECONDS,     // Thread keep-alive time\n            new ArrayBlockingQueue<>(50),  // Bounded queue size\n            new ThreadPoolExecutor.CallerRunsPolicy()  // Backpressure strategy\n        );\n        \n        // Pool for non-critical services - larger queue, fewer threads\n        nonCriticalServicePool = new ThreadPoolExecutor(\n            5,                        // Core pool size\n            10,                       // Max pool size\n            60, TimeUnit.SECONDS,     // Thread keep-alive time\n            new ArrayBlockingQueue<>(100), // Larger queue size\n            new ThreadPoolExecutor.AbortPolicy()  // Different strategy\n        );\n    }\n    \n    // Execute critical service operation\n    public <T> Future<T> executeCriticalOperation(Callable<T> operation) {\n        return criticalServicePool.submit(operation);\n    }\n    \n    // Execute non-critical service operation\n    public <T> Future<T> executeNonCriticalOperation(Callable<T> operation) {\n        return nonCriticalServicePool.submit(operation);\n    }\n    \n    // Shutdown pools gracefully\n    public void shutdown() {\n        criticalServicePool.shutdown();\n        nonCriticalServicePool.shutdown();\n    }\n}"
+        }
+      ],
+      "relatedInstructions": ["scal010", "ms004", "api003"]
+    },
+    {
+      "id": "scal013",
+      "title": {
+        "es": "Implementar timeout adecuado",
+        "en": "Implement proper timeouts"
+      },
+      "description": {
+        "es": "Establecer límites de tiempo para todas las operaciones externas",
+        "en": "Set time limits for all external operations"
+      },
+      "text": {
+        "es": "Implementa timeouts explícitos y adecuados para todas las llamadas a servicios externos o recursos remotos. Nunca permitas llamadas sin timeout, ya que podrían bloquear indefinidamente hilos o conexiones valiosas. Ajusta los valores de timeout basándote en datos reales de latencia y contempla diferentes valores según la importancia de cada operación.",
+        "en": "Implement explicit and appropriate timeouts for all calls to external services or remote resources. Never allow calls without timeouts, as they could indefinitely block valuable threads or connections. Tune timeout values based on real latency data, and consider different values based on the importance of each operation."
+      },
+      "importance": "high",
+      "category": "scalability",
+      "subcategory": "resilience",
+      "tags": ["microservices", "resilience", "best_practices"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Resilience Patterns"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementación de timeouts en diferentes lenguajes",
+            "en": "Implementing timeouts in different languages"
+          },
+          "code": "// Java example with HttpClient\nHttpClient client = HttpClient.newBuilder()\n    .connectTimeout(Duration.ofSeconds(5))  // Connection timeout\n    .build();\n\nHttpRequest request = HttpRequest.newBuilder()\n    .uri(URI.create(\"https://api.example.com/data\"))\n    .timeout(Duration.ofSeconds(10))  // Request timeout\n    .build();\n\n// Python example with requests\nimport requests\n\ntry:\n    response = requests.get('https://api.example.com/data', \n                         timeout=(3.05, 10))  # (connect timeout, read timeout)\nexcept requests.exceptions.Timeout:\n    # Handle timeout error\n    print(\"The request timed out\")\n\n// JavaScript/Node.js example with axios\nconst axios = require('axios');\n\naxios.get('https://api.example.com/data', {\n  timeout: 5000  // 5 seconds timeout\n}).catch(error => {\n  if (error.code === 'ECONNABORTED') {\n    console.log('Request timed out');\n  }\n});"
+        }
+      ],
+      "relatedInstructions": ["scal010", "scal011", "perf004"]
+    },
+    {
+      "id": "scal014",
+      "title": {
+        "es": "Implementar backpressure",
+        "en": "Implement backpressure"
+      },
+      "description": {
+        "es": "Manejar sobrecarga mediante mecanismos de contrapresión",
+        "en": "Handle overload with backpressure mechanisms"
+      },
+      "text": {
+        "es": "Implementa mecanismos de backpressure (contrapresión) para manejar situaciones donde los productores de datos o solicitudes generan más carga de la que los consumidores pueden procesar. Estos mecanismos pueden incluir encolado con límites, throttling, shedding (rechazo de solicitudes) o señalización a productores para reducir su tasa de envío, manteniendo así la estabilidad del sistema.",
+        "en": "Implement backpressure mechanisms to handle situations where data producers or request generators create more load than consumers can process. These mechanisms may include bounded queuing, throttling, load shedding (request rejection), or signaling to producers to reduce their sending rate, thus maintaining system stability."
+      },
+      "importance": "medium",
+      "category": "scalability",
+      "subcategory": "resilience",
+      "tags": ["microservices", "resilience", "stream_processing"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Stream Processing Patterns"
+      },
+      "compatibility": {
+        "frameworks": ["rxjava", "akka", "spring-webflux", "reactor"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Backpressure con RxJava",
+            "en": "Backpressure with RxJava"
+          },
+          "code": "import io.reactivex.BackpressureStrategy;\nimport io.reactivex.Flowable;\nimport io.reactivex.schedulers.Schedulers;\nimport org.reactivestreams.Subscriber;\nimport org.reactivestreams.Subscription;\n\n// Create a flowable with backpressure strategy\nFlowable<Integer> flowable = Flowable.create(emitter -> {\n    // This is a fast producer\n    for (int i = 0; i < 1_000_000; i++) {\n        if (emitter.isCancelled()) {\n            return;\n        }\n        emitter.onNext(i);\n        System.out.println(\"Produced: \" + i);\n    }\n    emitter.onComplete();\n}, BackpressureStrategy.BUFFER); // Choose an appropriate backpressure strategy\n\n// Create a custom subscriber (slow consumer)\nflowable\n    .observeOn(Schedulers.io(), false, 16) // Set buffer size for backpressure\n    .subscribe(new Subscriber<Integer>() {\n        private Subscription subscription;\n\n        @Override\n        public void onSubscribe(Subscription s) {\n            this.subscription = s;\n            // Request initial batch size (control the pace)\n            subscription.request(4);\n        }\n\n        @Override\n        public void onNext(Integer item) {\n            System.out.println(\"Consuming: \" + item);\n            \n            try {\n                // Simulate slow processing\n                Thread.sleep(50);\n            } catch (InterruptedException e) {\n                e.printStackTrace();\n                subscription.cancel();\n            }\n            \n            // Request the next item (allowing backpressure)\n            subscription.request(1);\n        }\n\n        @Override\n        public void onError(Throwable throwable) {\n            throwable.printStackTrace();\n        }\n\n        @Override\n        public void onComplete() {\n            System.out.println(\"Processing completed\");\n        }\n    });"
+        }
+      ],
+      "relatedInstructions": ["scal009", "scal011", "ms005"]
     }
   ]
 }
