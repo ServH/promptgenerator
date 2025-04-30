@@ -1,0 +1,82 @@
+{
+  "instructions": [
+    {
+      "id": "back017",
+      "title": {
+        "es": "Implementar estrategias de caché efectivas",
+        "en": "Implement effective caching strategies"
+      },
+      "description": {
+        "es": "Utilizar técnicas de caché para mejorar rendimiento y reducir carga",
+        "en": "Use caching techniques to improve performance and reduce load"
+      },
+      "text": {
+        "es": "Implementa estrategias de caché efectivas para mejorar el rendimiento y reducir la carga en tus recursos. Utiliza caché en memoria para datos de acceso frecuente, implementa caché distribuida para entornos con múltiples servidores, configura correctamente los tiempos de expiración según el tipo de datos, y considera patrones como Cache-Aside o Write-Through según los requisitos. Implementa invalidación de caché cuando cambien los datos subyacentes y utiliza herramientas de monitoreo para evaluar la efectividad de tu estrategia de caché.",
+        "en": "Implement effective caching strategies to improve performance and reduce load on your resources. Use in-memory caching for frequently accessed data, implement distributed caching for multi-server environments, properly configure expiration times based on data type, and consider patterns like Cache-Aside or Write-Through according to requirements. Implement cache invalidation when underlying data changes and use monitoring tools to evaluate the effectiveness of your caching strategy."
+      },
+      "importance": "high",
+      "category": "caching",
+      "subcategory": "strategy",
+      "tags": ["backend", "performance", "optimization"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Caching Strategies section"
+      },
+      "compatibility": {
+        "frameworks": ["express", "nest", "django", "flask", "spring", "laravel"],
+        "languages": ["javascript", "python", "java", "php"],
+        "environments": ["server", "api", "web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de implementación de caché en Node.js con Redis",
+            "en": "Example of cache implementation in Node.js with Redis"
+          },
+          "code": "// Implementación de caché con Redis en Express/Node.js\n\nconst express = require('express');\nconst Redis = require('ioredis');\n\nconst app = express();\n\n// Configuración de cliente Redis\nconst redis = new Redis({\n  host: process.env.REDIS_HOST || 'localhost',\n  port: process.env.REDIS_PORT || 6379,\n  password: process.env.REDIS_PASSWORD,\n  // Definir comportamiento en caso de desconexión\n  reconnectOnError: (err) => {\n    const targetError = 'READONLY';\n    if (err.message.includes(targetError)) {\n      // Reconectar solo en ciertos errores\n      return true;\n    }\n    return false;\n  },\n  retryStrategy: (times) => {\n    // Estrategia exponencial de reintentos\n    const delay = Math.min(times * 50, 2000);\n    return delay;\n  }\n});\n\n// Middleware para caché a nivel de ruta\nconst cacheMiddleware = (duration) => {\n  return async (req, res, next) => {\n    // Omitir caché para solicitudes no GET\n    if (req.method !== 'GET') {\n      return next();\n    }\n    \n    // Generar clave de caché a partir de la URL y parámetros de consulta\n    const cacheKey = `cache:${req.originalUrl}`;\n    \n    try {\n      // Intentar obtener datos de caché\n      const cachedData = await redis.get(cacheKey);\n      \n      if (cachedData) {\n        // Cache hit - Devolver datos cacheados\n        const data = JSON.parse(cachedData);\n        // Agregar encabezado para indicar que viene de caché\n        res.setHeader('X-Cache', 'HIT');\n        return res.json(data);\n      }\n      \n      // Cache miss - Modificar el objeto res para interceptar la respuesta\n      const originalSend = res.send;\n      res.send = function(body) {\n        // Solo cachear respuestas exitosas\n        if (res.statusCode >= 200 && res.statusCode < 300) {\n          try {\n            // Guardar en caché con expiración\n            redis.setex(cacheKey, duration, body)\n              .catch(err => console.error('Error guardando en caché:', err));\n          } catch (error) {\n            console.error('Error al cachear respuesta:', error);\n          }\n        }\n        \n        // Agregar encabezado para indicar miss\n        res.setHeader('X-Cache', 'MISS');\n        // Continuar con el envío normal\n        return originalSend.call(this, body);\n      };\n      \n      next();\n    } catch (error) {\n      console.error('Error en middleware de caché:', error);\n      // Continuar sin usar caché en caso de error\n      next();\n    }\n  };\n};\n\n// Ejemplo de uso en rutas\n\n// Caché de corta duración para datos dinámicos (30 segundos)\napp.get('/api/products', cacheMiddleware(30), async (req, res) => {\n  try {\n    const products = await Product.find()\n      .sort({ createdAt: -1 })\n      .limit(20);\n    \n    res.json({\n      status: 'success',\n      data: { products }\n    });\n  } catch (error) {\n    res.status(500).json({ \n      status: 'error', \n      message: 'Error obteniendo productos'\n    });\n  }\n});\n\n// Caché de larga duración para datos estables (1 hora)\napp.get('/api/categories', cacheMiddleware(3600), async (req, res) => {\n  try {\n    const categories = await Category.find()\n      .sort({ name: 1 });\n    \n    res.json({\n      status: 'success',\n      data: { categories }\n    });\n  } catch (error) {\n    res.status(500).json({ \n      status: 'error', \n      message: 'Error obteniendo categorías'\n    });\n  }\n});\n\n// Función para invalidar caché cuando los datos cambien\nconst invalidateCache = async (patterns) => {\n  try {\n    if (!Array.isArray(patterns)) {\n      patterns = [patterns];\n    }\n    \n    for (const pattern of patterns) {\n      // Usar la función SCAN de Redis para encontrar claves que coincidan\n      let cursor = '0';\n      do {\n        const [nextCursor, keys] = await redis.scan(\n          cursor, \n          'MATCH', \n          pattern,\n          'COUNT',\n          1000\n        );\n        \n        cursor = nextCursor;\n        \n        if (keys.length) {\n          // Borrar las claves encontradas\n          await redis.del(...keys);\n          console.log(`Invalidadas ${keys.length} claves de caché que coinciden con: ${pattern}`);\n        }\n      } while (cursor !== '0');\n    }\n  } catch (error) {\n    console.error('Error al invalidar caché:', error);\n  }\n};\n\n// Ejemplo de uso en controlador que modifica datos\napp.post('/api/products', async (req, res) => {\n  try {\n    const newProduct = await Product.create(req.body);\n    \n    // Invalidar caché relacionada con productos\n    await invalidateCache(['cache:/api/products*']);\n    \n    res.status(201).json({\n      status: 'success',\n      data: { product: newProduct }\n    });\n  } catch (error) {\n    res.status(500).json({ \n      status: 'error', \n      message: 'Error creando producto'\n    });\n  }\n});\n\n// Función para cachear datos costosos con caché por usuario\nasync function getCachedUserRecommendations(userId) {\n  const cacheKey = `cache:recommendations:${userId}`;\n  \n  try {\n    // Intentar obtener de caché\n    const cachedRecommendations = await redis.get(cacheKey);\n    \n    if (cachedRecommendations) {\n      console.log('Cache hit para recomendaciones de usuario');\n      return JSON.parse(cachedRecommendations);\n    }\n    \n    console.log('Cache miss para recomendaciones de usuario');\n    \n    // Generar recomendaciones (operación costosa)\n    const recommendations = await generateUserRecommendations(userId);\n    \n    // Guardar en caché por 1 hora\n    await redis.setex(\n      cacheKey, \n      3600, \n      JSON.stringify(recommendations)\n    );\n    \n    return recommendations;\n  } catch (error) {\n    console.error('Error obteniendo recomendaciones:', error);\n    \n    // Manejar error de caché fallando graciosamente\n    // Intentar obtener recomendaciones sin caché\n    return await generateUserRecommendations(userId);\n  }\n}"
+        }
+      ],
+      "relatedInstructions": ["back013", "back018"]
+    },
+    {
+      "id": "back018",
+      "title": {
+        "es": "Configurar caché HTTP correctamente",
+        "en": "Configure HTTP caching correctly"
+      },
+      "description": {
+        "es": "Optimizar encabezados de caché HTTP para contenido web",
+        "en": "Optimize HTTP cache headers for web content"
+      },
+      "text": {
+        "es": "Configura correctamente los encabezados de caché HTTP para optimizar el rendimiento y la experiencia del usuario. Utiliza encabezados Cache-Control apropiados para diferentes tipos de contenido, implementa validación condicional con ETag o Last-Modified, considera el uso de 'stale-while-revalidate' para mantener el contenido fresco, y establece políticas de caché apropiadas para activos estáticos. Asegúrate de que los recursos sensibles o personalizados no se almacenen en caché compartidas y monitorea la efectividad de tu estrategia de caché HTTP.",
+        "en": "Properly configure HTTP cache headers to optimize performance and user experience. Use appropriate Cache-Control headers for different types of content, implement conditional validation with ETag or Last-Modified, consider using 'stale-while-revalidate' to keep content fresh, and set appropriate cache policies for static assets. Ensure that sensitive or personalized resources are not stored in shared caches and monitor the effectiveness of your HTTP caching strategy."
+      },
+      "importance": "medium",
+      "category": "caching",
+      "subcategory": "http_caching",
+      "tags": ["backend", "http", "headers"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Web Performance section"
+      },
+      "compatibility": {
+        "frameworks": ["express", "nest", "django", "flask", "spring", "laravel"],
+        "languages": ["all"],
+        "environments": ["web", "api"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de configuración de caché HTTP en Express",
+            "en": "Example of HTTP cache configuration in Express"
+          },
+          "code": "// Configuración de encabezados de caché HTTP en Express\n\nconst express = require('express');\nconst path = require('path');\nconst crypto = require('crypto');\n\nconst app = express();\n\n// Middleware para configurar encabezados de caché según el tipo de contenido\nfunction setCacheHeaders(req, res, next) {\n  // Por defecto, prevenir caché para contenido dinámico/API\n  res.setHeader('Cache-Control', 'no-store');\n  next();\n}\n\n// Aplicar el middleware a nivel de aplicación\napp.use(setCacheHeaders);\n\n// Configurar diferentes políticas de caché según rutas específicas\n\n// 1. Activos estáticos con hashes en nombre de archivo (inmutables)\n// Ejemplo: styles.a1b2c3.css, bundle.x7y8z9.js\napp.use('/static', (req, res, next) => {\n  const filePath = req.path;\n  \n  // Verificar si el archivo tiene hash en el nombre\n  if (/\\.[a-f0-9]{8,}\\.(css|js|png|jpg|jpeg|gif|webp|svg)$/.test(filePath)) {\n    // Estos archivos son inmutables - caché agresiva por 1 año\n    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');\n  } else {\n    // Otros activos estáticos - caché moderada con validación\n    res.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate');\n  }\n  \n  next();\n}, express.static('public'));\n\n// 2. API con datos que cambian con moderada frecuencia, usando validación condicional\napp.get('/api/products', async (req, res) => {\n  try {\n    // Obtener última fecha de actualización de productos\n    const lastUpdate = await getProductsLastUpdate();\n    \n    // Generar ETag basado en los datos\n    const productsData = await getProducts();\n    const etag = generateETag(productsData);\n    \n    // Configurar encabezados de caché\n    res.setHeader('Cache-Control', 'private, max-age=60'); // 1 minuto\n    res.setHeader('ETag', etag);\n    res.setHeader('Last-Modified', lastUpdate.toUTCString());\n    \n    // Comprobar ETag para responder con 304 si no ha cambiado\n    const ifNoneMatch = req.headers['if-none-match'];\n    if (ifNoneMatch && ifNoneMatch === etag) {\n      return res.status(304).end(); // Not Modified\n    }\n    \n    // Comprobar fecha de modificación\n    const ifModifiedSince = req.headers['if-modified-since'];\n    if (ifModifiedSince && new Date(ifModifiedSince) >= lastUpdate) {\n      return res.status(304).end(); // Not Modified\n    }\n    \n    // Enviar datos completos si han cambiado\n    return res.json(productsData);\n  } catch (error) {\n    console.error('Error fetching products:', error);\n    res.status(500).json({ message: 'Error interno del servidor' });\n  }\n});\n\n// 3. Datos relativamente estables con revalidación en segundo plano\napp.get('/api/settings', async (req, res) => {\n  try {\n    const settings = await getSystemSettings();\n    \n    // Usar stale-while-revalidate para mantener frescura\n    // - max-age=300: Usar caché directamente por 5 minutos\n    // - stale-while-revalidate=3600: Permitir datos obsoletos por 1 hora mientras se revalida\n    res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=3600');\n    \n    return res.json(settings);\n  } catch (error) {\n    console.error('Error fetching settings:', error);\n    res.status(500).json({ message: 'Error interno del servidor' });\n  }\n});\n\n// 4. Contenido privado o específico por usuario (no cacheable a nivel de red)\napp.get('/api/user/profile', authorize, async (req, res) => {\n  try {\n    const userProfile = await getUserProfile(req.user.id);\n    \n    // Prevenir cacheo por CDNs o proxies compartidos\n    res.setHeader('Cache-Control', 'private, no-cache');\n    // Alternativamente: res.setHeader('Cache-Control', 'private, max-age=0');\n    \n    return res.json(userProfile);\n  } catch (error) {\n    console.error('Error fetching user profile:', error);\n    res.status(500).json({ message: 'Error interno del servidor' });\n  }\n});\n\n// 5. Respuestas que nunca deben ser cacheadas (como login/logout)\napp.post('/api/auth/login', async (req, res) => {\n  try {\n    // Proceso de login...\n    \n    // Nunca cachear\n    res.setHeader('Cache-Control', 'no-store');\n    res.setHeader('Pragma', 'no-cache'); // Para compatibilidad con HTTP/1.0\n    \n    return res.json({ token: 'jwt-token-here' });\n  } catch (error) {\n    console.error('Error in login:', error);\n    res.status(401).json({ message: 'Credenciales inválidas' });\n  }\n});\n\n// Función para generar ETag\nfunction generateETag(data) {\n  return crypto\n    .createHash('md5')\n    .update(JSON.stringify(data))\n    .digest('hex');\n}"
+        }
+      ],
+      "relatedInstructions": ["back013", "back017"]
+    }
+  ]
+}
