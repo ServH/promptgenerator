@@ -1,0 +1,121 @@
+{
+  "instructions": [
+    {
+      "id": "devops001",
+      "title": {
+        "es": "Implementar integración continua",
+        "en": "Implement continuous integration"
+      },
+      "description": {
+        "es": "Establecer un flujo de integración continua para verificar código automáticamente",
+        "en": "Establish continuous integration workflow to automatically verify code"
+      },
+      "text": {
+        "es": "Implementa un sistema de integración continua (CI) para automatizar la verificación de código con cada cambio. Configura ejecución automática de pruebas unitarias e integración, validación de estilo de código, análisis estático y otras verificaciones relevantes. Esto permite identificar problemas rápidamente, mantener la calidad del código y facilitar la colaboración en el equipo. Asegúrate de que el proceso sea rápido, confiable y proporcione retroalimentación clara a los desarrolladores.",
+        "en": "Implement a continuous integration (CI) system to automate code verification with each change. Configure automatic execution of unit and integration tests, code style validation, static analysis, and other relevant checks. This allows for quickly identifying issues, maintaining code quality, and facilitating team collaboration. Ensure the process is fast, reliable, and provides clear feedback to developers."
+      },
+      "importance": "high",
+      "category": "ci_cd",
+      "subcategory": "continuous_integration",
+      "tags": ["devops", "automation", "testing"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "DevOps Workflows section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de configuración de GitHub Actions para CI",
+            "en": "Example of GitHub Actions configuration for CI"
+          },
+          "code": "# .github/workflows/ci.yml\nname: Continuous Integration\n\non:\n  push:\n    branches: [ main, develop ]\n  pull_request:\n    branches: [ main, develop ]\n\njobs:\n  test:\n    name: Test\n    runs-on: ubuntu-latest\n    \n    strategy:\n      matrix:\n        node-version: [16.x, 18.x]\n    \n    steps:\n    - uses: actions/checkout@v3\n    \n    - name: Set up Node.js ${{ matrix.node-version }}\n      uses: actions/setup-node@v3\n      with:\n        node-version: ${{ matrix.node-version }}\n        cache: 'npm'\n    \n    - name: Install dependencies\n      run: npm ci\n    \n    - name: Lint\n      run: npm run lint\n    \n    - name: Type check\n      run: npm run typecheck\n    \n    - name: Unit tests\n      run: npm run test:unit\n    \n    - name: Integration tests\n      run: npm run test:integration\n      \n    - name: Upload coverage reports\n      uses: codecov/codecov-action@v3\n      with:\n        token: ${{ secrets.CODECOV_TOKEN }}\n        fail_ci_if_error: false\n\n  build:\n    name: Build\n    runs-on: ubuntu-latest\n    needs: test\n    \n    steps:\n    - uses: actions/checkout@v3\n    \n    - name: Set up Node.js\n      uses: actions/setup-node@v3\n      with:\n        node-version: '18.x'\n        cache: 'npm'\n    \n    - name: Install dependencies\n      run: npm ci\n    \n    - name: Build\n      run: npm run build\n    \n    - name: Upload build artifacts\n      uses: actions/upload-artifact@v3\n      with:\n        name: build\n        path: dist\n        retention-days: 3"
+        }
+      ],
+      "relatedInstructions": ["devops002", "devops005"]
+    },
+    {
+      "id": "devops002",
+      "title": {
+        "es": "Implementar despliegue continuo",
+        "en": "Implement continuous deployment"
+      },
+      "description": {
+        "es": "Automatizar el proceso de despliegue de aplicaciones a diferentes entornos",
+        "en": "Automate the application deployment process to different environments"
+      },
+      "text": {
+        "es": "Implementa un sistema de despliegue continuo (CD) para automatizar la entrega de software a diferentes entornos. Define un pipeline que maneje la progresión desde desarrollo a producción, pasando por entornos intermedios como staging. Aplica la estrategia de despliegue más adecuada (blue-green, canary, rolling) según tus requisitos, configura verificaciones automáticas post-despliegue, y establece mecanismos para rollback rápido en caso de problemas. El sistema debe minimizar el tiempo entre la implementación y la entrega mientras mantiene la estabilidad.",
+        "en": "Implement a continuous deployment (CD) system to automate software delivery to different environments. Define a pipeline that handles progression from development to production, going through intermediate environments like staging. Apply the most suitable deployment strategy (blue-green, canary, rolling) according to your requirements, configure automatic post-deployment checks, and establish mechanisms for quick rollback in case of issues. The system should minimize the time between implementation and delivery while maintaining stability."
+      },
+      "importance": "high",
+      "category": "ci_cd",
+      "subcategory": "continuous_deployment",
+      "tags": ["devops", "automation", "deployment"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "DevOps Workflows section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de configuración de GitHub Actions para CD a AWS",
+            "en": "Example of GitHub Actions configuration for CD to AWS"
+          },
+          "code": "# .github/workflows/cd.yml\nname: Continuous Deployment\n\non:\n  push:\n    branches: [ main ]\n    # Opcionalmente, solo activar en cambios de ciertos archivos\n    paths:\n      - 'src/**'\n      - 'public/**'\n      - 'package.json'\n      - 'package-lock.json'\n\njobs:\n  deploy-staging:\n    name: Deploy to Staging\n    runs-on: ubuntu-latest\n    environment: staging\n    \n    steps:\n    - uses: actions/checkout@v3\n    \n    - name: Set up Node.js\n      uses: actions/setup-node@v3\n      with:\n        node-version: '18.x'\n        cache: 'npm'\n    \n    - name: Install dependencies\n      run: npm ci\n    \n    - name: Build\n      run: npm run build\n      env:\n        REACT_APP_API_URL: ${{ secrets.STAGING_API_URL }}\n        REACT_APP_ENV: 'staging'\n    \n    - name: Configure AWS credentials\n      uses: aws-actions/configure-aws-credentials@v2\n      with:\n        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}\n        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}\n        aws-region: eu-west-1\n    \n    - name: Deploy to S3\n      run: |\n        aws s3 sync dist/ s3://${{ secrets.STAGING_S3_BUCKET }} --delete\n    \n    - name: Invalidate CloudFront cache\n      run: |\n        aws cloudfront create-invalidation --distribution-id ${{ secrets.STAGING_CF_DISTRIBUTION }} --paths \"/*\"\n    \n    - name: Run smoke tests\n      run: npm run test:smoke\n      env:\n        TEST_URL: https://${{ secrets.STAGING_DOMAIN }}\n\n  deploy-production:\n    name: Deploy to Production\n    needs: deploy-staging\n    runs-on: ubuntu-latest\n    environment: production\n    # Opcional: Permitir aprobación manual antes de producción\n    # environment:\n    #   name: production\n    #   url: https://www.example.com\n    \n    steps:\n    - uses: actions/checkout@v3\n    \n    - name: Set up Node.js\n      uses: actions/setup-node@v3\n      with:\n        node-version: '18.x'\n        cache: 'npm'\n    \n    - name: Install dependencies\n      run: npm ci\n    \n    - name: Build\n      run: npm run build\n      env:\n        REACT_APP_API_URL: ${{ secrets.PRODUCTION_API_URL }}\n        REACT_APP_ENV: 'production'\n    \n    - name: Configure AWS credentials\n      uses: aws-actions/configure-aws-credentials@v2\n      with:\n        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}\n        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}\n        aws-region: eu-west-1\n    \n    - name: Deploy to S3 (Blue-Green deployment)\n      run: |\n        # Despliega a un nuevo bucket (verde) y luego cambia el enrutamiento\n        aws s3 sync dist/ s3://${{ secrets.PRODUCTION_S3_BUCKET_GREEN }} --delete\n        # Actualiza la distribución para usar el nuevo bucket\n        aws cloudfront update-distribution --id ${{ secrets.PRODUCTION_CF_DISTRIBUTION }} --distribution-config file://cloudfront-config.json\n    \n    - name: Invalidate CloudFront cache\n      run: |\n        aws cloudfront create-invalidation --distribution-id ${{ secrets.PRODUCTION_CF_DISTRIBUTION }} --paths \"/*\"\n    \n    - name: Run post-deployment tests\n      run: npm run test:e2e\n      env:\n        TEST_URL: https://${{ secrets.PRODUCTION_DOMAIN }}\n    \n    - name: Notify team on success\n      if: success()\n      uses: slackapi/slack-github-action@v1.23.0\n      with:\n        payload: |\n          {\n            \"text\": \"✅ Despliegue exitoso a producción\",\n            \"blocks\": [\n              {\n                \"type\": \"section\",\n                \"text\": {\n                  \"type\": \"mrkdwn\",\n                  \"text\": \"✅ *Despliegue exitoso a producción*\\nVersión: ${{ github.sha }}\\nAutor: ${{ github.actor }}\\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Ver detalles>\"\n                }\n              }\n            ]\n          }\n      env:\n        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}"
+        }
+      ],
+      "relatedInstructions": ["devops001", "devops003"]
+    },
+    {
+      "id": "devops003",
+      "title": {
+        "es": "Implementar estrategias de despliegue seguro",
+        "en": "Implement safe deployment strategies"
+      },
+      "description": {
+        "es": "Utilizar técnicas avanzadas para minimizar riesgos durante despliegues",
+        "en": "Use advanced techniques to minimize risks during deployments"
+      },
+      "text": {
+        "es": "Implementa estrategias de despliegue seguro para minimizar el riesgo y el impacto durante las actualizaciones de software. Utiliza despliegues Blue-Green para mantener dos entornos idénticos y cambiar el tráfico instantáneamente, despliegues Canary para liberar gradualmente a un subconjunto de usuarios, o despliegues Rolling para actualizar instancias de forma incremental. Implementa sistemas de detección temprana de problemas, automatiza pruebas post-despliegue, y establece criterios claros para rollbacks automáticos. Estas estrategias aumentan la confiabilidad y reducen el tiempo de inactividad.",
+        "en": "Implement safe deployment strategies to minimize risk and impact during software updates. Use Blue-Green deployments to maintain two identical environments and switch traffic instantly, Canary deployments to gradually release to a subset of users, or Rolling deployments to update instances incrementally. Implement early problem detection systems, automate post-deployment tests, and establish clear criteria for automatic rollbacks. These strategies increase reliability and reduce downtime."
+      },
+      "importance": "high",
+      "category": "ci_cd",
+      "subcategory": "deployment_strategy",
+      "tags": ["devops", "reliability", "deployment"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Infrastructure section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["kubernetes", "aws", "azure", "gcp"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de despliegue Blue-Green en Kubernetes",
+            "en": "Example of Blue-Green deployment in Kubernetes"
+          },
+          "code": "# blue-green-deployment.yaml\n# Estrategia Blue-Green usando Kubernetes\n\n# Servicio que siempre apunta al entorno activo\napiVersion: v1\nkind: Service\nmetadata:\n  name: my-app\n  labels:\n    app: my-app\nspec:\n  selector:\n    app: my-app\n    version: v1  # Esto cambiará entre blue y green\n  ports:\n  - port: 80\n    targetPort: 8080\n---\n# Deployment para la versión blue (v1)\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: my-app-blue\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: my-app\n      version: v1\n  template:\n    metadata:\n      labels:\n        app: my-app\n        version: v1\n    spec:\n      containers:\n      - name: my-app\n        image: my-app:1.0.0\n        ports:\n        - containerPort: 8080\n        readinessProbe:\n          httpGet:\n            path: /health\n            port: 8080\n          initialDelaySeconds: 5\n          periodSeconds: 10\n---\n# Deployment para la versión green (v2) - inicialmente con 0 réplicas\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: my-app-green\nspec:\n  replicas: 0  # Inicialmente sin réplicas\n  selector:\n    matchLabels:\n      app: my-app\n      version: v2\n  template:\n    metadata:\n      labels:\n        app: my-app\n        version: v2\n    spec:\n      containers:\n      - name: my-app\n        image: my-app:2.0.0  # Nueva versión\n        ports:\n        - containerPort: 8080\n        readinessProbe:\n          httpGet:\n            path: /health\n            port: 8080\n          initialDelaySeconds: 5\n          periodSeconds: 10\n\n# Script para realizar el despliegue Blue-Green\n# #!/bin/bash\n#\n# # 1. Desplegar la nueva versión (green)\n# kubectl scale deployment my-app-green --replicas=3\n#\n# # 2. Esperar a que todos los pods estén listos\n# kubectl rollout status deployment/my-app-green\n#\n# # 3. Verificar la nueva versión con pruebas\n# ./run-smoke-tests.sh\n#\n# if [ $? -eq 0 ]; then\n#   # 4. Cambiar el tráfico a la nueva versión (green)\n#   kubectl patch service my-app -p '{\"spec\":{\"selector\":{\"version\":\"v2\"}}}'\n#   \n#   # 5. Verificar que todo funcione con la nueva versión\n#   ./verify-deployment.sh\n#   \n#   if [ $? -eq 0 ]; then\n#     # 6. Escalar a cero el entorno antiguo (blue)\n#     kubectl scale deployment my-app-blue --replicas=0\n#     echo \"Deployment completed successfully!\"\n#     exit 0\n#   else\n#     # Rollback si la verificación falla\n#     kubectl patch service my-app -p '{\"spec\":{\"selector\":{\"version\":\"v1\"}}}'\n#     kubectl scale deployment my-app-green --replicas=0\n#     echo \"Verification failed! Rolled back to previous version.\"\n#     exit 1\n#   fi\n# else\n#   # Rollback si las pruebas fallan\n#   kubectl scale deployment my-app-green --replicas=0\n#   echo \"Smoke tests failed! Deployment aborted.\"\n#   exit 1\n# fi"
+        }
+      ],
+      "relatedInstructions": ["devops002", "devops004"]
+    }
+  ]
+}
