@@ -1,0 +1,121 @@
+{
+  "instructions": [
+    {
+      "id": "devops004",
+      "title": {
+        "es": "Crear Dockerfiles optimizados",
+        "en": "Create optimized Dockerfiles"
+      },
+      "description": {
+        "es": "Desarrollar imágenes Docker eficientes y seguras",
+        "en": "Develop efficient and secure Docker images"
+      },
+      "text": {
+        "es": "Crea Dockerfiles optimizados para generar imágenes Docker eficientes, seguras y mantenibles. Utiliza imágenes base oficiales y mínimas, combina comandos para reducir capas, establece un usuario no-root para ejecución, aprovecha el caché de capas ordenando las instrucciones adecuadamente, y elimina archivos temporales dentro de la misma capa. Incluye solo los archivos necesarios para la ejecución, utiliza multi-stage builds para separar construcción y ejecución, y especifica versiones exactas para dependencias. Implementa health checks y documenta los puertos y volúmenes utilizados.",
+        "en": "Create optimized Dockerfiles to generate efficient, secure, and maintainable Docker images. Use official and minimal base images, combine commands to reduce layers, set a non-root user for execution, leverage layer caching by properly ordering instructions, and remove temporary files within the same layer. Include only files necessary for execution, use multi-stage builds to separate build and runtime environments, and specify exact versions for dependencies. Implement health checks and document the ports and volumes used."
+      },
+      "importance": "high",
+      "category": "containerization",
+      "subcategory": "docker",
+      "tags": ["devops", "containers", "docker"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Container Management section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["docker"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de Dockerfile optimizado para aplicación Node.js",
+            "en": "Example of optimized Dockerfile for Node.js application"
+          },
+          "code": "# Dockerfile multi-etapa optimizado para aplicación Node.js\n\n# Etapa de construcción\nFROM node:18-alpine AS build\n\n# Establecer directorio de trabajo\nWORKEDIR /app\n\n# Copiar archivos de dependencias primero para aprovechar el caché de capas\nCOPY package.json package-lock.json ./\n\n# Instalar dependencias con bandera para producción (sin devDependencies)\n# y limpiar caché en la misma capa para reducir tamaño\nRUN npm ci --production && \\\n    npm cache clean --force\n\n# Copiar el código fuente\nCOPY . .\n\n# Compilar la aplicación (TypeScript, etc.)\nRUN npm run build\n\n# Eliminar archivos innecesarios para la producción\nRUN rm -rf src/ tests/ *.ts tsconfig.json\n\n# Etapa de producción\nFROM node:18-alpine AS production\n\n# Establecer variables de entorno de producción\nENV NODE_ENV=production\n\n# Crear usuario no-root para ejecutar la aplicación\nRUN addgroup -g 1001 -S nodejs && \\\n    adduser -S -u 1001 -G nodejs nodeuser\n\n# Establecer directorio de trabajo\nWORKEDIR /app\n\n# Copiar sólo los archivos necesarios desde la etapa de construcción\nCOPY --from=build --chown=nodeuser:nodejs /app/package.json /app/package-lock.json ./\nCOPY --from=build --chown=nodeuser:nodejs /app/node_modules ./node_modules\nCOPY --from=build --chown=nodeuser:nodejs /app/dist ./dist\n\n# Documentar los puertos que la aplicación utiliza\nEXPOSE 3000\n\n# Configurar health check\nHEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \\\n    CMD wget --quiet --tries=1 --spider http://localhost:3000/health || exit 1\n\n# Cambiar al usuario no-root\nUSER nodeuser\n\n# Comando para iniciar la aplicación\nCMD [\"node\", \"dist/index.js\"]\n\n# NOTAS:\n# - Este Dockerfile utiliza técnicas importantes:\n#   1. Construcción multi-etapa para mantener la imagen final pequeña\n#   2. Gestión eficiente del caché de capas (dependencias antes que código fuente)\n#   3. Limpieza de archivos temporales en la misma capa que los crea\n#   4. Uso de usuario no-root por seguridad\n#   5. Documentación clara de puertos y healthcheck\n#   6. Versiones específicas de imágenes base\n#   7. Copiado selectivo de archivos necesarios"
+        }
+      ],
+      "relatedInstructions": ["devops005", "devops006"]
+    },
+    {
+      "id": "devops005",
+      "title": {
+        "es": "Configurar orquestación con Kubernetes",
+        "en": "Configure orchestration with Kubernetes"
+      },
+      "description": {
+        "es": "Implementar y gestionar aplicaciones en clústeres de Kubernetes",
+        "en": "Deploy and manage applications in Kubernetes clusters"
+      },
+      "text": {
+        "es": "Configura orquestación con Kubernetes para gestionar aplicaciones en contenedores a escala. Organiza recursos en Namespaces para aislar entornos, implementa Deployments con estrategias de actualización adecuadas, configura Services para descubrimiento y balanceo, utiliza ConfigMaps y Secrets para gestionar configuraciones, e implementa probes de liveness y readiness para garantizar disponibilidad. Configura límites de recursos y solicitudes para asegurar rendimiento predecible, utiliza HorizontalPodAutoscalers para escalar automáticamente, e implementa PersistentVolumes para datos persistentes. Considera herramientas como Helm para gestionar despliegues complejos.",
+        "en": "Configure orchestration with Kubernetes to manage containerized applications at scale. Organize resources in Namespaces to isolate environments, implement Deployments with appropriate update strategies, configure Services for discovery and load balancing, use ConfigMaps and Secrets to manage configurations, and implement liveness and readiness probes to ensure availability. Configure resource limits and requests to ensure predictable performance, use HorizontalPodAutoscalers for automatic scaling, and implement PersistentVolumes for persistent data. Consider tools like Helm for managing complex deployments."
+      },
+      "importance": "high",
+      "category": "containerization",
+      "subcategory": "kubernetes",
+      "tags": ["devops", "containers", "orchestration"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Container Orchestration section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["kubernetes"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de configuración básica de Kubernetes para aplicación web",
+            "en": "Example of basic Kubernetes configuration for web application"
+          },
+          "code": "# Configuración de Kubernetes para aplicación web con frontend y backend\n\n---\n# Namespace para aislar el entorno\napiVersion: v1\nkind: Namespace\nmetadata:\n  name: myapp\n---\n# ConfigMap para configuración no sensible\napiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: myapp-config\n  namespace: myapp\ndata:\n  API_URL: \"http://backend-service:8080\"\n  LOG_LEVEL: \"info\"\n---\n# Secret para datos sensibles (codificado en base64)\napiVersion: v1\nkind: Secret\nmetadata:\n  name: myapp-secrets\n  namespace: myapp\ntype: Opaque\ndata:\n  DB_PASSWORD: cGFzc3dvcmQxMjM=  # password123 en base64\n  API_KEY: YWJjZGVmMTIzNDU2Nzg5MA==  # abcdef1234567890 en base64\n---\n# Deployment para el backend\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: backend\n  namespace: myapp\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: backend\n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxSurge: 1\n      maxUnavailable: 0\n  template:\n    metadata:\n      labels:\n        app: backend\n    spec:\n      containers:\n      - name: backend\n        image: myapp/backend:1.0.0\n        ports:\n        - containerPort: 8080\n        env:\n        - name: LOG_LEVEL\n          valueFrom:\n            configMapKeyRef:\n              name: myapp-config\n              key: LOG_LEVEL\n        - name: DB_PASSWORD\n          valueFrom:\n            secretKeyRef:\n              name: myapp-secrets\n              key: DB_PASSWORD\n        resources:\n          requests:\n            memory: \"256Mi\"\n            cpu: \"100m\"\n          limits:\n            memory: \"512Mi\"\n            cpu: \"500m\"\n        readinessProbe:\n          httpGet:\n            path: /health\n            port: 8080\n          initialDelaySeconds: 10\n          periodSeconds: 5\n        livenessProbe:\n          httpGet:\n            path: /health\n            port: 8080\n          initialDelaySeconds: 15\n          periodSeconds: 20\n---\n# Servicio para backend\napiVersion: v1\nkind: Service\nmetadata:\n  name: backend-service\n  namespace: myapp\nspec:\n  selector:\n    app: backend\n  ports:\n  - port: 8080\n    targetPort: 8080\n  type: ClusterIP\n---\n# Deployment para el frontend\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: frontend\n  namespace: myapp\nspec:\n  replicas: 2\n  selector:\n    matchLabels:\n      app: frontend\n  template:\n    metadata:\n      labels:\n        app: frontend\n    spec:\n      containers:\n      - name: frontend\n        image: myapp/frontend:1.0.0\n        ports:\n        - containerPort: 80\n        env:\n        - name: API_URL\n          valueFrom:\n            configMapKeyRef:\n              name: myapp-config\n              key: API_URL\n        resources:\n          requests:\n            memory: \"128Mi\"\n            cpu: \"100m\"\n          limits:\n            memory: \"256Mi\"\n            cpu: \"300m\"\n        readinessProbe:\n          httpGet:\n            path: /\n            port: 80\n          initialDelaySeconds: 5\n          periodSeconds: 5\n---\n# Servicio para frontend con exposición externa\napiVersion: v1\nkind: Service\nmetadata:\n  name: frontend-service\n  namespace: myapp\nspec:\n  selector:\n    app: frontend\n  ports:\n  - port: 80\n    targetPort: 80\n  type: LoadBalancer\n---\n# HorizontalPodAutoscaler para escalar backend automáticamente\napiVersion: autoscaling/v2\nkind: HorizontalPodAutoscaler\nmetadata:\n  name: backend-hpa\n  namespace: myapp\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: backend\n  minReplicas: 3\n  maxReplicas: 10\n  metrics:\n  - type: Resource\n    resource:\n      name: cpu\n      target:\n        type: Utilization\n        averageUtilization: 70\n---\n# PersistentVolumeClaim para almacenamiento de datos\napiVersion: v1\nkind: PersistentVolumeClaim\nmetadata:\n  name: backend-data\n  namespace: myapp\nspec:\n  accessModes:\n    - ReadWriteOnce\n  resources:\n    requests:\n      storage: 10Gi\n  storageClassName: standard"
+        }
+      ],
+      "relatedInstructions": ["devops004", "devops007"]
+    },
+    {
+      "id": "devops006",
+      "title": {
+        "es": "Implementar Docker Compose para entornos de desarrollo",
+        "en": "Implement Docker Compose for development environments"
+      },
+      "description": {
+        "es": "Configurar entornos de desarrollo local con Docker Compose",
+        "en": "Configure local development environments with Docker Compose"
+      },
+      "text": {
+        "es": "Implementa Docker Compose para crear entornos de desarrollo local consistentes y reproducibles. Define servicios interconectados en un archivo docker-compose.yml, configura volúmenes para persistencia y desarrollo en vivo, establece variables de entorno para cada servicio, implementa redes para comunicación entre contenedores, y configura dependencias y orden de inicio. Optimiza la experiencia del desarrollador incluyendo herramientas de desarrollo, habilitando recarga en vivo, y proporcionando comandos útiles. Docker Compose simplifica significativamente el desarrollo local en proyectos con múltiples servicios.",
+        "en": "Implement Docker Compose to create consistent and reproducible local development environments. Define interconnected services in a docker-compose.yml file, configure volumes for persistence and live development, set environment variables for each service, implement networks for inter-container communication, and configure dependencies and startup order. Optimize developer experience by including development tools, enabling live reloading, and providing useful commands. Docker Compose significantly simplifies local development in projects with multiple services."
+      },
+      "importance": "medium",
+      "category": "containerization",
+      "subcategory": "docker_compose",
+      "tags": ["devops", "containers", "development"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Development Tools section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["docker"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de Docker Compose para aplicación web con frontend, backend y base de datos",
+            "en": "Example of Docker Compose for web application with frontend, backend, and database"
+          },
+          "code": "# docker-compose.yml para entorno de desarrollo de aplicación MERN\nversion: '3.8'\n\nservices:\n  # Servicio de frontend (React)\n  frontend:\n    build:\n      context: ./frontend\n      dockerfile: Dockerfile.dev\n    container_name: myapp-frontend\n    ports:\n      - \"3000:3000\"\n    volumes:\n      # Montar código fuente para desarrollo en vivo\n      - ./frontend/src:/app/src\n      - ./frontend/public:/app/public\n      # Evitar sobreescribir node_modules para mejor rendimiento\n      - /app/node_modules\n    environment:\n      - NODE_ENV=development\n      - REACT_APP_API_URL=http://localhost:4000/api\n      - CHOKIDAR_USEPOLLING=true\n    depends_on:\n      - backend\n\n  # Servicio de backend (Node.js/Express)\n  backend:\n    build:\n      context: ./backend\n      dockerfile: Dockerfile.dev\n    container_name: myapp-backend\n    ports:\n      - \"4000:4000\"\n    volumes:\n      # Montar código fuente para desarrollo en vivo\n      - ./backend/src:/app/src\n      # Montar archivos de configuración\n      - ./backend/config:/app/config\n      # Evitar sobreescribir node_modules para mejor rendimiento\n      - /app/node_modules\n    environment:\n      - NODE_ENV=development\n      - PORT=4000\n      - MONGO_URI=mongodb://mongo:27017/myapp\n      - LOG_LEVEL=debug\n    depends_on:\n      - mongo\n\n  # Servicio de base de datos MongoDB\n  mongo:\n    image: mongo:6.0\n    container_name: myapp-mongodb\n    ports:\n      - \"27017:27017\"\n    volumes:\n      # Volumen persistente para datos\n      - mongo-data:/data/db\n      # Script de inicialización opcional\n      - ./mongo-init:/docker-entrypoint-initdb.d\n    environment:\n      # No necesita credenciales en desarrollo local\n      - MONGO_INITDB_DATABASE=myapp\n\n  # Herramienta de administración de MongoDB (opcional)\n  mongo-express:\n    image: mongo-express:latest\n    container_name: myapp-mongo-express\n    restart: unless-stopped\n    ports:\n      - \"8081:8081\"\n    environment:\n      - ME_CONFIG_MONGODB_SERVER=mongo\n      - ME_CONFIG_BASICAUTH_USERNAME=admin\n      - ME_CONFIG_BASICAUTH_PASSWORD=password\n    depends_on:\n      - mongo\n\n  # Servicio de caché Redis (opcional)\n  redis:\n    image: redis:alpine\n    container_name: myapp-redis\n    ports:\n      - \"6379:6379\"\n    volumes:\n      - redis-data:/data\n\n  # Herramienta de visualización Redis (opcional)\n  redis-commander:\n    image: rediscommander/redis-commander:latest\n    container_name: myapp-redis-commander\n    restart: unless-stopped\n    ports:\n      - \"8085:8081\"\n    environment:\n      - REDIS_HOSTS=local:redis:6379\n    depends_on:\n      - redis\n\nvolumes:\n  mongo-data:\n  redis-data:\n\nnetworks:\n  default:\n    name: myapp-network\n\n# Archivo Dockerfile.dev para frontend (referenciado arriba)\n# FROM node:18-alpine\n# WORKDIR /app\n# COPY package*.json ./\n# RUN npm install\n# COPY . .\n# EXPOSE 3000\n# CMD [\"npm\", \"start\"]\n\n# Archivo Dockerfile.dev para backend (referenciado arriba)\n# FROM node:18-alpine\n# WORKDIR /app\n# COPY package*.json ./\n# RUN npm install\n# COPY . .\n# EXPOSE 4000\n# CMD [\"npm\", \"run\", \"dev\"]\n\n# Comandos útiles:\n# - Iniciar todos los servicios:            docker-compose up\n# - Iniciar en segundo plano:               docker-compose up -d\n# - Reconstruir imágenes:                   docker-compose up --build\n# - Detener servicios:                      docker-compose down\n# - Detener y eliminar volúmenes:           docker-compose down -v\n# - Ver logs (seguimiento):                 docker-compose logs -f [servicio]\n# - Ejecutar comandos en un contenedor:     docker-compose exec [servicio] [comando]\n# - Entrar en shell de un contenedor:       docker-compose exec [servicio] sh"
+        }
+      ],
+      "relatedInstructions": ["devops004", "devops007"]
+    }
+  ]
+}
