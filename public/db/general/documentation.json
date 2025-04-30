@@ -1,0 +1,152 @@
+{
+  "instructions": [
+    {
+      "id": "gen017",
+      "title": {
+        "es": "Documentación clara de API",
+        "en": "Clear API documentation"
+      },
+      "description": {
+        "es": "Documentar claramente la interfaz de funciones, clases y módulos",
+        "en": "Clearly document the interface of functions, classes, and modules"
+      },
+      "text": {
+        "es": "Documenta claramente la interfaz de funciones, clases y módulos con descripciones concisas de parámetros, valores de retorno, posibles errores y ejemplos de uso. Una buena documentación de API facilita la integración y el mantenimiento del código.",
+        "en": "Clearly document the interface of functions, classes, and modules with concise descriptions of parameters, return values, possible errors, and usage examples. Good API documentation facilitates code integration and maintenance."
+      },
+      "importance": "high",
+      "category": "documentation",
+      "subcategory": "api_docs",
+      "tags": ["universal", "implementation"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Code Project section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Documentación JSDoc para una función",
+          "en": "JSDoc documentation for a function"
+        },
+        "code": "/**\n * Realiza una búsqueda paginada de usuarios según criterios especificados.\n *\n * @param {Object} options - Opciones de búsqueda\n * @param {string} [options.name] - Filtrar por nombre (opcional)\n * @param {string} [options.email] - Filtrar por email (opcional)\n * @param {string} [options.role] - Filtrar por rol (opcional)\n * @param {number} [options.page=1] - Número de página\n * @param {number} [options.limit=10] - Número de resultados por página\n * @param {string} [options.sort='createdAt'] - Campo por el cual ordenar\n * @param {boolean} [options.desc=false] - Ordenar descendentemente si es true\n *\n * @returns {Promise<Object>} Resultado de la búsqueda\n * @returns {Array<User>} result.users - Lista de usuarios\n * @returns {number} result.total - Número total de resultados\n * @returns {number} result.pages - Número total de páginas\n * @returns {number} result.currentPage - Página actual\n *\n * @throws {ValidationError} Si algún parámetro es inválido\n * @throws {DatabaseError} Si ocurre un error en la base de datos\n *\n * @example\n * // Buscar todos los administradores, 10 por página\n * const result = await searchUsers({ role: 'admin', page: 1, limit: 10 });\n * console.log(`Encontrados ${result.total} administradores`);\n */\nasync function searchUsers(options = {}) {\n  // Implementación...\n}"
+      }],
+      "relatedInstructions": ["gen018", "gen019"]
+    },
+    {
+      "id": "gen018",
+      "title": {
+        "es": "Documentar decisiones de diseño",
+        "en": "Document design decisions"
+      },
+      "description": {
+        "es": "Explicar el razonamiento detrás de decisiones de diseño importantes",
+        "en": "Explain the reasoning behind important design decisions"
+      },
+      "text": {
+        "es": "Documenta el razonamiento detrás de decisiones de diseño importantes, especialmente cuando no son obvias. Explica por qué se eligió un enfoque particular, qué alternativas se consideraron y cuáles fueron los pros y contras evaluados.",
+        "en": "Document the reasoning behind important design decisions, especially when they are not obvious. Explain why a particular approach was chosen, what alternatives were considered, and what pros and cons were evaluated."
+      },
+      "importance": "medium",
+      "category": "documentation",
+      "subcategory": "design_docs",
+      "tags": ["universal", "planning"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Code Project section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Documentación de decisión arquitectónica",
+          "en": "Documentation of an architectural decision"
+        },
+        "code": "/**\n * # Decisión de Arquitectura: Patrón de Estado para Gestión de Pedidos\n * \n * ## Contexto\n * \n * El sistema debe manejar pedidos que pasan por múltiples estados \n * (creado, pagado, en preparación, enviado, entregado, cancelado) con \n * diferentes reglas de negocio y validaciones para cada transición de estado.\n * \n * ## Opciones Consideradas\n * \n * 1. Enfoque con condicionales: Usar if/switch statements para manejar la lógica\n * 2. Patrón de Estado: Implementar clases separadas para cada estado\n * 3. Máquina de estados: Usar una biblioteca externa para máquinas de estado\n * \n * ## Decisión\n * \n * Se eligió el Patrón de Estado (opción 2) porque:\n * \n * - Encapsula la lógica específica de cada estado en clases independientes\n * - Facilita añadir nuevos estados sin modificar las clases existentes\n * - Hace que las transiciones de estado sean explícitas y auditables\n * - No introduce dependencias externas complejas\n * \n * ## Consecuencias\n * \n * - Mayor número de clases en el sistema\n * - Mayor flexibilidad para cambios futuros\n * - Mejor testabilidad de la lógica específica de cada estado\n * - Mayor claridad en el flujo de transiciones de estado\n */\n\n// Implementación del patrón de Estado\nclass Order {\n  constructor() {\n    this.state = new CreatedState(this);\n  }\n  \n  setState(state) {\n    this.state = state;\n  }\n  \n  // Métodos que delegan a los estados\n  pay() { this.state.pay(); }\n  prepare() { this.state.prepare(); }\n  ship() { this.state.ship(); }\n  deliver() { this.state.deliver(); }\n  cancel() { this.state.cancel(); }\n}"
+      }],
+      "relatedInstructions": ["gen017", "gen019"]
+    },
+    {
+      "id": "gen019",
+      "title": {
+        "es": "README actualizado",
+        "en": "Updated README"
+      },
+      "description": {
+        "es": "Mantener el README actualizado con información esencial del proyecto",
+        "en": "Keep the README updated with essential project information"
+      },
+      "text": {
+        "es": "Mantén el archivo README del proyecto actualizado con información esencial como descripción, requisitos, instrucciones de instalación, uso básico, contribución y licencia. Un buen README es crucial para que nuevos desarrolladores entiendan rápidamente el proyecto.",
+        "en": "Keep the project's README file updated with essential information such as description, requirements, installation instructions, basic usage, contribution guidelines, and licensing. A good README is crucial for new developers to quickly understand the project."
+      },
+      "importance": "medium",
+      "category": "documentation",
+      "subcategory": "project_docs",
+      "tags": ["universal", "collaboration"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Markdown section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Estructura de un buen README",
+          "en": "Structure of a good README"
+        },
+        "code": "# Nombre del Proyecto\n\n## Descripción\nUna descripción concisa pero informativa del proyecto, su propósito y características principales.\n\n## Requisitos Previos\n- Node.js v16+\n- MongoDB\n- Redis (opcional, para caché)\n\n## Instalación\n```bash\n# Clonar el repositorio\ngit clone https://github.com/usuario/proyecto.git\ncd proyecto\n\n# Instalar dependencias\nnpm install\n\n# Configurar variables de entorno\ncp .env.example .env\n# Editar .env con tus configuraciones\n\n# Iniciar la aplicación\nnpm run dev\n```\n\n## Uso\nEjemplos básicos de cómo usar las características principales.\n\n```js\n// Ejemplo de código de uso\nconst client = new Client();\nconst result = await client.getData({\n  filter: 'active',\n  limit: 5\n});\n```\n\n## Estructura del Proyecto\nBreve descripción de la estructura de directorios y archivos principales.\n\n## Pruebas\nInstrucciones para ejecutar las pruebas.\n\n## Contribuir\nDirectrices para contribuir al proyecto.\n\n## Licencia\nInformación sobre la licencia."
+      }],
+      "relatedInstructions": ["gen017", "gen020"]
+    },
+    {
+      "id": "gen020",
+      "title": {
+        "es": "Comentarios para código complejo",
+        "en": "Comments for complex code"
+      },
+      "description": {
+        "es": "Añadir comentarios explicativos para código complejo o no intuitivo",
+        "en": "Add explanatory comments for complex or non-intuitive code"
+      },
+      "text": {
+        "es": "Añade comentarios explicativos para código complejo o no intuitivo que expliquen el 'por qué' y no solo el 'qué'. Los buenos comentarios explican la intención, los supuestos subyacentes, o advertencias importantes, no simplemente repiten lo que hace el código.",
+        "en": "Add explanatory comments for complex or non-intuitive code that explain the 'why' and not just the 'what'. Good comments explain the intention, underlying assumptions, or important caveats, not simply repeat what the code does."
+      },
+      "importance": "medium",
+      "category": "documentation",
+      "subcategory": "inline_comments",
+      "tags": ["universal", "implementation"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Coding Best Practices section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Comentarios explicativos para algoritmo complejo",
+          "en": "Explanatory comments for complex algorithm"
+        },
+        "code": "function optimizeDataStructure(data) {\n  // Usamos un algoritmo de dos pasadas porque necesitamos:\n  // 1. Calcular estadísticas globales en la primera pasada\n  // 2. Normalizar valores basados en esas estadísticas en la segunda pasada\n  // Un enfoque de una sola pasada requeriría almacenar todos los datos en memoria\n  \n  // Primera pasada: recopilar estadísticas\n  let sum = 0;\n  let max = Number.MIN_SAFE_INTEGER;\n  let validCount = 0;\n  \n  for (const item of data) {\n    if (isValid(item)) {\n      sum += item.value;\n      max = Math.max(max, item.value);\n      validCount++;\n    }\n  }\n  \n  // Evitar división por cero si no hay elementos válidos\n  if (validCount === 0) {\n    return [];\n  }\n  \n  const average = sum / validCount;\n  \n  // Segunda pasada: normalizar y optimizar\n  // Usamos un Map en lugar de un objeto para preservar el orden de inserción\n  // y porque las claves pueden ser cualquier tipo, no solo strings\n  const result = new Map();\n  \n  for (const item of data) {\n    if (!isValid(item)) continue;\n    \n    // Aplicamos un factor de normalización logarítmico para\n    // comprimir el rango de valores extremos sin perder sensibilidad\n    // en el rango normal de valores\n    const normalizedValue = item.value / max;\n    const weight = Math.log1p(normalizedValue * 9 + 1) / Math.log(10);\n    \n    result.set(item.id, {\n      ...item,\n      normalizedValue,\n      weight,\n      deviation: (item.value - average) / average\n    });\n  }\n  \n  return result;\n}"
+      }],
+      "relatedInstructions": ["gen005", "gen017"]
+    }
+  ]
+}
