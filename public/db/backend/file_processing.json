@@ -1,0 +1,82 @@
+{
+  "instructions": [
+    {
+      "id": "back015",
+      "title": {
+        "es": "Optimizar carga de archivos y procesamiento multimedia",
+        "en": "Optimize file uploads and media processing"
+      },
+      "description": {
+        "es": "Técnicas para gestionar eficientemente la carga y procesamiento de archivos",
+        "en": "Techniques for efficiently managing file uploads and processing"
+      },
+      "text": {
+        "es": "Implementa estrategias eficientes para la carga y procesamiento de archivos, especialmente para contenido multimedia. Utiliza carga de archivos en trozos (chunked uploads) para manejar archivos grandes, implementa validación de archivos por tipo y tamaño antes de procesarlos, procesa archivos multimedia de forma asíncrona con colas de trabajo, genera múltiples versiones optimizadas de las imágenes, y considera el uso de almacenamiento en la nube con CDN para una entrega más rápida.",
+        "en": "Implement efficient strategies for file uploads and processing, especially for multimedia content. Use chunked file uploads to handle large files, implement file validation by type and size before processing, process media files asynchronously with work queues, generate multiple optimized versions of images, and consider using cloud storage with CDN for faster delivery."
+      },
+      "importance": "medium",
+      "category": "performance",
+      "subcategory": "file_handling",
+      "tags": ["backend", "multimedia", "optimization"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "File Processing section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["server", "cloud"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de sistema de carga y procesamiento de imágenes con Node.js",
+            "en": "Example of image upload and processing system with Node.js"
+          },
+          "code": "// Sistema de carga y procesamiento de imágenes con Node.js\n\nconst express = require('express');\nconst multer = require('multer');\nconst sharp = require('sharp');\nconst path = require('path');\nconst crypto = require('crypto');\nconst { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');\nconst Queue = require('bull');\n\nconst app = express();\n\n// Configuración de S3\nconst s3Client = new S3Client({\n  region: process.env.AWS_REGION,\n  credentials: {\n    accessKeyId: process.env.AWS_ACCESS_KEY_ID,\n    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY\n  }\n});\n\n// Configuración de cola de procesamiento\nconst imageQueue = new Queue('image-processing', {\n  redis: {\n    host: process.env.REDIS_HOST,\n    port: process.env.REDIS_PORT\n  }\n});\n\n// Configuración de multer para manejo de archivos\nconst storage = multer.diskStorage({\n  destination: function(req, file, cb) {\n    cb(null, './uploads/temp'); // Directorio temporal para archivos subidos\n  },\n  filename: function(req, file, cb) {\n    // Generar nombre único con timestamp y hash\n    const uniqueSuffix = Date.now() + '-' + crypto.randomBytes(6).toString('hex');\n    const ext = path.extname(file.originalname).toLowerCase();\n    cb(null, uniqueSuffix + ext);\n  }\n});\n\n// Filtro de archivos por tipo\nconst fileFilter = (req, file, cb) => {\n  // Validar tipos de archivo permitidos\n  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];\n  \n  if (allowedTypes.includes(file.mimetype)) {\n    cb(null, true);\n  } else {\n    cb(new Error('Tipo de archivo no soportado. Solo se permiten imágenes (JPEG, PNG, WebP, GIF).'), false);\n  }\n};\n\n// Configuración de multer\nconst upload = multer({\n  storage: storage,\n  fileFilter: fileFilter,\n  limits: {\n    fileSize: 10 * 1024 * 1024 // 10MB máximo\n  }\n});\n\n// Ruta para carga de imágenes\napp.post('/api/images/upload', upload.single('image'), async (req, res, next) => {\n  try {\n    if (!req.file) {\n      return res.status(400).json({ message: 'No se ha proporcionado ninguna imagen' });\n    }\n    \n    // Generar ID único para la imagen\n    const imageId = crypto.randomUUID();\n    \n    // Añadir tarea a la cola para procesamiento asíncrono\n    const job = await imageQueue.add({\n      tempPath: req.file.path,\n      filename: req.file.filename,\n      originalname: req.file.originalname,\n      mimetype: req.file.mimetype,\n      size: req.file.size,\n      imageId,\n      userId: req.user.id\n    }, {\n      attempts: 3,\n      removeOnComplete: true\n    });\n    \n    // Responder inmediatamente al cliente con el ID\n    return res.status(202).json({\n      message: 'Imagen en procesamiento',\n      imageId,\n      jobId: job.id\n    });\n  } catch (error) {\n    console.error('Error al procesar la carga de imagen:', error);\n    return res.status(500).json({ message: 'Error al procesar la imagen' });\n  }\n});\n\n// Procesar imágenes en segundo plano\nimageQueue.process(async (job) => {\n  const { tempPath, imageId, userId, mimetype } = job.data;\n  const images = {};\n  \n  try {\n    // Base path para S3\n    const s3BasePath = `uploads/${userId}/${imageId}`;\n    \n    // Procesar imagen con sharp\n    const originalImage = sharp(tempPath);\n    const metadata = await originalImage.metadata();\n    \n    // Definir versiones a generar\n    const versions = [\n      { name: 'original', width: null, height: null },\n      { name: 'large', width: 1200, height: 1200 },\n      { name: 'medium', width: 600, height: 600 },\n      { name: 'thumbnail', width: 200, height: 200 }\n    ];\n    \n    // Procesar y subir cada versión\n    for (const version of versions) {\n      // Clonar imagen para crear la versión\n      let processedImage = sharp(tempPath);\n      \n      // Redimensionar si es necesario (excepto original)\n      if (version.width && version.height) {\n        processedImage = processedImage.resize(version.width, version.height, {\n          fit: 'inside',\n          withoutEnlargement: true\n        });\n      }\n      \n      // Auto-optimizar según el tipo original\n      if (mimetype === 'image/jpeg') {\n        processedImage = processedImage.jpeg({ quality: 80 });\n      } else if (mimetype === 'image/png') {\n        processedImage = processedImage.png({ compressionLevel: 9 });\n      } else if (mimetype === 'image/webp' || version.name !== 'original') {\n        // Convertir a webp para versiones no originales o si ya era webp\n        processedImage = processedImage.webp({ quality: 80 });\n      }\n      \n      // Generar buffer de la imagen\n      const buffer = await processedImage.toBuffer();\n      \n      // Subir a S3\n      await s3Client.send(new PutObjectCommand({\n        Bucket: process.env.AWS_S3_BUCKET,\n        Key: `${s3BasePath}/${version.name}.${version.name === 'original' ? path.extname(tempPath).substring(1) : 'webp'}`,\n        Body: buffer,\n        ContentType: mimetype,\n        CacheControl: 'max-age=31536000' // 1 año de caché\n      }));\n    }\n    \n    // Eliminar archivo temporal\n    const fs = require('fs').promises;\n    await fs.unlink(tempPath);\n    \n    return { success: true, imageId, urls: images };\n  } catch (error) {\n    console.error('Error procesando imagen:', error);\n    throw error;\n  }\n});"
+        }
+      ],
+      "relatedInstructions": ["back013", "back016"]
+    },
+    {
+      "id": "back016",
+      "title": {
+        "es": "Implementar streaming de datos",
+        "en": "Implement data streaming"
+      },
+      "description": {
+        "es": "Técnicas para manejar flujos de datos de manera eficiente",
+        "en": "Techniques for efficiently handling data streams"
+      },
+      "text": {
+        "es": "Implementa streaming de datos para manejar eficientemente grandes volúmenes de información o transmisiones en tiempo real. Utiliza streams para procesar archivos grandes sin cargarlos completamente en memoria, implementa transformaciones en pipeline para procesar datos mientras se transfieren, considera WebSockets o Server-Sent Events para comunicación en tiempo real, y mantén buffers adecuados para equilibrar la eficiencia de memoria y la reactividad del sistema.",
+        "en": "Implement data streaming to efficiently handle large volumes of information or real-time transmissions. Use streams to process large files without loading them entirely into memory, implement pipeline transformations to process data while it's being transferred, consider WebSockets or Server-Sent Events for real-time communication, and maintain appropriate buffers to balance memory efficiency and system responsiveness."
+      },
+      "importance": "medium",
+      "category": "performance",
+      "subcategory": "streaming",
+      "tags": ["backend", "data", "realtime"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Data Processing section"
+      },
+      "compatibility": {
+        "frameworks": ["express", "nest", "django", "spring"],
+        "languages": ["javascript", "python", "java"],
+        "environments": ["server", "cloud"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de streaming de archivos en Node.js",
+            "en": "Example of file streaming in Node.js"
+          },
+          "code": "// Streaming de archivos grandes en Node.js\n\nconst fs = require('fs');\nconst { pipeline } = require('stream/promises');\nconst { createGzip } = require('zlib');\nconst { createCsvStringifier } = require('csv-writer').createObjectCsvStringifier;\nconst express = require('express');\n\nconst app = express();\n\n// Endpoint para descargar datos CSV grandes sin consumir mucha memoria\napp.get('/api/reports/large-data', async (req, res) => {\n  try {\n    // Configurar encabezados de respuesta\n    res.setHeader('Content-Type', 'text/csv');\n    res.setHeader('Content-Disposition', 'attachment; filename=\"large-report.csv\"');\n    \n    // Si el cliente soporta compresión, usarla\n    const acceptEncoding = req.headers['accept-encoding'] || '';\n    const useCompression = acceptEncoding.includes('gzip');\n    \n    if (useCompression) {\n      res.setHeader('Content-Encoding', 'gzip');\n    }\n    \n    // Configurar el generador de CSV\n    const csvStringifier = createCsvStringifier({\n      header: [\n        { id: 'id', title: 'ID' },\n        { id: 'name', title: 'Nombre' },\n        { id: 'value', title: 'Valor' },\n        { id: 'date', title: 'Fecha' }\n      ]\n    });\n    \n    // Crear una fuente de datos (podría ser una consulta paginada a BD)\n    const dataSource = createDataSource(req.query);\n    \n    // Configurar la transformación CSV\n    const csvTransform = new (require('stream').Transform)({\n      objectMode: true,\n      transform(chunk, encoding, callback) {\n        // Para el primer chunk, incluir encabezados\n        if (this.isFirstChunk) {\n          this.push(csvStringifier.getHeaderString());\n          this.isFirstChunk = false;\n        }\n        \n        // Convertir chunk a formato CSV\n        const csvLine = csvStringifier.stringifyRecords([chunk]);\n        callback(null, csvLine);\n      }\n    });\n    csvTransform.isFirstChunk = true;\n    \n    // Configurar pipeline de streams\n    if (useCompression) {\n      // Con compresión: fuente -> transformación a CSV -> compresión -> respuesta\n      await pipeline(dataSource, csvTransform, createGzip(), res);\n    } else {\n      // Sin compresión: fuente -> transformación a CSV -> respuesta\n      await pipeline(dataSource, csvTransform, res);\n    }\n  } catch (error) {\n    // Si el cliente desconectó, no necesitamos hacer nada\n    if (!res.headersSent) {\n      console.error('Error en streaming:', error);\n      res.status(500).send('Error generando reporte');\n    }\n  }\n});\n\n// Función para crear un stream de datos de ejemplo\nfunction createDataSource(queryParams) {\n  const { start = 0, limit = 1000000 } = queryParams;\n  let currentId = parseInt(start);\n  const maxId = currentId + parseInt(limit);\n  \n  // Stream de objetos que genera datos bajo demanda\n  return new (require('stream').Readable)({\n    objectMode: true,\n    read() {\n      if (currentId < maxId) {\n        // Generar registro de ejemplo\n        const item = {\n          id: currentId,\n          name: `Item ${currentId}`,\n          value: Math.random() * 1000,\n          date: new Date(Date.now() - Math.random() * 10000000000).toISOString()\n        };\n        \n        this.push(item);\n        currentId++;\n      } else {\n        // Fin de datos\n        this.push(null);\n      }\n    }\n  });\n}\n\n// Endpoint para streaming de archivo grande desde el sistema de archivos\napp.get('/api/files/:fileId', async (req, res) => {\n  const { fileId } = req.params;\n  \n  try {\n    // Verificar permisos y obtener metadatos del archivo\n    const fileInfo = await getFileInfo(fileId, req.user.id);\n    \n    if (!fileInfo) {\n      return res.status(404).json({ message: 'Archivo no encontrado' });\n    }\n    \n    // Configurar encabezados de respuesta\n    res.setHeader('Content-Type', fileInfo.mimeType);\n    res.setHeader('Content-Disposition', `attachment; filename=\"${fileInfo.filename}\"`);\n    \n    // Configurar manejo de rangos para descarga parcial (resumible)\n    const fileSize = fileInfo.size;\n    const range = req.headers.range;\n    \n    if (range) {\n      const parts = range.replace(/bytes=/, '').split('-');\n      const start = parseInt(parts[0], 10);\n      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;\n      \n      const chunkSize = (end - start) + 1;\n      \n      res.setHeader('Content-Range', `bytes ${start}-${end}/${fileSize}`);\n      res.setHeader('Accept-Ranges', 'bytes');\n      res.setHeader('Content-Length', chunkSize);\n      res.status(206); // Respuesta parcial\n      \n      // Crear stream de archivo con rango específico\n      const stream = fs.createReadStream(fileInfo.path, { start, end });\n      stream.pipe(res);\n    } else {\n      // Sin rango, enviar archivo completo\n      res.setHeader('Content-Length', fileSize);\n      const stream = fs.createReadStream(fileInfo.path);\n      stream.pipe(res);\n    }\n  } catch (error) {\n    console.error('Error en streaming de archivo:', error);\n    if (!res.headersSent) {\n      res.status(500).json({ message: 'Error al procesar archivo' });\n    }\n  }\n});"
+        }
+      ],
+      "relatedInstructions": ["back013", "back015"]
+    }
+  ]
+}
