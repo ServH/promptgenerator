@@ -34,7 +34,7 @@
             "es": "Circuit breaker en Java con Resilience4j",
             "en": "Circuit breaker in Java with Resilience4j"
           },
-          "code": "import io.github.resilience4j.circuitbreaker.CircuitBreaker;\nimport io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;\nimport io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;\n\nimport java.time.Duration;\nimport java.util.function.Supplier;\n\npublic class PaymentService {\n\n    private final ExternalPaymentGateway paymentGateway;\n    private final CircuitBreaker circuitBreaker;\n\n    public PaymentService(ExternalPaymentGateway paymentGateway) {\n        this.paymentGateway = paymentGateway;\n        \n        // Define circuit breaker configuration\n        CircuitBreakerConfig config = CircuitBreakerConfig.custom()\n            .failureRateThreshold(50)  // 50% failure rate to open circuit\n            .waitDurationInOpenState(Duration.ofSeconds(30))  // Wait 30s in OPEN state\n            .permittedNumberOfCallsInHalfOpenState(5)  // Allow 5 calls in HALF-OPEN\n            .slidingWindowSize(10)  // Look at last 10 calls to calculate failure rate\n            .recordExceptions(TimeoutException.class, IOException.class) // Which exceptions count as failures\n            .build();\n            \n        // Create the circuit breaker\n        CircuitBreakerRegistry registry = CircuitBreakerRegistry.of(config);\n        this.circuitBreaker = registry.circuitBreaker(\"paymentService\");\n    }\n\n    public PaymentResult processPayment(Payment payment) {\n        // Decorate the function call with circuit breaker\n        Supplier<PaymentResult> decoratedSupplier = CircuitBreaker\n            .decorateSupplier(circuitBreaker, () -> paymentGateway.processPayment(payment));\n            \n        try {\n            // Execute the decorated function\n            return decoratedSupplier.get();\n        } catch (Exception e) {\n            // Handle the exception (circuit open or actual failure)\n            return new PaymentResult(PaymentStatus.FAILED, \"Payment service unavailable\");\n        }\n    }\n}"
+          "code": "import io.github.resilience4j.circuitbreaker.CircuitBreaker;\nimport io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;\nimport io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;\n\npublic class PaymentService {\n    private final CircuitBreaker circuitBreaker;\n\n    public PaymentService() {\n        CircuitBreakerConfig config = CircuitBreakerConfig.custom()\n            .failureRateThreshold(50)  // 50% failure rate to open circuit\n            .waitDurationInOpenState(Duration.ofSeconds(30))\n            .build();\n            \n        CircuitBreakerRegistry registry = CircuitBreakerRegistry.of(config);\n        this.circuitBreaker = registry.circuitBreaker(\"paymentService\");\n    }\n}"
         }
       ],
       "relatedInstructions": ["scal011", "ms004", "api005"]
@@ -73,7 +73,7 @@
             "es": "Implementación de retry con backoff exponencial en Node.js",
             "en": "Implementing retry with exponential backoff in Node.js"
           },
-          "code": "// Retry function with exponential backoff\nasync function retryWithExponentialBackoff(operation, maxRetries = 5, baseDelay = 300) {\n  let retries = 0;\n  \n  while (true) {\n    try {\n      return await operation();\n    } catch (error) {\n      // If we've used all retries, or if error is not retryable, throw\n      if (retries >= maxRetries || !isRetryable(error)) {\n        throw error;\n      }\n      \n      // Calculate delay with exponential backoff and jitter\n      const delay = baseDelay * Math.pow(2, retries) + Math.random() * 100;\n      console.log(`Operation failed. Retrying in ${delay}ms. Retry ${retries + 1}/${maxRetries}`);\n      \n      // Wait before retrying\n      await new Promise(resolve => setTimeout(resolve, delay));\n      retries++;\n    }\n  }\n}\n\n// Determine if an error is retryable\nfunction isRetryable(error) {\n  // Network errors and certain HTTP status codes are often retryable\n  return error.code === 'ECONNRESET' || \n         error.code === 'ETIMEDOUT' || \n         (error.response && (error.response.status === 429 || \n                             error.response.status === 503 || \n                             error.response.status >= 500));\n}\n\n// Example usage\nasync function fetchDataWithRetry() {\n  try {\n    const result = await retryWithExponentialBackoff(\n      () => axios.get('https://api.example.com/data'),\n      3,  // max 3 retries\n      500 // start with 500ms delay\n    );\n    return result.data;\n  } catch (error) {\n    console.error('Failed after multiple retries', error);\n    throw error;\n  }\n}"
+          "code": "// Retry function with exponential backoff\nasync function retryWithExponentialBackoff(operation, maxRetries = 5, baseDelay = 300) {\n  let retries = 0;\n  \n  while (true) {\n    try {\n      return await operation();\n    } catch (error) {\n      if (retries >= maxRetries) throw error;\n      const delay = baseDelay * Math.pow(2, retries) + Math.random() * 100;\n      await new Promise(resolve => setTimeout(resolve, delay));\n      retries++;\n    }\n  }\n}"
         }
       ],
       "relatedInstructions": ["scal010", "ms004", "api005"]
@@ -109,10 +109,10 @@
       "examples": [
         {
           "context": {
-            "es": "Implementación de bulkheads en Java con ThreadPoolExecutor",
-            "en": "Implementing bulkheads in Java with ThreadPoolExecutor"
+            "es": "Implementación de bulkheads en Java",
+            "en": "Implementing bulkheads in Java"
           },
-          "code": "import java.util.concurrent.ArrayBlockingQueue;\nimport java.util.concurrent.ThreadPoolExecutor;\nimport java.util.concurrent.TimeUnit;\n\npublic class ServiceRegistry {\n\n    // Separate thread pools for different service categories\n    private final ThreadPoolExecutor criticalServicePool;\n    private final ThreadPoolExecutor nonCriticalServicePool;\n    \n    public ServiceRegistry() {\n        // Pool for critical services - small queue to fail fast, more threads\n        criticalServicePool = new ThreadPoolExecutor(\n            10,                       // Core pool size\n            20,                       // Max pool size\n            60, TimeUnit.SECONDS,     // Thread keep-alive time\n            new ArrayBlockingQueue<>(50),  // Bounded queue size\n            new ThreadPoolExecutor.CallerRunsPolicy()  // Backpressure strategy\n        );\n        \n        // Pool for non-critical services - larger queue, fewer threads\n        nonCriticalServicePool = new ThreadPoolExecutor(\n            5,                        // Core pool size\n            10,                       // Max pool size\n            60, TimeUnit.SECONDS,     // Thread keep-alive time\n            new ArrayBlockingQueue<>(100), // Larger queue size\n            new ThreadPoolExecutor.AbortPolicy()  // Different strategy\n        );\n    }\n    \n    // Execute critical service operation\n    public <T> Future<T> executeCriticalOperation(Callable<T> operation) {\n        return criticalServicePool.submit(operation);\n    }\n    \n    // Execute non-critical service operation\n    public <T> Future<T> executeNonCriticalOperation(Callable<T> operation) {\n        return nonCriticalServicePool.submit(operation);\n    }\n    \n    // Shutdown pools gracefully\n    public void shutdown() {\n        criticalServicePool.shutdown();\n        nonCriticalServicePool.shutdown();\n    }\n}"
+          "code": "// Separate thread pools for different service categories\nprivate final ThreadPoolExecutor criticalServicePool = new ThreadPoolExecutor(\n    10, 20, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(50));\n    \nprivate final ThreadPoolExecutor nonCriticalServicePool = new ThreadPoolExecutor(\n    5, 10, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(100));"
         }
       ],
       "relatedInstructions": ["scal010", "ms004", "api003"]
@@ -151,7 +151,7 @@
             "es": "Implementación de timeouts en diferentes lenguajes",
             "en": "Implementing timeouts in different languages"
           },
-          "code": "// Java example with HttpClient\nHttpClient client = HttpClient.newBuilder()\n    .connectTimeout(Duration.ofSeconds(5))  // Connection timeout\n    .build();\n\nHttpRequest request = HttpRequest.newBuilder()\n    .uri(URI.create(\"https://api.example.com/data\"))\n    .timeout(Duration.ofSeconds(10))  // Request timeout\n    .build();\n\n// Python example with requests\nimport requests\n\ntry:\n    response = requests.get('https://api.example.com/data', \n                         timeout=(3.05, 10))  # (connect timeout, read timeout)\nexcept requests.exceptions.Timeout:\n    # Handle timeout error\n    print(\"The request timed out\")\n\n// JavaScript/Node.js example with axios\nconst axios = require('axios');\n\naxios.get('https://api.example.com/data', {\n  timeout: 5000  // 5 seconds timeout\n}).catch(error => {\n  if (error.code === 'ECONNABORTED') {\n    console.log('Request timed out');\n  }\n});"
+          "code": "// Java example with HttpClient\nHttpClient client = HttpClient.newBuilder()\n    .connectTimeout(Duration.ofSeconds(5))\n    .build();\n\n// Python example with requests\nimport requests\ntry:\n    response = requests.get('https://api.example.com/data', \n                         timeout=(3.05, 10))\nexcept requests.exceptions.Timeout:\n    # Handle timeout error\n    print(\"The request timed out\")"
         }
       ],
       "relatedInstructions": ["scal010", "scal011", "perf004"]
@@ -159,41 +159,80 @@
     {
       "id": "scal014",
       "title": {
-        "es": "Implementar backpressure",
-        "en": "Implement backpressure"
+        "es": "Implementar degradación elegante",
+        "en": "Implement graceful degradation"
       },
       "description": {
-        "es": "Manejar sobrecarga mediante mecanismos de contrapresión",
-        "en": "Handle overload with backpressure mechanisms"
+        "es": "Mantener funcionalidad esencial cuando los recursos son limitados",
+        "en": "Maintain essential functionality when resources are constrained"
       },
       "text": {
-        "es": "Implementa mecanismos de backpressure (contrapresión) para manejar situaciones donde los productores de datos o solicitudes generan más carga de la que los consumidores pueden procesar. Estos mecanismos pueden incluir encolado con límites, throttling, shedding (rechazo de solicitudes) o señalización a productores para reducir su tasa de envío, manteniendo así la estabilidad del sistema.",
-        "en": "Implement backpressure mechanisms to handle situations where data producers or request generators create more load than consumers can process. These mechanisms may include bounded queuing, throttling, load shedding (request rejection), or signaling to producers to reduce their sending rate, thus maintaining system stability."
+        "es": "Implementa estrategias de degradación elegante que permitan a tu sistema seguir funcionando con capacidad reducida durante períodos de alta carga o cuando ciertos componentes fallen. Identifica las funcionalidades esenciales que deben mantenerse y aquellas secundarias que pueden desactivarse temporalmente para preservar la experiencia principal.",
+        "en": "Implement graceful degradation strategies that allow your system to continue operating with reduced capacity during periods of high load or when certain components fail. Identify essential functionalities that must be maintained and secondary ones that can be temporarily disabled to preserve the core experience."
       },
       "importance": "medium",
       "category": "scalability",
       "subcategory": "resilience",
-      "tags": ["microservices", "resilience", "stream_processing"],
+      "tags": ["architecture", "user_experience", "reliability"],
       "source": {
         "agentType": "general",
         "repository": "system-prompts/devops",
-        "context": "Stream Processing Patterns"
+        "context": "Resilience Patterns"
       },
       "compatibility": {
-        "frameworks": ["rxjava", "akka", "spring-webflux", "reactor"],
+        "frameworks": ["all"],
         "languages": ["all"],
         "environments": ["all"]
       },
       "examples": [
         {
           "context": {
-            "es": "Backpressure con RxJava",
-            "en": "Backpressure with RxJava"
+            "es": "Degradación elegante en servicio web",
+            "en": "Graceful degradation in web service"
           },
-          "code": "import io.reactivex.BackpressureStrategy;\nimport io.reactivex.Flowable;\nimport io.reactivex.schedulers.Schedulers;\nimport org.reactivestreams.Subscriber;\nimport org.reactivestreams.Subscription;\n\n// Create a flowable with backpressure strategy\nFlowable<Integer> flowable = Flowable.create(emitter -> {\n    // This is a fast producer\n    for (int i = 0; i < 1_000_000; i++) {\n        if (emitter.isCancelled()) {\n            return;\n        }\n        emitter.onNext(i);\n        System.out.println(\"Produced: \" + i);\n    }\n    emitter.onComplete();\n}, BackpressureStrategy.BUFFER); // Choose an appropriate backpressure strategy\n\n// Create a custom subscriber (slow consumer)\nflowable\n    .observeOn(Schedulers.io(), false, 16) // Set buffer size for backpressure\n    .subscribe(new Subscriber<Integer>() {\n        private Subscription subscription;\n\n        @Override\n        public void onSubscribe(Subscription s) {\n            this.subscription = s;\n            // Request initial batch size (control the pace)\n            subscription.request(4);\n        }\n\n        @Override\n        public void onNext(Integer item) {\n            System.out.println(\"Consuming: \" + item);\n            \n            try {\n                // Simulate slow processing\n                Thread.sleep(50);\n            } catch (InterruptedException e) {\n                e.printStackTrace();\n                subscription.cancel();\n            }\n            \n            // Request the next item (allowing backpressure)\n            subscription.request(1);\n        }\n\n        @Override\n        public void onError(Throwable throwable) {\n            throwable.printStackTrace();\n        }\n\n        @Override\n        public void onComplete() {\n            System.out.println(\"Processing completed\");\n        }\n    });"
+          "code": "// Check if we're in high load mode\nif (isHighLoadMode.get()) {\n    // Skip all non-essential enrichments under high load\n    response.setMessage(\"Some features are temporarily unavailable\");\n    return response;\n}\n\n// Try to get recommendations - non-essential, can be skipped\ntry {\n    List<Product> recommendations = recommendationService.getRecommendations(productId);\n    response.setRecommendations(recommendations);\n} catch (Exception e) {\n    // Just log and continue without recommendations\n    log.info(\"Skipping recommendations due to service issues\");\n}"
         }
       ],
-      "relatedInstructions": ["scal009", "scal011", "ms005"]
+      "relatedInstructions": ["scal010", "scal013", "perf006"]
+    },
+    {
+      "id": "scal015",
+      "title": {
+        "es": "Diseñar para fallos",
+        "en": "Design for failure"
+      },
+      "description": {
+        "es": "Construir sistemas asumiendo que los fallos ocurrirán",
+        "en": "Build systems assuming that failures will occur"
+      },
+      "text": {
+        "es": "Diseña todos los componentes del sistema asumiendo que ocurrirán fallos. Anticipa escenarios de fallo específicos para cada componente y desarrolla estrategias para detectar, mitigar y recuperarse de estos fallos. Esto implica implementar sistemas de monitorización efectivos, redundancia apropiada, y mecanismos de recuperación automática desde distintos tipos de fallos.",
+        "en": "Design all system components assuming that failures will occur. Anticipate specific failure scenarios for each component and develop strategies to detect, mitigate, and recover from these failures. This involves implementing effective monitoring systems, appropriate redundancy, and mechanisms for automatically recovering from different types of failures."
+      },
+      "importance": "high",
+      "category": "scalability",
+      "subcategory": "resilience",
+      "tags": ["architecture", "reliability", "best_practices"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Cloud Architecture Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Diseño para fallos en microservicios",
+            "en": "Design for failure in microservices"
+          },
+          "code": "// Health Check API\n@RestController\npublic class HealthController {\n    @GetMapping(\"/health\")\n    public HealthStatus checkHealth() {\n        return new HealthStatus(\"UP\", System.currentTimeMillis());\n    }\n}\n\n// Graceful shutdown\n@PreDestroy\npublic void shutdown() {\n    // Allow in-flight requests to complete (30 seconds max)\n    server.shutdown(30, TimeUnit.SECONDS);\n    // Close resources gracefully\n    databaseConnection.close();\n}"
+        }
+      ],
+      "relatedInstructions": ["mon001", "infra003", "ms001"]
     }
   ]
 }
