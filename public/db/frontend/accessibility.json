@@ -1,0 +1,160 @@
+{
+  "instructions": [
+    {
+      "id": "fe013",
+      "title": {
+        "es": "Usar elementos HTML semánticos",
+        "en": "Use semantic HTML elements"
+      },
+      "description": {
+        "es": "Preferir elementos HTML semánticos sobre divs o spans genéricos",
+        "en": "Prefer semantic HTML elements over generic divs or spans"
+      },
+      "text": {
+        "es": "Utiliza elementos HTML semánticos (<header>, <nav>, <main>, <section>, <article>, <footer>, etc.) en lugar de <div> o <span> genéricos cuando corresponda. Los elementos semánticos proporcionan significado a tu estructura HTML, mejoran la accesibilidad para tecnologías de asistencia, benefician el SEO y hacen que tu código sea más fácil de leer y mantener.",
+        "en": "Use semantic HTML elements (<header>, <nav>, <main>, <section>, <article>, <footer>, etc.) instead of generic <div> or <span> elements when appropriate. Semantic elements provide meaning to your HTML structure, improve accessibility for assistive technologies, benefit SEO, and make your code more readable and maintainable."
+      },
+      "importance": "high",
+      "category": "accessibility",
+      "subcategory": "semantic_html",
+      "tags": ["frontend", "accessibility", "seo"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Accessibility section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["html", "jsx"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de HTML semántico vs. no semántico",
+            "en": "Example of semantic vs. non-semantic HTML"
+          },
+          "code": "<!-- MAL: Uso excesivo de divs sin semántica -->\n<div class=\"header\">\n  <div class=\"logo\">Logo</div>\n  <div class=\"nav\">\n    <div class=\"nav-item\">Home</div>\n    <div class=\"nav-item\">About</div>\n  </div>\n</div>\n<div class=\"content\">\n  <div class=\"article\">\n    <div class=\"title\">Artículo Título</div>\n    <div class=\"text\">Contenido...</div>\n  </div>\n</div>\n<div class=\"footer\">Copyright 2023</div>\n\n<!-- MEJOR: Uso de elementos semánticos -->\n<header>\n  <div class=\"logo\">Logo</div>\n  <nav>\n    <ul>\n      <li><a href=\"/\">Home</a></li>\n      <li><a href=\"/about\">About</a></li>\n    </ul>\n  </nav>\n</header>\n<main>\n  <article>\n    <h1>Artículo Título</h1>\n    <p>Contenido...</p>\n  </article>\n</main>\n<footer>Copyright 2023</footer>"
+        }
+      ],
+      "relatedInstructions": ["fe014"]
+    },
+    {
+      "id": "fe014",
+      "title": {
+        "es": "Proporcionar texto alternativo para imágenes",
+        "en": "Provide alternative text for images"
+      },
+      "description": {
+        "es": "Añadir atributos alt descriptivos a las imágenes",
+        "en": "Add descriptive alt attributes to images"
+      },
+      "text": {
+        "es": "Siempre proporciona texto alternativo (atributo alt) para imágenes relevantes. El texto debe describir concisamente el contenido y la función de la imagen. Para imágenes decorativas que no aportan contenido significativo, usa un alt vacío (alt=\"\"). Esto permite que los usuarios con lectores de pantalla u otras tecnologías de asistencia comprendan el contenido de la página.",
+        "en": "Always provide alternative text (alt attribute) for relevant images. The text should concisely describe the content and function of the image. For decorative images that don't add meaningful content, use an empty alt (alt=\"\"). This allows users with screen readers or other assistive technologies to understand the page content."
+      },
+      "importance": "high",
+      "category": "accessibility",
+      "subcategory": "image_accessibility",
+      "tags": ["frontend", "accessibility", "images"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Accessibility section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["html", "jsx"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplos de uso correcto de atributos alt",
+            "en": "Examples of proper use of alt attributes"
+          },
+          "code": "<!-- Imagen informativa con alt descriptivo -->\n<img src=\"chart-revenue-2023.png\" alt=\"Gráfico de barras mostrando ingresos por trimestre en 2023\" />\n\n<!-- Imagen de logo con alt conciso -->\n<img src=\"company-logo.png\" alt=\"Logo de Acme Inc.\" />\n\n<!-- Imagen que es un enlace - alt describe destino -->\n<a href=\"/productos\">\n  <img src=\"ver-productos.png\" alt=\"Ver catálogo de productos\" />\n</a>\n\n<!-- Imagen decorativa con alt vacío -->\n<img src=\"decorative-divider.png\" alt=\"\" role=\"presentation\" />\n\n<!-- Imagen compleja con descripción detallada en otro lugar -->\n<figure>\n  <img src=\"infografia-proceso.png\" alt=\"Infografía del proceso de fabricación\" aria-describedby=\"desc-infografia\" />\n  <figcaption id=\"desc-infografia\">\n    El proceso de fabricación incluye 5 etapas: diseño, preparación de materiales,\n    ensamblaje, control de calidad y empaquetado.\n  </figcaption>\n</figure>"
+        }
+      ],
+      "relatedInstructions": ["fe013", "fe015"]
+    },
+    {
+      "id": "fe015",
+      "title": {
+        "es": "Asegurar navegación por teclado",
+        "en": "Ensure keyboard navigation"
+      },
+      "description": {
+        "es": "Permitir la navegación y uso completo del sitio mediante teclado",
+        "en": "Allow for full site navigation and usage through keyboard"
+      },
+      "text": {
+        "es": "Asegúrate de que toda la funcionalidad del sitio sea accesible usando solo el teclado. Verifica que todos los elementos interactivos sean accesibles mediante Tab, que exista un indicador de enfoque visible, que los menús desplegables sean operables con teclado y que no haya trampas de teclado. Esto es esencial para usuarios que no pueden usar un ratón debido a discapacidades físicas o visuales.",
+        "en": "Ensure that all site functionality is accessible using only the keyboard. Verify that all interactive elements are accessible via Tab, that there is a visible focus indicator, that dropdown menus are keyboard operable, and that there are no keyboard traps. This is essential for users who cannot use a mouse due to physical or visual disabilities."
+      },
+      "importance": "high",
+      "category": "accessibility",
+      "subcategory": "keyboard_navigation",
+      "tags": ["frontend", "accessibility", "interaction"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Accessibility section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["html", "css", "javascript"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de manejo de navegación por teclado",
+            "en": "Example of keyboard navigation handling"
+          },
+          "code": "// 1. Nunca quitar el outline predeterminado sin proporcionar una alternativa\n// MAL:\n*:focus {\n  outline: none; /* Elimina el indicador visual de foco */\n}\n\n// BIEN: Proporcionar un estilo de foco personalizado pero visible\n*:focus {\n  outline: 2px solid #4A90E2;\n  outline-offset: 2px;\n}\n\n// 2. Utilizar roles y atributos ARIA cuando sea necesario\n// Menú desplegable accesible mediante teclado\n<div class=\"dropdown\">\n  <button\n    aria-haspopup=\"true\"\n    aria-expanded=\"false\"\n    id=\"dropdown-button\"\n    onclick=\"toggleDropdown()\"\n    onkeydown=\"handleDropdownKeyDown(event)\"\n  >\n    Menú\n  </button>\n  <ul\n    class=\"dropdown-menu\"\n    role=\"menu\"\n    aria-labelledby=\"dropdown-button\"\n    hidden\n  >\n    <li role=\"menuitem\"><a href=\"#\" tabindex=\"-1\">Opción 1</a></li>\n    <li role=\"menuitem\"><a href=\"#\" tabindex=\"-1\">Opción 2</a></li>\n    <li role=\"menuitem\"><a href=\"#\" tabindex=\"-1\">Opción 3</a></li>\n  </ul>\n</div>\n\n// JavaScript para manejar eventos de teclado\nfunction handleDropdownKeyDown(event) {\n  const dropdown = document.querySelector('.dropdown');\n  const button = document.getElementById('dropdown-button');\n  const menu = dropdown.querySelector('.dropdown-menu');\n  const menuItems = menu.querySelectorAll('[role=\"menuitem\"] a');\n  \n  // Si el menú está abierto\n  if (button.getAttribute('aria-expanded') === 'true') {\n    switch (event.key) {\n      case 'Escape':\n        // Cerrar el menú con ESC\n        closeDropdown();\n        break;\n      case 'ArrowDown':\n        // Mover al siguiente ítem\n        event.preventDefault();\n        focusNextMenuItem(menuItems);\n        break;\n      case 'ArrowUp':\n        // Mover al ítem anterior\n        event.preventDefault();\n        focusPreviousMenuItem(menuItems);\n        break;\n    }\n  } else if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {\n    // Abrir el menú con flecha abajo, Enter o espacio\n    event.preventDefault();\n    openDropdown();\n    // Enfocar el primer ítem del menú\n    if (menuItems.length > 0) {\n      menuItems[0].focus();\n    }\n  }\n}\n\n// Funciones auxiliares\nfunction openDropdown() {\n  const button = document.getElementById('dropdown-button');\n  const menu = document.querySelector('.dropdown-menu');\n  button.setAttribute('aria-expanded', 'true');\n  menu.hidden = false;\n  // Hacer tabindex=0 para los items cuando el menú está abierto\n  menu.querySelectorAll('[role=\"menuitem\"] a').forEach(item => {\n    item.setAttribute('tabindex', '0');\n  });\n}\n\nfunction closeDropdown() {\n  const button = document.getElementById('dropdown-button');\n  const menu = document.querySelector('.dropdown-menu');\n  button.setAttribute('aria-expanded', 'false');\n  menu.hidden = true;\n  button.focus(); // Devolver el foco al botón\n  // Hacer tabindex=-1 para los items cuando el menú está cerrado\n  menu.querySelectorAll('[role=\"menuitem\"] a').forEach(item => {\n    item.setAttribute('tabindex', '-1');\n  });\n}"
+        }
+      ],
+      "relatedInstructions": ["fe013", "fe016"]
+    },
+    {
+      "id": "fe016",
+      "title": {
+        "es": "Implementar ARIA cuando sea necesario",
+        "en": "Implement ARIA when necessary"
+      },
+      "description": {
+        "es": "Utilizar ARIA para mejorar la accesibilidad cuando HTML semántico no es suficiente",
+        "en": "Use ARIA to enhance accessibility when semantic HTML is not enough"
+      },
+      "text": {
+        "es": "Utiliza atributos ARIA (Accessible Rich Internet Applications) cuando el HTML semántico por sí solo no proporciona suficiente información de accesibilidad. Esto incluye roles, estados y propiedades que ayudan a tecnologías asistivas a entender la función y estado de elementos complejos. Sin embargo, recuerda que el HTML semántico debe ser tu primera opción, y que 'Sin ARIA es mejor que mal ARIA'.",
+        "en": "Use ARIA (Accessible Rich Internet Applications) attributes when semantic HTML alone doesn't provide enough accessibility information. This includes roles, states, and properties that help assistive technologies understand the function and state of complex elements. However, remember that semantic HTML should be your first choice, and that 'No ARIA is better than bad ARIA'."
+      },
+      "importance": "medium",
+      "category": "accessibility",
+      "subcategory": "aria",
+      "tags": ["frontend", "accessibility", "advanced"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Accessibility section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["html", "jsx"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplos de uso correcto de ARIA",
+            "en": "Examples of proper ARIA usage"
+          },
+          "code": "<!-- 1. No usar ARIA si el HTML semántico es suficiente -->\n<!-- MAL -->\n<div role=\"button\" tabindex=\"0\" onclick=\"doSomething()\">Haz clic</div>\n<!-- BIEN -->\n<button onclick=\"doSomething()\">Haz clic</button>\n\n<!-- 2. Usar ARIA para componentes personalizados complejos -->\n<!-- Pestañas accesibles -->\n<div role=\"tablist\" aria-label=\"Categorías de productos\">\n  <button role=\"tab\" id=\"tab-1\" aria-selected=\"true\" aria-controls=\"panel-1\">\n    Electrónica\n  </button>\n  <button role=\"tab\" id=\"tab-2\" aria-selected=\"false\" aria-controls=\"panel-2\" tabindex=\"-1\">\n    Ropa\n  </button>\n  <button role=\"tab\" id=\"tab-3\" aria-selected=\"false\" aria-controls=\"panel-3\" tabindex=\"-1\">\n    Hogar\n  </button>\n</div>\n\n<div id=\"panel-1\" role=\"tabpanel\" aria-labelledby=\"tab-1\">\n  Contenido de electrónica...\n</div>\n<div id=\"panel-2\" role=\"tabpanel\" aria-labelledby=\"tab-2\" hidden>\n  Contenido de ropa...\n</div>\n<div id=\"panel-3\" role=\"tabpanel\" aria-labelledby=\"tab-3\" hidden>\n  Contenido de hogar...\n</div>\n\n<!-- 3. Comunicar estados dinámicos -->\n<button aria-expanded=\"false\" aria-controls=\"details-1\">\n  Mostrar detalles\n</button>\n<div id=\"details-1\" hidden>\n  Información detallada que se muestra u oculta...\n</div>\n\n<!-- 4. Proporcionar descripciones adicionales -->\n<form>\n  <div>\n    <label for=\"password\">Contraseña</label>\n    <input \n      id=\"password\" \n      type=\"password\" \n      aria-describedby=\"password-requirements\"\n    >\n    <p id=\"password-requirements\">\n      La contraseña debe tener al menos 8 caracteres, incluir una mayúscula,\n      un número y un carácter especial.\n    </p>\n  </div>\n</form>\n\n<!-- 5. Notificar cambios dinámicos con regiones \"live\" -->\n<div aria-live=\"polite\" class=\"notification-area\">\n  <!-- Cuando se inserte contenido aquí, los lectores de pantalla lo anunciarán -->\n</div>"
+        }
+      ],
+      "relatedInstructions": ["fe013", "fe015"]
+    }
+  ]
+}
