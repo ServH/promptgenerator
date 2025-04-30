@@ -1,0 +1,152 @@
+{
+  "instructions": [
+    {
+      "id": "gen025",
+      "title": {
+        "es": "Gestión de versiones de dependencias",
+        "en": "Dependency version management"
+      },
+      "description": {
+        "es": "Especificar versiones concretas de dependencias para evitar problemas de compatibilidad",
+        "en": "Specify concrete dependency versions to avoid compatibility issues"
+      },
+      "text": {
+        "es": "Especifica versiones concretas de dependencias en lugar de rangos amplios para evitar problemas de compatibilidad inesperados. Usa el versionado semántico adecuadamente y considera herramientas de bloqueo de versiones como package-lock.json o yarn.lock.",
+        "en": "Specify concrete dependency versions instead of wide ranges to avoid unexpected compatibility issues. Use semantic versioning appropriately and consider version locking tools like package-lock.json or yarn.lock."
+      },
+      "importance": "high",
+      "category": "dependencies",
+      "subcategory": "version_management",
+      "tags": ["universal", "infrastructure"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Coding Best Practices section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Especificación adecuada de versiones en package.json",
+          "en": "Proper version specification in package.json"
+        },
+        "code": "// Versiones específicas\n{\n  \"dependencies\": {\n    // Exactamente la versión 4.17.21\n    \"lodash\": \"4.17.21\",\n    \n    // Actualizaciones de parche permitidas (4.17.x)\n    \"express\": \"~4.17.1\",\n    \n    // Actualizaciones menores permitidas (4.x.y)\n    \"react\": \"^17.0.2\",\n    \n    // Mala práctica: cualquier versión\n    \"bad-library\": \"*\",\n    \n    // Mala práctica: rango muy amplio\n    \"another-lib\": \">=2.0.0\"\n  }\n}\n\n// Siempre incluir los archivos de bloqueo de versiones en el control de versiones\n// - package-lock.json para npm\n// - yarn.lock para Yarn\n// - pnpm-lock.yaml para pnpm"
+      }],
+      "relatedInstructions": ["gen003", "gen026"]
+    },
+    {
+      "id": "gen026",
+      "title": {
+        "es": "Auditoría de seguridad de dependencias",
+        "en": "Dependency security auditing"
+      },
+      "description": {
+        "es": "Verificar regularmente las dependencias en busca de vulnerabilidades",
+        "en": "Regularly check dependencies for vulnerabilities"
+      },
+      "text": {
+        "es": "Verifica regularmente las dependencias en busca de vulnerabilidades de seguridad utilizando herramientas como npm audit, Snyk, o Dependabot. Mantén las dependencias actualizadas y prioriza la corrección de vulnerabilidades críticas.",
+        "en": "Regularly check dependencies for security vulnerabilities using tools like npm audit, Snyk, or Dependabot. Keep dependencies updated and prioritize fixing critical vulnerabilities."
+      },
+      "importance": "high",
+      "category": "dependencies",
+      "subcategory": "security",
+      "tags": ["universal", "security"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Data Security section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Integración de auditoría de seguridad en el flujo de CI",
+          "en": "Integration of security auditing in CI flow"
+        },
+        "code": "// Ejemplo de script en package.json para auditoría\n{\n  \"scripts\": {\n    \"audit\": \"npm audit --production\",\n    \"audit:fix\": \"npm audit fix --production\"\n  }\n}\n\n// Ejemplo de configuración de GitHub Actions para auditoría automática\n// .github/workflows/security.yml\n/*\nname: Security Audit\n\non:\n  push:\n    branches: [ main ]\n  pull_request:\n    branches: [ main ]\n  schedule:\n    - cron: '0 0 * * 0' # Ejecutar cada domingo\n\njobs:\n  security-audit:\n    runs-on: ubuntu-latest\n    steps:\n    - uses: actions/checkout@v3\n    - name: Setup Node.js\n      uses: actions/setup-node@v3\n      with:\n        node-version: '16'\n        cache: 'npm'\n    - name: Install dependencies\n      run: npm ci\n    - name: Run security audit\n      run: npm audit --production\n    - name: Run Snyk to check for vulnerabilities\n      uses: snyk/actions/node@master\n      env:\n        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}\n*/"
+      }],
+      "relatedInstructions": ["gen025", "gen027"]
+    },
+    {
+      "id": "gen027",
+      "title": {
+        "es": "Minimizar dependencias",
+        "en": "Minimize dependencies"
+      },
+      "description": {
+        "es": "Evaluar cuidadosamente la necesidad de cada dependencia externa",
+        "en": "Carefully evaluate the need for each external dependency"
+      },
+      "text": {
+        "es": "Evalúa cuidadosamente la necesidad de cada dependencia externa. Antes de añadir una nueva dependencia, considera si la funcionalidad podría implementarse con código propio sin complejidad excesiva, o si ya existe una biblioteca con funcionalidad similar en el proyecto.",
+        "en": "Carefully evaluate the need for each external dependency. Before adding a new dependency, consider whether the functionality could be implemented with your own code without excessive complexity, or if a library with similar functionality already exists in the project."
+      },
+      "importance": "medium",
+      "category": "dependencies",
+      "subcategory": "dependency_management",
+      "tags": ["universal", "planning"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Coding Best Practices section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Evaluación sobre añadir una dependencia",
+          "en": "Evaluation about adding a dependency"
+        },
+        "code": "// Antes de añadir una dependencia, pregúntate:\n\n// 1. ¿Es realmente necesaria?\n// function formatDate(date) {\n//   // Una simple función formateadora puede ser suficiente para casos simples\n//   const day = date.getDate().toString().padStart(2, '0');\n//   const month = (date.getMonth() + 1).toString().padStart(2, '0');\n//   const year = date.getFullYear();\n//   return `${day}/${month}/${year}`;\n// }\n// vs.\n// import { format } from 'date-fns';\n// format(date, 'dd/MM/yyyy');\n\n// 2. ¿Ya existe una biblioteca similar en el proyecto?\n// Si ya usamos lodash, podemos usar _.debounce en lugar de añadir\n// una biblioteca de debounce específica\n\n// 3. ¿Cuál es el costo de mantenimiento?\n// - Tamaño del bundle\n// - Complejidad adicional\n// - Posibles vulnerabilidades de seguridad\n// - Frecuencia de actualizaciones y mantenimiento del paquete"
+      }],
+      "relatedInstructions": ["gen003", "gen026"]
+    },
+    {
+      "id": "gen028",
+      "title": {
+        "es": "Dependencias de desarrollo vs producción",
+        "en": "Development vs production dependencies"
+      },
+      "description": {
+        "es": "Distinguir correctamente entre dependencias de desarrollo y producción",
+        "en": "Correctly distinguish between development and production dependencies"
+      },
+      "text": {
+        "es": "Separa claramente las dependencias de producción (necesarias para ejecutar la aplicación) de las dependencias de desarrollo (necesarias solo para desarrollo, testing o build). Esto mejora la seguridad, reduce el tamaño de la aplicación en producción y acelera los tiempos de instalación.",
+        "en": "Clearly separate production dependencies (needed to run the application) from development dependencies (needed only for development, testing, or building). This improves security, reduces the application size in production, and speeds up installation times."
+      },
+      "importance": "medium",
+      "category": "dependencies",
+      "subcategory": "dependency_management",
+      "tags": ["universal", "infrastructure"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Code Project section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [{
+        "context": {
+          "es": "Separación correcta de dependencias en package.json",
+          "en": "Correct separation of dependencies in package.json"
+        },
+        "code": "// Separación correcta en package.json\n{\n  // Necesarias para ejecutar la aplicación\n  \"dependencies\": {\n    \"express\": \"^4.17.1\",\n    \"react\": \"^17.0.2\",\n    \"react-dom\": \"^17.0.2\",\n    \"mongoose\": \"^6.0.12\"\n  },\n  \n  // Solo necesarias durante desarrollo/testing\n  \"devDependencies\": {\n    \"jest\": \"^27.3.1\",\n    \"nodemon\": \"^2.0.14\",\n    \"webpack\": \"^5.60.0\",\n    \"typescript\": \"^4.4.4\",\n    \"eslint\": \"^8.1.0\",\n    \"prettier\": \"^2.4.1\"\n  },\n  \n  // Scripts que diferencian entornos\n  \"scripts\": {\n    // Instalar solo dependencias de producción\n    \"install:prod\": \"npm install --production\",\n    \n    // Verificar vulnerabilidades solo en dependencias de producción\n    \"audit:prod\": \"npm audit --production\"\n  }\n}\n\n// Uso en Dockerfile\n/*\n# Construir la aplicación\nFROM node:16 as builder\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build\n\n# Imagen de producción - solo con dependencias necesarias\nFROM node:16-alpine\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci --production\nCOPY --from=builder /app/build ./build\nCMD [\"node\", \"build/server.js\"]\n*/"
+      }],
+      "relatedInstructions": ["gen025", "gen027"]
+    }
+  ]
+}
