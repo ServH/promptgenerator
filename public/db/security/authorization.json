@@ -1,0 +1,121 @@
+{
+  "instructions": [
+    {
+      "id": "sec007",
+      "title": {
+        "es": "Implementar control de acceso basado en roles",
+        "en": "Implement role-based access control"
+      },
+      "description": {
+        "es": "Definir y aplicar permisos basados en roles de usuario",
+        "en": "Define and enforce permissions based on user roles"
+      },
+      "text": {
+        "es": "Implementa un sistema de control de acceso basado en roles (RBAC) para gestionar permisos de manera eficiente. Define claramente roles con conjuntos específicos de permisos, aplica verificaciones de autorización en cada punto de acceso, y sigue el principio de privilegio mínimo. Asegúrate de validar permisos tanto en el frontend como en el backend y nunca confíes únicamente en controles del lado del cliente.",
+        "en": "Implement a role-based access control (RBAC) system to efficiently manage permissions. Clearly define roles with specific sets of permissions, apply authorization checks at each access point, and follow the principle of least privilege. Ensure you validate permissions on both frontend and backend and never rely solely on client-side controls."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "authorization",
+      "tags": ["security", "user_management", "rbac"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Authorization Security section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["web", "api", "mobile"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de middleware de autorización en Express",
+            "en": "Example of authorization middleware in Express"
+          },
+          "code": "// Middleware para verificar permisos basados en roles\nconst checkPermission = (requiredPermission) => {\n  return (req, res, next) => {\n    // Asumimos que el usuario y sus roles/permisos están en req.user después de autenticación\n    if (!req.user) {\n      return res.status(401).json({ message: 'No autenticado' });\n    }\n    \n    // Verificar si el usuario tiene el permiso requerido\n    const hasPermission = req.user.permissions.includes(requiredPermission) ||\n                         req.user.role === 'admin'; // admin tiene todos los permisos\n    \n    if (!hasPermission) {\n      // Registrar intento de acceso no autorizado\n      console.warn(`[SECURITY] Unauthorized access attempt to ${req.originalUrl} by user ${req.user.id}`);\n      return res.status(403).json({ message: 'Acceso denegado' });\n    }\n    \n    next();\n  };\n};\n\n// Uso en rutas\napp.get('/api/users', checkPermission('read:users'), (req, res) => {\n  // Controlador para listar usuarios\n});\n\napp.post('/api/users', checkPermission('create:users'), (req, res) => {\n  // Controlador para crear usuarios\n});"
+        }
+      ],
+      "relatedInstructions": ["sec004", "sec008"]
+    },
+    {
+      "id": "sec008",
+      "title": {
+        "es": "Prevenir vulnerabilidades de control de acceso",
+        "en": "Prevent access control vulnerabilities"
+      },
+      "description": {
+        "es": "Proteger contra elevación de privilegios y referencias inseguras a objetos",
+        "en": "Guard against privilege escalation and insecure direct object references"
+      },
+      "text": {
+        "es": "Protege tu aplicación contra vulnerabilidades de control de acceso como escalada de privilegios, falsificación de solicitudes entre sitios (CSRF) y referencias directas inseguras a objetos (IDOR). Utiliza tokens anti-CSRF, verifica la propiedad de recursos en cada solicitud, y siempre confirma que un usuario tiene acceso a los datos específicos que está solicitando. Implementa comprobaciones de autorización a nivel de objeto y no solo a nivel de acción.",
+        "en": "Protect your application against access control vulnerabilities such as privilege escalation, cross-site request forgery (CSRF), and insecure direct object references (IDOR). Use anti-CSRF tokens, verify resource ownership on every request, and always confirm a user has access to the specific data they're requesting. Implement authorization checks at the object level, not just the action level."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "authorization",
+      "tags": ["security", "vulnerability", "data_access"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Web Security section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["web", "api"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de protección contra IDOR",
+            "en": "Example of protection against IDOR"
+          },
+          "code": "// Prevención de IDOR (Insecure Direct Object References)\nasync function getDocument(req, res) {\n  try {\n    const documentId = req.params.id;\n    \n    // Validar que el documento exista\n    const document = await Document.findById(documentId);\n    if (!document) {\n      return res.status(404).json({ message: 'Documento no encontrado' });\n    }\n    \n    // ⚠️ MAL: No verifica que el usuario actual tenga permiso para ver este documento\n    // return res.json(document);\n    \n    // ✅ BIEN: Verificar la propiedad o acceso del recurso\n    if (document.userId !== req.user.id && \n        !req.user.permissions.includes('admin') && \n        !document.sharedWith.includes(req.user.id)) {\n      // Registrar intento de acceso no autorizado\n      console.warn(`[SECURITY] IDOR attempt: User ${req.user.id} tried to access document ${documentId}`);\n      return res.status(403).json({ message: 'Acceso denegado' });\n    }\n    \n    // Usuario autorizado, devolver documento\n    return res.json(document);\n  } catch (error) {\n    console.error('Error al obtener documento:', error);\n    return res.status(500).json({ message: 'Error interno del servidor' });\n  }\n}"
+        }
+      ],
+      "relatedInstructions": ["sec007", "sec009"]
+    },
+    {
+      "id": "sec009",
+      "title": {
+        "es": "Protección contra CSRF",
+        "en": "CSRF protection"
+      },
+      "description": {
+        "es": "Implementar medidas contra falsificación de solicitudes entre sitios",
+        "en": "Implement measures against cross-site request forgery"
+      },
+      "text": {
+        "es": "Protege tu aplicación contra ataques de falsificación de solicitudes entre sitios (CSRF) que aprovechan la sesión autenticada de un usuario para realizar acciones no autorizadas. Implementa tokens anti-CSRF para todas las solicitudes que modifican datos, verifica el encabezado Origin o Referer para peticiones sensibles, y utiliza el atributo SameSite en cookies para limitar solicitudes entre sitios.",
+        "en": "Protect your application against Cross-Site Request Forgery (CSRF) attacks that exploit a user's authenticated session to perform unauthorized actions. Implement anti-CSRF tokens for all requests that modify data, verify the Origin or Referer header for sensitive requests, and use the SameSite attribute on cookies to limit cross-site requests."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "authorization",
+      "tags": ["security", "web", "csrf"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Web Security section"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de implementación de protección CSRF en Express",
+            "en": "Example of CSRF protection implementation in Express"
+          },
+          "code": "const csrf = require('csurf');\n\n// Configurar middleware CSRF\nconst csrfProtection = csrf({ \n  cookie: {\n    httpOnly: true,\n    secure: process.env.NODE_ENV === 'production',\n    sameSite: 'strict' // Prevenir que la cookie se envíe en solicitudes cross-site\n  }\n});\n\n// Aplicar a todas las rutas que modifican datos\napp.post('/api/profile', csrfProtection, (req, res) => {\n  // La solicitud pasó la verificación CSRF\n  // Proceder con actualización de perfil\n});\n\napp.delete('/api/account', csrfProtection, (req, res) => {\n  // La solicitud pasó la verificación CSRF\n  // Proceder con eliminación de cuenta\n});\n\n// En aplicaciones SPA, proporcionar el token CSRF\napp.get('/api/csrf-token', csrfProtection, (req, res) => {\n  // Enviar token al cliente para incluirlo en solicitudes futuras\n  res.json({ csrfToken: req.csrfToken() });\n});\n\n// Cliente debe incluir el token en encabezado o cuerpo de la solicitud\n// fetch('/api/profile', {\n//   method: 'POST',\n//   headers: {\n//     'Content-Type': 'application/json',\n//     'CSRF-Token': csrfToken // Obtenido previamente\n//   },\n//   body: JSON.stringify(profileData)\n// });"
+        }
+      ],
+      "relatedInstructions": ["sec005", "sec008"]
+    }
+  ]
+}
