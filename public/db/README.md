@@ -1,65 +1,40 @@
-# Base de Conocimiento
+# Base de Conocimiento para Generador de Prompts
 
-Esta carpeta contiene la base de conocimiento estructurada para la generación de prompts personalizados.
+## Estructura Modular
 
-## Estructura
+Esta base de conocimiento sigue una estructura modular con archivos JSON limitados a un máximo de 100-150 líneas para facilitar el mantenimiento y la extensibilidad.
 
-- `/general_dev.json` - Instrucciones de desarrollo general
-- `/frontend_dev.json` - Instrucciones frontend
-- `/backend_dev.json` - Instrucciones backend
-- `/security.json` - Instrucciones de seguridad
-- `/design_principles.json` - Principios de diseño
-- `/frameworks/` - Instrucciones específicas por framework
-  - `react.json`
-  - `next_js.json`
-  - `node.json`
-  - etc.
-- `/templates/` - Plantillas de prompts completos
+## Organización Jerárquica
 
-## Formato de las Instrucciones
+1. **Dominios Principales**
+   - `general/` - Desarrollo General
+   - `frontend/` - Desarrollo Frontend
+   - `backend/` - Desarrollo Backend
+   - `devops/` - DevOps y Operaciones
+   - `security/` - Seguridad
+   - `data/` - Gestión de Datos
+   - `design/` - Diseño y UX/UI
+   - `methodology/` - Metodologías de Desarrollo
 
-Cada instrucción sigue esta estructura:
+2. **Categorías**
+   Cada dominio se divide en categorías específicas (ej: `frontend/components/`, `security/authentication/`).
 
-```json
-{
-  "id": "string",
-  "title": {
-    "es": "string",
-    "en": "string"
-  },
-  "description": {
-    "es": "string",
-    "en": "string"
-  },
-  "text": {
-    "es": "string",
-    "en": "string"
-  },
-  "importance": "high|medium|low",
-  "category": "string",
-  "subcategory": "string",
-  "tags": ["string"],
-  "source": {
-    "agentType": "string",
-    "repository": "string",
-    "context": "string"
-  },
-  "compatibility": {
-    "frameworks": ["string"],
-    "languages": ["string"],
-    "environments": ["string"]
-  },
-  "examples": [{
-    "context": {
-      "es": "string",
-      "en": "string"
-    },
-    "code": "string"
-  }],
-  "relatedInstructions": ["string"]
-}
-```
+3. **Instrucciones**
+   Cada archivo JSON contiene instrucciones relacionadas, sin exceder 150 líneas.
 
-## Fuente
+4. **Relaciones**
+   Las relaciones entre instrucciones se mantienen a través de referencias por ID.
 
-La información extraída proviene del repositorio [system-prompts-and-models-of-ai-tools](https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools/), que contiene instrucciones y prompts de diversos agentes de IA de desarrollo como Devin, v0, Cursor, etc.
+## Convenciones de Nombres
+
+- Archivos JSON: `categoria_subcategoria.json` (usando snake_case)
+- IDs de instrucciones: prefijo de dominio + número (ej: `gen001`, `fe002`)
+- Referencias: mediante el campo `relatedInstructions`
+
+## Normas de Implementación
+
+1. Máximo 150 líneas por archivo JSON
+2. Estructura bilingüe (español/inglés) en todos los textos de usuario
+3. Metadatos completos para facilitar búsqueda y filtrado
+4. Evitar duplicación mediante referencias
+5. Mantener consistencia terminológica

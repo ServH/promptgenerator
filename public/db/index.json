@@ -1,0 +1,102 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-04-30",
+  "domains": [
+    {
+      "id": "general",
+      "name": {
+        "es": "Desarrollo General",
+        "en": "General Development"
+      },
+      "description": {
+        "es": "Prácticas fundamentales aplicables a cualquier tipo de desarrollo",
+        "en": "Fundamental practices applicable to any type of development"
+      },
+      "categories": ["code_quality", "architecture", "testing", "documentation", "performance", "dependencies"]
+    },
+    {
+      "id": "frontend",
+      "name": {
+        "es": "Desarrollo Frontend",
+        "en": "Frontend Development"
+      },
+      "description": {
+        "es": "Todo lo relacionado con desarrollo de interfaz de usuario",
+        "en": "Everything related to user interface development"
+      },
+      "categories": ["components", "state_management", "responsive_design", "accessibility", "animations", "browser_apis"]
+    },
+    {
+      "id": "backend",
+      "name": {
+        "es": "Desarrollo Backend",
+        "en": "Backend Development"
+      },
+      "description": {
+        "es": "Todo lo relacionado con servidores, APIs y lógica de negocio",
+        "en": "Everything related to servers, APIs, and business logic"
+      },
+      "categories": ["api_design", "authentication", "database", "server_management", "caching", "error_handling", "logging"]
+    },
+    {
+      "id": "devops",
+      "name": {
+        "es": "DevOps",
+        "en": "DevOps"
+      },
+      "description": {
+        "es": "Integración, despliegue, monitorización y operaciones",
+        "en": "Integration, deployment, monitoring and operations"
+      },
+      "categories": ["ci_cd", "containerization", "infrastructure", "monitoring", "scalability"]
+    },
+    {
+      "id": "security",
+      "name": {
+        "es": "Seguridad",
+        "en": "Security"
+      },
+      "description": {
+        "es": "Consideraciones de seguridad en todos los aspectos del desarrollo",
+        "en": "Security considerations across all aspects of development"
+      },
+      "categories": ["authentication", "authorization", "data_protection", "input_validation", "vulnerabilities"]
+    },
+    {
+      "id": "data",
+      "name": {
+        "es": "Gestión de Datos",
+        "en": "Data Management"
+      },
+      "description": {
+        "es": "Manejo de datos, bases de datos, análisis y procesamiento",
+        "en": "Data handling, databases, analysis and processing"
+      },
+      "categories": ["database_design", "queries", "data_processing", "storage", "migrations"]
+    },
+    {
+      "id": "design",
+      "name": {
+        "es": "Diseño",
+        "en": "Design"
+      },
+      "description": {
+        "es": "Principios de diseño, UX/UI, accesibilidad",
+        "en": "Design principles, UX/UI, accessibility"
+      },
+      "categories": ["ui_principles", "ux_guidelines", "accessibility", "branding", "visual_hierarchy"]
+    },
+    {
+      "id": "methodology",
+      "name": {
+        "es": "Metodología",
+        "en": "Methodology"
+      },
+      "description": {
+        "es": "Enfoques de trabajo, planificación, organización",
+        "en": "Work approaches, planning, organization"
+      },
+      "categories": ["agile", "project_planning", "collaboration", "code_reviews", "documentation"]
+    }
+  ]
+}
