@@ -1,0 +1,199 @@
+{
+  "instructions": [
+    {
+      "id": "net006",
+      "title": {
+        "es": "Implementar gestión de ancho de banda y calidad de servicio (QoS)",
+        "en": "Implement bandwidth management and quality of service (QoS)"
+      },
+      "description": {
+        "es": "Optimizar el uso del ancho de banda y priorizar tráfico crítico en la red",
+        "en": "Optimize bandwidth usage and prioritize critical traffic on the network"
+      },
+      "text": {
+        "es": "Implementa mecanismos de gestión de ancho de banda y calidad de servicio (QoS) para optimizar el rendimiento de la red. Clasifica y prioriza el tráfico según su criticidad, estableciendo políticas que garanticen recursos suficientes para aplicaciones esenciales. Utiliza técnicas como limitación de velocidad, reserva de ancho de banda y políticas de encolamiento para prevenir congestión y asegurar un rendimiento predecible de aplicaciones críticas.",
+        "en": "Implement bandwidth management and quality of service (QoS) mechanisms to optimize network performance. Classify and prioritize traffic according to its criticality, establishing policies that ensure sufficient resources for essential applications. Use techniques such as rate limiting, bandwidth reservation, and queuing policies to prevent congestion and ensure predictable performance of critical applications."
+      },
+      "importance": "medium",
+      "category": "networking",
+      "subcategory": "performance",
+      "tags": ["optimization", "prioritization", "traffic_management"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Network Performance Optimization"
+      },
+      "compatibility": {
+        "frameworks": ["cisco_qos", "diffserv", "traffic_shaping", "tc", "kubernetes_qos"],
+        "languages": ["all"],
+        "environments": ["datacenter", "wan", "cloud", "kubernetes"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementación de QoS en redes empresariales",
+            "en": "QoS implementation in enterprise networks"
+          },
+          "code": "# Conceptos fundamentales para implementación de QoS en redes empresariales:\n\n# 1. Modelo de implementación de QoS en capas:\n#    - Clasificación: Identificar y marcar tráfico según tipo (voz, video, datos, crítico)\n#    - Marcado: Aplicar marcas DSCP/CoS para tratamiento diferenciado\n#    - Policing/Shaping: Limitar tráfico para adaptarlo a políticas establecidas\n#    - Queuing: Priorizar paquetes en colas según marcas y políticas\n#    - Gestión de congestión: Algoritmos para descarte selectivo (RED, WRED)\n\n# 2. Clases de tráfico comunes y recomendaciones de tratamiento:\n#    - Voz/Tiempo real: Máxima prioridad, latencia <150ms, jitter <30ms, 0% pérdida\n#    - Video conferencia: Alta prioridad, latencia <300ms, jitter <30ms, <1% pérdida\n#    - Aplicaciones críticas: Garantía de ancho de banda mínimo\n#    - Transferencia de datos: Best effort con asignación de ancho de banda restante\n#    - Background/Actualizaciones: Prioridad más baja, control de tasa máxima\n\n# 3. Implementación en diferentes puntos de la red:\n#    - Acceso: Clasificación y marcado inicial del tráfico\n#    - Distribución: Aplicación de políticas de tráfico y queuing\n#    - WAN: Gestión de congestión en enlaces limitados\n#    - Datacenter: Protección de aplicaciones críticas\n\n# 4. Consideraciones de diseño y operación:\n#    - Consistencia end-to-end de políticas QoS\n#    - Monitoreo continuo de efectividad y ajuste según necesidad\n#    - Reserva de ancho de banda (no sobresuscribir más del 75%)\n#    - Documentación detallada de políticas y configuraciones\n#    - Pruebas de validación bajo condiciones de congestión"
+        }
+      ],
+      "relatedInstructions": ["net003", "net005", "perf002"]
+    },
+    {
+      "id": "net007",
+      "title": {
+        "es": "Implementar microsegmentación de red",
+        "en": "Implement network microsegmentation"
+      },
+      "description": {
+        "es": "Crear controles de seguridad granulares dentro de segmentos de red",
+        "en": "Create granular security controls within network segments"
+      },
+      "text": {
+        "es": "Implementa microsegmentación de red para establecer controles de seguridad granulares a nivel de carga de trabajo o aplicación. Define políticas de seguridad basadas en la identidad de las aplicaciones, sus patrones de comunicación y requisitos de cumplimiento. La microsegmentación limita el movimiento lateral dentro de la red, minimiza la superficie de ataque y proporciona contención en caso de brechas de seguridad, especialmente en entornos de nube y centros de datos definidos por software.",
+        "en": "Implement network microsegmentation to establish granular security controls at the workload or application level. Define security policies based on application identity, communication patterns, and compliance requirements. Microsegmentation limits lateral movement within the network, minimizes the attack surface, and provides containment in case of security breaches, especially in cloud environments and software-defined data centers."
+      },
+      "importance": "high",
+      "category": "networking",
+      "subcategory": "security",
+      "tags": ["zero_trust", "isolation", "lateral_movement"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Zero Trust Network Architecture"
+      },
+      "compatibility": {
+        "frameworks": ["nsx", "cisco_tetration", "kubernetes_network_policies", "aws_security_groups"],
+        "languages": ["all"],
+        "environments": ["cloud", "sdn", "kubernetes", "datacenter"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementación de microsegmentación en entornos containerizados",
+            "en": "Microsegmentation implementation in containerized environments"
+          },
+          "code": "# Principios y prácticas clave para microsegmentación en entornos de contenedores:\n\n# 1. Enfoque metodológico para la implementación:\n#    - Descubrimiento: Mapear todas las aplicaciones y sus patrones de comunicación\n#    - Visualización: Crear mapa de tráfico y dependencias entre microservicios\n#    - Modelado: Definir grupos lógicos y políticas basadas en comunicación legítima\n#    - Implementación: Aplicar políticas en modo de observación antes de enforcement\n#    - Monitoreo: Validar continuamente el comportamiento de las políticas\n\n# 2. Componentes críticos para Kubernetes y contenedores:\n#    - Network Policies: Políticas declarativas a nivel de namespace/pod\n#    - Service Mesh: Control avanzado de tráfico entre servicios (Istio, Linkerd)\n#    - Ingress/Egress Controllers: Control de tráfico entrante/saliente\n#    - CNI con seguridad avanzada: Calico, Cilium con eBPF\n#    - Identity-based access: Autenticación mutua TLS entre servicios\n\n# 3. Patrones de segmentación recomendados:\n#    - Segmentación por función: Frontend, API, base de datos\n#    - Segmentación por entorno: Desarrollo, pruebas, producción\n#    - Segmentación por sensibilidad de datos: PCI, PII, pública\n#    - Políticas de default-deny con excepciones explícitas\n#    - Restricción de comunicación entre namespaces\n\n# 4. Monitoreo y operaciones:\n#    - Alertas sobre violaciones de políticas\n#    - Visualización de tráfico permitido vs bloqueado\n#    - Integración con SIEM para análisis de seguridad\n#    - Automatización de políticas via GitOps\n#    - Auditoría regular de políticas contra requisitos de cumplimiento"
+        }
+      ],
+      "relatedInstructions": ["net001", "net004", "sec003"]
+    },
+    {
+      "id": "net008",
+      "title": {
+        "es": "Implementar DNS resiliente y optimizado",
+        "en": "Implement resilient and optimized DNS"
+      },
+      "description": {
+        "es": "Configurar servicios DNS robustos, seguros y de alto rendimiento",
+        "en": "Set up robust, secure, and high-performance DNS services"
+      },
+      "text": {
+        "es": "Implementa una infraestructura DNS resiliente y optimizada como componente crítico de la arquitectura de red. Configura servidores DNS redundantes, distribuidos geográficamente y con capacidades de conmutación automática por error. Aplica medidas de seguridad como DNSSEC, filtrado de consultas maliciosas y protección contra ataques de denegación de servicio. Un sistema DNS bien diseñado mejora la disponibilidad, rendimiento y seguridad de las aplicaciones distribuidas.",
+        "en": "Implement a resilient and optimized DNS infrastructure as a critical component of network architecture. Configure redundant, geographically distributed DNS servers with automatic failover capabilities. Apply security measures such as DNSSEC, filtering of malicious queries, and protection against denial of service attacks. A well-designed DNS system improves the availability, performance, and security of distributed applications."
+      },
+      "importance": "high",
+      "category": "networking",
+      "subcategory": "infrastructure",
+      "tags": ["availability", "security", "performance"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Network Infrastructure Services"
+      },
+      "compatibility": {
+        "frameworks": ["bind", "powerdns", "unbound", "route53", "cloudflare"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Arquitectura DNS resiliente para entornos empresariales",
+            "en": "Resilient DNS architecture for enterprise environments"
+          },
+          "code": "# Componentes clave para una arquitectura DNS resiliente y segura:\n\n# 1. Diseño de alta disponibilidad:\n#    - Múltiples servidores DNS distribuidos geográficamente\n#    - Configuración primario-secundario con transferencias de zona seguras\n#    - Balanceadores de carga para distribución de consultas\n#    - Sistemas de monitoreo y failover automático\n#    - TTL (Time-to-Live) optimizado para balance entre rendimiento y disponibilidad\n\n# 2. Capas de la arquitectura DNS:\n#    - Resolvers recursivos internos para clientes corporativos\n#    - Servidores autoritativos para zonas propias\n#    - Forwarders selectivos para optimizar resolución\n#    - Caché distribuida para mejorar rendimiento\n#    - Servidores raíz locales (opcional) para independencia de internet\n\n# 3. Medidas de seguridad esenciales:\n#    - DNSSEC para validación criptográfica de respuestas\n#    - Filtrado de consultas maliciosas o sospechosas\n#    - Limitación de tasa para prevenir ataques DoS\n#    - Split-horizon DNS para separación interna/externa\n#    - Restricción de transferencias de zona solo a servidores autorizados\n#    - Registros de auditoría para análisis de seguridad\n\n# 4. Optimización de rendimiento:\n#    - Distribución geográfica con DNS Anycast\n#    - Respuestas basadas en ubicación geográfica (GeoDNS)\n#    - Pre-carga y calentamiento de caché para dominios populares\n#    - Tamaño de caché apropiado según volumen de consultas\n#    - Ajuste de tiempos de expiración (TTL) por tipo de registro"
+        }
+      ],
+      "relatedInstructions": ["net001", "infra003", "sec005"]
+    },
+    {
+      "id": "net009",
+      "title": {
+        "es": "Implementar detección y respuesta de intrusiones de red",
+        "en": "Implement network intrusion detection and response"
+      },
+      "description": {
+        "es": "Configurar sistemas para detectar y responder a actividades maliciosas en la red",
+        "en": "Set up systems to detect and respond to malicious network activities"
+      },
+      "text": {
+        "es": "Implementa sistemas de detección y respuesta de intrusiones (IDS/IPS) para identificar y mitigar actividades maliciosas en la red. Despliega sensores en puntos estratégicos de la infraestructura para monitorear el tráfico en busca de patrones sospechosos, anomalías o firmas de ataques conocidos. Configura respuestas automatizadas para bloquear amenazas en tiempo real y establece procesos para la investigación de alertas y mejora continua de las capacidades de detección.",
+        "en": "Implement intrusion detection and response systems (IDS/IPS) to identify and mitigate malicious activities on the network. Deploy sensors at strategic points in the infrastructure to monitor traffic for suspicious patterns, anomalies, or signatures of known attacks. Configure automated responses to block threats in real-time and establish processes for alert investigation and continuous improvement of detection capabilities."
+      },
+      "importance": "high",
+      "category": "networking",
+      "subcategory": "security",
+      "tags": ["ids", "ips", "threat_detection", "security_monitoring"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Network Security Monitoring"
+      },
+      "compatibility": {
+        "frameworks": ["suricata", "snort", "zeek", "aws_guardduty", "azure_defender"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementación de IDS/IPS en entornos cloud",
+            "en": "IDS/IPS implementation in cloud environments"
+          },
+          "code": "# Consideraciones clave para implementar IDS/IPS efectivo en entornos cloud:\n\n# 1. Arquitectura y componentes:\n#    - Sensores distribuidos en puntos críticos de la infraestructura\n#    - Colector centralizado para análisis y correlación\n#    - Base de datos de inteligencia de amenazas actualizada\n#    - Motor de políticas para respuestas automatizadas\n#    - Consola de gestión y visualización de alertas\n#    - Almacenamiento de logs para análisis forense e histórico\n\n# 2. Estrategias de detección complementarias:\n#    - Basada en firmas: Para amenazas conocidas y documentadas\n#    - Basada en anomalías: Para detectar comportamientos inusuales\n#    - Basada en heurística: Para identificar ataques sofisticados\n#    - Análisis de comportamiento: Para establecer líneas base y desviaciones\n#    - Inspección de protocolos: Para validar conformidad con especificaciones\n\n# 3. Puntos de implementación estratégicos:\n#    - Perímetro de la red virtual (VPC/VNET)\n#    - Entre zonas de seguridad internas\n#    - Frente a recursos críticos (bases de datos, APIs sensibles)\n#    - Puntos de interconexión con servicios externos\n#    - En tráfico norte-sur y este-oeste\n\n# 4. Prácticas operativas esenciales:\n#    - Gestión de falsos positivos mediante tuning constante\n#    - Proceso de respuesta a incidentes documentado\n#    - Actualización regular de firmas y reglas\n#    - Correlación con otras fuentes de seguridad (logs, SIEM)\n#    - Simulaciones periódicas (red team) para validar efectividad\n#    - Revisión periódica de reglas para eliminar obsoletas"
+        }
+      ],
+      "relatedInstructions": ["sec001", "sec004", "mon003"]
+    },
+    {
+      "id": "net010",
+      "title": {
+        "es": "Implementar automatización de red",
+        "en": "Implement network automation"
+      },
+      "description": {
+        "es": "Automatizar tareas de configuración, monitoreo y mantenimiento de red",
+        "en": "Automate network configuration, monitoring, and maintenance tasks"
+      },
+      "text": {
+        "es": "Implementa soluciones de automatización de red para reducir tareas manuales, minimizar errores y mejorar la consistencia en las operaciones de red. Utiliza herramientas de automatización, frameworks de Infrastructure as Code (IaC) y APIs programáticas para gestionar configuraciones, despliegues y cambios de red. La automatización facilita la escalabilidad, reduce el tiempo de implementación de cambios y permite respuestas más rápidas a incidentes o necesidades de negocio.",
+        "en": "Implement network automation solutions to reduce manual tasks, minimize errors, and improve consistency in network operations. Use automation tools, Infrastructure as Code (IaC) frameworks, and programmatic APIs to manage network configurations, deployments, and changes. Automation facilitates scalability, reduces the time to implement changes, and enables faster responses to incidents or business needs."
+      },
+      "importance": "high",
+      "category": "networking",
+      "subcategory": "automation",
+      "tags": ["devops", "netops", "infrastructure_as_code"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Network Operations Automation"
+      },
+      "compatibility": {
+        "frameworks": ["ansible", "terraform", "puppet", "chef", "salt", "nornir"],
+        "languages": ["python", "go", "yaml", "json"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Estrategia de automatización de red con Ansible",
+            "en": "Network automation strategy with Ansible"
+          },
+          "code": "# Enfoque estratégico para automatización de red con Ansible:\n\n# 1. Casos de uso prioritarios para automatización:\n#    - Configuración inicial (Day 0): Bootstrap de dispositivos nuevos\n#    - Configuración de servicios (Day 1): Implementación de VLAN, ACL, routing\n#    - Operaciones (Day 2): Backup, validación, cambios rutinarios, compliance\n#    - Resolución de problemas: Recopilación de información, diagnóstico, corrección\n#    - Gestión de cambios: Implementación controlada, validación, rollback\n\n# 2. Arquitectura de automatización escalable:\n#    - Control centralizado: Ansible Control Node con gestión de inventario\n#    - Inventario dinámico: Integración con IPAM, CMDB u otras fuentes de verdad\n#    - Sistema de control de versiones: Git para roles, playbooks y templates\n#    - Gestión de secretos segura: Ansible Vault o sistemas externos\n#    - Integración con CI/CD: Pipelines para validación y despliegue\n#    - Modularidad: Roles reutilizables y bien documentados\n\n# 3. Componentes clave para redes:\n#    - Network modules específicos por plataforma (IOS, NXOS, Junos)\n#    - Librerías para parseo estructurado de salidas (TextFSM, ntc-templates)\n#    - Validación automatizada pre y post cambios\n#    - Templates Jinja2 para generar configuraciones\n#    - Ansible Network Resource Modules para abstracción declarativa\n#    - Estrategias de conexión apropiadas (SSH, API, NETCONF)\n\n# 4. Prácticas recomendadas de implementación:\n#    - Estado deseado vs. comandos imperativos\n#    - Idempotencia de playbooks\n#    - Manejo de errores y excepciones\n#    - Pruebas automatizadas de playbooks\n#    - Despliegues canary para cambios críticos\n#    - Documentación efectiva y estándares de código\n#    - Transferencia de conocimiento y adopción por equipos"
+        }
+      ],
+      "relatedInstructions": ["auto001", "cm001", "ci001"]
+    }
+  ]
+}
