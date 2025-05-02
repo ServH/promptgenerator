@@ -1,0 +1,43 @@
+{
+  "instructions": [
+    {
+      "id": "dr010",
+      "title": {
+        "es": "Documentar procedimientos de recuperación detallados",
+        "en": "Document detailed recovery procedures"
+      },
+      "description": {
+        "es": "Crear documentación paso a paso para cada escenario de recuperación",
+        "en": "Create step-by-step documentation for each recovery scenario"
+      },
+      "text": {
+        "es": "Documenta procedimientos detallados de recuperación para cada escenario de desastre potencial. Incluye instrucciones paso a paso con niveles adecuados de detalle que permitan a cualquier miembro del equipo con el nivel de acceso apropiado ejecutar la recuperación. Mantener esta documentación en múltiples ubicaciones accesibles incluso durante una interrupción mayor.",
+        "en": "Document detailed recovery procedures for each potential disaster scenario. Include step-by-step instructions with appropriate levels of detail that allow any team member with the proper access level to execute the recovery. Maintain this documentation in multiple locations that are accessible even during a major disruption."
+      },
+      "importance": "high",
+      "category": "disaster_recovery",
+      "subcategory": "documentation",
+      "tags": ["documentation", "procedures", "knowledge_management"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Operational Documentation"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Procedimiento de recuperación de base de datos",
+            "en": "Database recovery procedure"
+          },
+          "code": "# Procedimiento de Recuperación: Pérdida Total de Base de Datos Principal\n\n## Información General\n- **Sistema**: PostgreSQL - Base de Datos de Clientes\n- **Criticidad**: Alta\n- **RTO**: 1 hora\n- **RPO**: 15 minutos\n- **Responsable Principal**: Administrador de Base de Datos de Guardia\n\n## Precondiciones\n- Acceso a AWS Console (rol: DB-Admin)\n- Accesos VPN a entorno de Producción\n- Backups verificados en las últimas 24 horas\n\n## Detección y Validación\n1. Confirmar la caída de la base de datos principal verificando:\n   - Alertas en el sistema de monitoreo\n   - Imposibilidad de conectarse a la instancia\n   - Errores en logs de aplicación\n\n## Procedimiento de Recuperación\n\n### Paso 1: Evaluación Inicial (Tiempo estimado: 5 min)\n1. Acceder al panel de CloudWatch para revisar métricas:\n   * Navegue a https://console.aws.amazon.com/cloudwatch/\n   * Verifique alarmas activas para `prod-db-cluster`\n   * Revisar logs de errores recientes\n\n2. Determinar tipo de fallo:\n   * Si es fallo de instancia pero la réplica está activa, proceder al Paso 2\n   * Si es corrupción de datos/fallo completo, proceder al Paso 3\n\n### Paso 2: Promoción de Réplica (Tiempo estimado: 10-15 min)\n1. Acceder a la consola RDS: https://console.aws.amazon.com/rds/\n2. Seleccionar la instancia de réplica `prod-db-replica`\n3. Hacer clic en \"Actions\" > \"Promote\"\n4. Confirmar la promoción\n5. Esperar a que el estado cambie a \"Available\" (5-10 min)\n6. Actualizar la configuración de la aplicación:\n   ```bash\n   kubectl -n production apply -f database-config-standby.yaml\n   ```\n7. Verificar la conectividad desde la aplicación:\n   ```bash\n   kubectl -n production exec -it deploy/api -- curl http://localhost:8080/health\n   ```\n\n### Paso 3: Restauración desde Backup (Tiempo estimado: 30-45 min)\n1. Identificar el último backup válido:\n   ```bash\n   aws s3 ls s3://db-backups/prod/daily/ --profile prod-db-admin | sort | tail -n 5\n   ```\n\n2. Crear nueva instancia RDS:\n   * Navegue a la consola RDS > \"Create database\"\n   * Seleccione \"PostgreSQL\" y la versión actual en uso\n   * Nombre: `prod-db-restored`\n   * Clase: db.r5.2xlarge\n   * Almacenamiento: 500 GB\n   * Multi-AZ: Yes\n   * VPC, subredes y grupos de seguridad: Igual que la instancia original\n\n3. Restaurar el backup:\n   ```bash\n   aws rds restore-db-instance-from-s3 \\\n     --db-instance-identifier prod-db-restored \\\n     --s3-bucket db-backups \\\n     --s3-prefix prod/daily/prod-db-202XYYZZ.dump \\\n     --profile prod-db-admin\n   ```\n\n4. Aplicar transacciones recientes desde WAL (si disponibles)\n   [Instrucciones detalladas para recuperación Point-in-Time]\n\n5. Actualizar la configuración de la aplicación con la nueva instancia:\n   ```bash\n   kubectl -n production apply -f database-config-restored.yaml\n   ```\n\n## Verificación Post-Recuperación\n1. Ejecutar consultas de diagnóstico:\n   ```sql\n   SELECT count(*) FROM customers;\n   SELECT max(created_at) FROM orders;\n   SELECT count(*) FROM transactions WHERE date > current_date - interval '1 day';\n   ```\n   * Comparar resultados con los límites esperados documentados en KB-12345\n\n2. Verificar el funcionamiento de la aplicación:\n   * Iniciar sesión como usuario de prueba\n   * Completar 3 transacciones de prueba\n   * Verificar que los datos aparecen correctamente en informes\n\n3. Comprobar el rendimiento:\n   * Revisar tiempos de respuesta en el panel de CloudWatch\n   * Verificar que están dentro de los SLAs\n\n## Comunicación\n1. Actualizar ticket en el sistema de incidentes\n2. Notificar a gerentes de operaciones por canal de Slack #prod-incidents\n3. Si el tiempo de interrupción > 15 min, iniciar comunicación con clientes según protocolo\n\n## Tareas Post-Incidente\n1. Programar la creación de una nueva instancia de replica\n2. Actualizar documentación con cualquier hallazgo nuevo\n3. Programar reunión post-mortem para el siguiente día hábil\n4. Crear reporte de incidente"
+        }
+      ],
+      "relatedInstructions": ["dr001", "dr008", "doc001"]
+    }
+  ]
+}
