@@ -77,6 +77,123 @@
         }
       ],
       "relatedInstructions": ["dr001", "dr007", "infra008"]
+    },
+    {
+      "id": "dr003",
+      "title": {
+        "es": "Establecer objetivos de recuperación",
+        "en": "Establish recovery objectives"
+      },
+      "description": {
+        "es": "Definir RTO y RPO para los sistemas críticos",
+        "en": "Define RTO and RPO for critical systems"
+      },
+      "text": {
+        "es": "Establece objetivos claros y medibles de tiempo de recuperación (RTO) y punto de recuperación (RPO) para cada sistema, servicio y conjunto de datos. Clasifica los sistemas según su criticidad para el negocio y alinea estos objetivos con las expectativas de continuidad del negocio y los acuerdos de nivel de servicio (SLA).",
+        "en": "Establish clear and measurable Recovery Time Objectives (RTO) and Recovery Point Objectives (RPO) for each system, service, and dataset. Classify systems according to their business criticality and align these objectives with business continuity expectations and Service Level Agreements (SLAs)."
+      },
+      "importance": "high",
+      "category": "disaster_recovery",
+      "subcategory": "planning",
+      "tags": ["governance", "business_continuity", "requirements"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Business Continuity Planning"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Tabla de objetivos de recuperación para diferentes servicios",
+            "en": "Recovery objectives table for different services"
+          },
+          "code": "# Ejemplo de matriz de objetivos de recuperación\n\n| Sistema/Servicio | Criticidad | RPO | RTO | Estrategia |\n|------------------|------------|-----|-----|------------|\n| Pasarela de pago | Crítico | 0 min (sin pérdida) | 15 min | Multi-AZ activo-activo |\n| Base de datos principal | Crítico | 15 min | 1 hora | Réplica síncrona cross-región |\n| Sistema de inventario | Alto | 1 hora | 4 horas | Backup/restore con replica read-only |\n| CMS interno | Medio | 24 horas | 8 horas | Backup diario, restore manual |\n| Sistema de análisis | Bajo | 48 horas | 24 horas | Backup diario, restore bajo demanda |\n\n# Definición de niveles de criticidad:\n# - Crítico: Impacto inmediato en operaciones core y finanzas\n# - Alto: Impacto significativo en operaciones después de 1 hora\n# - Medio: Impacto en eficiencia interna, sin afectar clientes directamente\n# - Bajo: Funciones no esenciales que pueden retrasarse"
+        }
+      ],
+      "relatedInstructions": ["dr001", "dr004", "infra001"]
+    },
+    {
+      "id": "dr004",
+      "title": {
+        "es": "Implementar replicación de datos multi-región",
+        "en": "Implement multi-region data replication"
+      },
+      "description": {
+        "es": "Configurar replicación de datos entre múltiples regiones geográficas",
+        "en": "Set up data replication across multiple geographic regions"
+      },
+      "text": {
+        "es": "Implementa sistemas de replicación de datos entre múltiples regiones geográficas para proteger contra fallos a nivel de región o zona de disponibilidad. Configura la replicación síncrona para datos críticos donde el RPO debe ser cercano a cero, y replicación asíncrona para datos donde se puede tolerar cierta pérdida en caso de desastre.",
+        "en": "Implement data replication systems across multiple geographic regions to protect against region-level or availability zone failures. Configure synchronous replication for critical data where RPO needs to be near zero, and asynchronous replication for data where some loss can be tolerated in case of disaster."
+      },
+      "importance": "high",
+      "category": "disaster_recovery",
+      "subcategory": "data_protection",
+      "tags": ["architecture", "data", "redundancy"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Multi-region Architecture"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["cloud", "hybrid"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Configuración de replicación multi-región en AWS",
+            "en": "Setting up multi-region replication in AWS"
+          },
+          "code": "# Ejemplo de configuración de replicación multi-región para S3 con Terraform\n\n# Bucket principal en región us-east-1\nresource \"aws_s3_bucket\" \"primary\" {\n  bucket = \"my-app-data-primary\"\n  region = \"us-east-1\"\n}\n\n# Bucket de réplica en región us-west-2\nresource \"aws_s3_bucket\" \"replica\" {\n  bucket = \"my-app-data-replica\"\n  region = \"us-west-2\"\n}\n\n# Política de replicación\nresource \"aws_s3_bucket_replication_configuration\" \"replication\" {\n  role   = aws_iam_role.replication.arn\n  bucket = aws_s3_bucket.primary.id\n\n  rule {\n    id     = \"entire-bucket\"\n    status = \"Enabled\"\n\n    destination {\n      bucket        = aws_s3_bucket.replica.arn\n      storage_class = \"STANDARD\"\n    }\n  }\n}\n\n# Para bases de datos, ejemplo con RDS:\nresource \"aws_db_instance\" \"primary\" {\n  engine            = \"mysql\"\n  instance_class    = \"db.r5.large\"\n  allocated_storage = 100\n  identifier        = \"primary-db\"\n  multi_az          = true  # Alta disponibilidad en la región primaria\n  # ... otras configuraciones\n}\n\n# Réplica de lectura cross-región\nresource \"aws_db_instance\" \"replica\" {\n  replicate_source_db = aws_db_instance.primary.identifier\n  instance_class      = \"db.r5.large\"\n  identifier          = \"dr-replica-db\"\n  availability_zone   = \"us-west-2a\"\n  # ... otras configuraciones\n}"
+        }
+      ],
+      "relatedInstructions": ["dr005", "dr007", "infra006"]
+    },
+    {
+      "id": "dr005",
+      "title": {
+        "es": "Diseñar arquitectura activo-activo o activo-pasivo",
+        "en": "Design active-active or active-passive architecture"
+      },
+      "description": {
+        "es": "Seleccionar e implementar la estrategia apropiada de arquitectura para DR",
+        "en": "Select and implement the appropriate DR architecture strategy"
+      },
+      "text": {
+        "es": "Determina si tu sistema debe implementar arquitectura activo-activo (múltiples regiones operativas simultáneamente) o activo-pasivo (región principal con secundaria en standby). Activo-activo proporciona menor RTO pero mayor complejidad y costo, mientras que activo-pasivo puede ser más simple pero con mayor tiempo de recuperación.",
+        "en": "Determine whether your system should implement active-active (multiple regions operating simultaneously) or active-passive (primary region with standby secondary) architecture. Active-active provides lower RTO but higher complexity and cost, while active-passive may be simpler but with longer recovery time."
+      },
+      "importance": "high",
+      "category": "disaster_recovery",
+      "subcategory": "architecture",
+      "tags": ["architecture", "redundancy", "resilience"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Resilient Architecture Patterns"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["cloud", "hybrid"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Diagrama y comparación de arquitecturas de DR",
+            "en": "Diagram and comparison of DR architectures"
+          },
+          "code": "# Comparación de arquitecturas para DR\n\n## Arquitectura Activo-Activo\n\n```\n[Usuarios] -----> [DNS/Global LB] ----+-----> [Región A - Activa]\n                                      |\n                                      +-----> [Región B - Activa]\n                                                    |\n[Datos] <---- [Replicación bidireccional] <---------+\n   |\n   +----> [Región A - DB]\n   |\n   +----> [Región B - DB]\n```\n\n**Ventajas:**\n- RTO cercano a cero (continuidad inmediata)\n- Balanceo de carga entre regiones\n- Mayor utilización de recursos\n\n**Desventajas:**\n- Mayor complejidad en sincronización de datos\n- Potenciales conflictos de escritura\n- Mayor costo operativo\n- Requiere aplicaciones conscientes de multi-región\n\n## Arquitectura Activo-Pasivo\n\n```\n[Usuarios] -----> [DNS/Global LB] ----+-----> [Región A - Activa]\n                                      |\n                                      +- - -> [Región B - Pasiva]\n                                                   |\n[Datos] <---- [Replicación unidireccional] <-------+\n   |\n   +----> [Región A - DB]\n   |\n   +----> [Región B - DB (standby)]\n```\n\n**Ventajas:**\n- Menor complejidad\n- Menor costo (recursos pasivos pueden ser mínimos)\n- No hay conflictos de escritura\n\n**Desventajas:**\n- RTO más alto (tiempo para activar región pasiva)\n- Recursos infrautilizados en región pasiva\n- Requiere procesos de failover"
+        }
+      ],
+      "relatedInstructions": ["dr004", "dr006", "infra002"]
     }
   ]
 }
