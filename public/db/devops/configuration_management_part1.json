@@ -1,0 +1,199 @@
+{
+  "instructions": [
+    {
+      "id": "cm001",
+      "title": {
+        "es": "Implementar infraestructura como código (IaC)",
+        "en": "Implement Infrastructure as Code (IaC)"
+      },
+      "description": {
+        "es": "Gestionar la infraestructura mediante archivos de configuración versionados",
+        "en": "Manage infrastructure through versioned configuration files"
+      },
+      "text": {
+        "es": "Implementa prácticas de Infraestructura como Código (IaC) para definir y gestionar toda la infraestructura mediante archivos de configuración versionados. Utiliza herramientas como Terraform, AWS CloudFormation, o Pulumi para describir declarativamente los recursos necesarios y su configuración, permitiendo así un aprovisionamiento repetible, auditable y seguro de entornos completos.",
+        "en": "Implement Infrastructure as Code (IaC) practices to define and manage all infrastructure through versioned configuration files. Use tools like Terraform, AWS CloudFormation, or Pulumi to declaratively describe the required resources and their configuration, thus enabling repeatable, auditable, and secure provisioning of complete environments."
+      },
+      "importance": "high",
+      "category": "configuration_management",
+      "subcategory": "infrastructure",
+      "tags": ["automation", "versioning", "consistency"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Configuration Management Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["terraform", "cloudformation", "pulumi", "ansible"],
+        "languages": ["hcl", "yaml", "json", "python"],
+        "environments": ["cloud", "hybrid"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Definición de una red virtual en AWS usando Terraform",
+            "en": "Defining a virtual network in AWS using Terraform"
+          },
+          "code": "# Ejemplo de código Terraform para definir una VPC en AWS\n# Archivo: network.tf\n\nresource \"aws_vpc\" \"main\" {\n  cidr_block           = \"10.0.0.0/16\"\n  enable_dns_support   = true\n  enable_dns_hostnames = true\n\n  tags = {\n    Name        = \"${var.project}-${var.environment}-vpc\"\n    Environment = var.environment\n    Project     = var.project\n    Terraform   = \"true\"\n  }\n}\n\nresource \"aws_subnet\" \"public\" {\n  count             = length(var.availability_zones)\n  vpc_id            = aws_vpc.main.id\n  cidr_block        = cidrsubnet(\"10.0.0.0/16\", 8, count.index)\n  availability_zone = var.availability_zones[count.index]\n\n  tags = {\n    Name        = \"${var.project}-${var.environment}-public-${count.index + 1}\"\n    Environment = var.environment\n    Project     = var.project\n    Terraform   = \"true\"\n    Type        = \"public\"\n  }\n}\n\nresource \"aws_subnet\" \"private\" {\n  count             = length(var.availability_zones)\n  vpc_id            = aws_vpc.main.id\n  cidr_block        = cidrsubnet(\"10.0.0.0/16\", 8, count.index + 100)\n  availability_zone = var.availability_zones[count.index]\n\n  tags = {\n    Name        = \"${var.project}-${var.environment}-private-${count.index + 1}\"\n    Environment = var.environment\n    Project     = var.project\n    Terraform   = \"true\"\n    Type        = \"private\"\n  }\n}\n\n# Variables y otros recursos relacionados...\n"
+        }
+      ],
+      "relatedInstructions": ["cm002", "cm003", "infra001"]
+    },
+    {
+      "id": "cm002",
+      "title": {
+        "es": "Usar control de versiones para configuraciones",
+        "en": "Use version control for configurations"
+      },
+      "description": {
+        "es": "Mantener todos los archivos de configuración en un sistema de control de versiones",
+        "en": "Keep all configuration files in a version control system"
+      },
+      "text": {
+        "es": "Mantén todos los archivos de configuración, plantillas y scripts de automatización en un sistema de control de versiones como Git. Esto proporciona un historial completo de cambios, facilita la colaboración, permite revisiones por pares, y habilita la posibilidad de revertir a estados anteriores. Organiza los repositorios de manera lógica por aplicación, entorno o función para facilitar su mantenimiento.",
+        "en": "Keep all configuration files, templates, and automation scripts in a version control system like Git. This provides a complete history of changes, facilitates collaboration, enables peer reviews, and allows for rollbacks to previous states. Organize repositories logically by application, environment, or function to facilitate maintenance."
+      },
+      "importance": "high",
+      "category": "configuration_management",
+      "subcategory": "versioning",
+      "tags": ["git", "traceability", "collaboration"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Version Control Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["git", "svn", "mercurial"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Estructura de repositorio Git para configuraciones de infraestructura",
+            "en": "Git repository structure for infrastructure configurations"
+          },
+          "code": "# Ejemplo de estructura de un repositorio Git para IaC con Terraform\n\ninfrastructure-repo/\n├── README.md                     # Documentación principal del repositorio\n├── .gitignore                    # Configuración de archivos a ignorar\n├── environments/                 # Definiciones específicas por entorno\n│   ├── development/              # Entorno de desarrollo\n│   │   ├── main.tf               # Entrada principal para Terraform\n│   │   ├── variables.tf          # Variables específicas de desarrollo\n│   │   └── terraform.tfvars      # Valores concretos para variables (gitignore)\n│   ├── staging/                  # Entorno de pruebas\n│   │   ├── main.tf\n│   │   ├── variables.tf\n│   │   └── terraform.tfvars\n│   └── production/               # Entorno de producción\n│       ├── main.tf\n│       ├── variables.tf\n│       └── terraform.tfvars\n├── modules/                      # Módulos reutilizables\n│   ├── networking/               # Módulo para configuración de red\n│   │   ├── main.tf\n│   │   ├── variables.tf\n│   │   └── outputs.tf\n│   ├── compute/                  # Módulo para recursos de computación\n│   │   ├── main.tf\n│   │   ├── variables.tf\n│   │   └── outputs.tf\n│   └── database/                 # Módulo para bases de datos\n│       ├── main.tf\n│       ├── variables.tf\n│       └── outputs.tf\n├── scripts/                      # Scripts de automatización\n│   ├── apply.sh                  # Script para aplicar cambios\n│   └── validate.sh               # Script para validar configuraciones\n└── .github/                      # Configuración de CI/CD\n    └── workflows/\n        ├── validate.yml          # Validación automática en PR\n        └── apply.yml             # Despliegue automático en merge\n\n# También se recomienda incluir:\n# - CHANGELOG.md                  # Registro de cambios\n# - CONTRIBUTING.md               # Guía para contribuir al repositorio\n# - .pre-commit-config.yaml       # Configuración para hooks de pre-commit\n# - backend.tf                    # Configuración del backend para Terraform"
+        }
+      ],
+      "relatedInstructions": ["cm001", "cm005", "ci002"]
+    },
+    {
+      "id": "cm003",
+      "title": {
+        "es": "Adoptar configuración inmutable",
+        "en": "Adopt immutable configuration"
+      },
+      "description": {
+        "es": "Implementar el principio de inmutabilidad en la configuración de servidores e infraestructura",
+        "en": "Implement the principle of immutability for server and infrastructure configuration"
+      },
+      "text": {
+        "es": "Implementa el principio de inmutabilidad en la configuración de infraestructura, donde los servidores y componentes no se modifican después de su despliegue. En lugar de actualizar componentes existentes, crea nuevas instancias con la configuración actualizada y reemplaza las anteriores. Este enfoque mejora la consistencia, simplifica las reversiones y elimina la desviación de configuración.",
+        "en": "Implement the principle of immutability in infrastructure configuration, where servers and components are not modified after deployment. Instead of updating existing components, create new instances with the updated configuration and replace the previous ones. This approach improves consistency, simplifies rollbacks, and eliminates configuration drift."
+      },
+      "importance": "high",
+      "category": "configuration_management",
+      "subcategory": "principles",
+      "tags": ["immutability", "consistency", "deployment"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Infrastructure Design Patterns"
+      },
+      "compatibility": {
+        "frameworks": ["terraform", "cloudformation", "kubernetes", "docker"],
+        "languages": ["all"],
+        "environments": ["cloud", "containerized"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementación de inmutabilidad con imágenes de contenedores",
+            "en": "Implementing immutability with container images"
+          },
+          "code": "# Ejemplo de inmutabilidad usando Docker y Kubernetes\n\n# 1. Dockerfile que crea una imagen inmutable\nFROM node:16-alpine\n\n# Establecer directorio de trabajo\nWORKDIR /app\n\n# Copiar archivos de dependencias\nCOPY package*.json ./\n\n# Instalar dependencias\nRUN npm ci --only=production\n\n# Copiar código fuente\nCOPY src/ ./src/\n\n# Establecer usuario no privilegiado para seguridad\nUSER node\n\n# Comando para ejecutar la aplicación\nCMD [\"node\", \"src/index.js\"]\n\n\n# 2. Implementación inmutable en Kubernetes\n# archivo: deployment.yaml\n\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api-service\n  labels:\n    app: api-service\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: api-service\n  strategy:\n    type: RollingUpdate    # Estrategia para reemplazar pods\n    rollingUpdate:\n      maxSurge: 1          # Máximo de pods adicionales\n      maxUnavailable: 0    # No permitir indisponibilidad durante actualización\n  template:\n    metadata:\n      labels:\n        app: api-service\n    spec:\n      containers:\n      - name: api\n        image: company/api-service:1.2.3  # Versión específica e inmutable\n        imagePullPolicy: Always\n        ports:\n        - containerPort: 3000\n        env:\n        - name: NODE_ENV\n          value: \"production\"\n        resources:\n          limits:\n            cpu: \"500m\"\n            memory: \"512Mi\"\n          requests:\n            cpu: \"200m\"\n            memory: \"256Mi\"\n        readinessProbe:     # Verificar si el pod está listo\n          httpGet:\n            path: /health\n            port: 3000\n          initialDelaySeconds: 5\n          periodSeconds: 10\n\n# 3. Flujo de CI/CD para inmutabilidad\n# - Versiones inmutables para cada build\n# - Testeo completo antes de despliegue\n# - Actualización mediante reemplazo, no modificación\n# - Capacidad de rollback inmediato a versión anterior"
+        }
+      ],
+      "relatedInstructions": ["cm001", "cm004", "cont001"]
+    },
+    {
+      "id": "cm004",
+      "title": {
+        "es": "Implementar gestión de secretos",
+        "en": "Implement secrets management"
+      },
+      "description": {
+        "es": "Utilizar soluciones seguras para gestionar credenciales y configuraciones sensibles",
+        "en": "Use secure solutions to manage credentials and sensitive configurations"
+      },
+      "text": {
+        "es": "Implementa una solución robusta de gestión de secretos para manejar credenciales, claves de API, certificados y otras configuraciones sensibles. Nunca almacenes secretos en código fuente o repositorios, incluso en repositorios privados. Utiliza servicios especializados como HashiCorp Vault, AWS Secrets Manager, o herramientas de gestión de secretos de Kubernetes para cifrar, controlar acceso y versionar de forma segura la información confidencial.",
+        "en": "Implement a robust secrets management solution to handle credentials, API keys, certificates, and other sensitive configurations. Never store secrets in source code or repositories, even private ones. Use specialized services like HashiCorp Vault, AWS Secrets Manager, or Kubernetes secrets management tools to encrypt, access-control, and securely version confidential information."
+      },
+      "importance": "high",
+      "category": "configuration_management",
+      "subcategory": "security",
+      "tags": ["secrets", "credentials", "security"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Security Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["vault", "aws_secrets_manager", "azure_key_vault", "kubernetes_secrets"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Integración de HashiCorp Vault con una aplicación",
+            "en": "Integrating HashiCorp Vault with an application"
+          },
+          "code": "# Ejemplo de implementación de gestión de secretos con HashiCorp Vault\n\n# 1. Configuración del cliente Vault en una aplicación Node.js\n\n// Archivo: src/services/secrets.js\nconst vault = require('node-vault')();\n\nasync function getSecret(path) {\n  try {\n    // Obtener token de autenticación (desde variable de entorno o archivo)\n    const token = process.env.VAULT_TOKEN;\n    vault.token = token;\n    \n    // Leer el secreto desde Vault\n    const result = await vault.read(`secret/data/${path}`);\n    return result.data.data;\n  } catch (error) {\n    console.error(`Error retrieving secret from path ${path}:`, error.message);\n    throw new Error(`Failed to retrieve secret: ${error.message}`);\n  }\n}\n\n// Uso en la aplicación\nasync function initializeDatabase() {\n  try {\n    // Recuperar credenciales de base de datos desde Vault\n    const dbCredentials = await getSecret('database/credentials');\n    \n    // Usar las credenciales para la conexión a la base de datos\n    const connection = await connectToDatabase({\n      host: process.env.DB_HOST, // No-sensible config en variables de entorno\n      port: process.env.DB_PORT,\n      username: dbCredentials.username, // Sensible desde Vault\n      password: dbCredentials.password  // Sensible desde Vault\n    });\n    \n    return connection;\n  } catch (error) {\n    console.error('Failed to initialize database:', error);\n    process.exit(1);\n  }\n}\n\n# 2. Configuración en Kubernetes usando Vault\n# Archivo: deployment.yaml con anotaciones para inyección de secretos\n\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api-service\nspec:\n  replicas: 3\n  template:\n    metadata:\n      annotations:\n        vault.hashicorp.com/agent-inject: 'true'\n        vault.hashicorp.com/role: 'api-service'\n        vault.hashicorp.com/agent-inject-secret-database-creds: 'secret/data/database/credentials'\n        vault.hashicorp.com/agent-inject-template-database-creds: |\n          {{- with secret \"secret/data/database/credentials\" -}}\n          export DB_USERNAME=\"{{ .Data.data.username }}\"\n          export DB_PASSWORD=\"{{ .Data.data.password }}\"\n          {{- end -}}\n    spec:\n      serviceAccountName: api-service-account\n      containers:\n      - name: api\n        image: company/api-service:1.2.3\n        # El sidecar de Vault inyecta los secretos como archivos\n        # que el contenedor puede cargar durante su inicio\n\n# 3. Buenas prácticas adicionales:\n# - Rotación automática de secretos\n# - Control de acceso basado en roles (RBAC)\n# - Auditoría de todos los accesos a secretos\n# - Secretos efímeros (de corta duración)\n# - Encriptación en reposo y en tránsito"
+        }
+      ],
+      "relatedInstructions": ["cm001", "cm005", "sec003"]
+    },
+    {
+      "id": "cm005",
+      "title": {
+        "es": "Separar configuración por entorno",
+        "en": "Separate configuration by environment"
+      },
+      "description": {
+        "es": "Mantener configuraciones específicas para cada entorno de manera separada",
+        "en": "Maintain separate environment-specific configurations"
+      },
+      "text": {
+        "es": "Separa claramente las configuraciones específicas para diferentes entornos (desarrollo, pruebas, staging, producción) mientras mantienes el código y la estructura base igual. Utiliza archivos de configuración diferentes, variables de entorno, o sistemas de gestión de configuración que permitan cambiar fácilmente entre entornos sin modificar el código. Esta práctica reduce los errores de despliegue y simplifica la promoción de cambios entre entornos.",
+        "en": "Clearly separate configurations specific to different environments (development, testing, staging, production) while keeping the base code and structure the same. Use different configuration files, environment variables, or configuration management systems that allow easy switching between environments without modifying code. This practice reduces deployment errors and simplifies the promotion of changes between environments."
+      },
+      "importance": "high",
+      "category": "configuration_management",
+      "subcategory": "environment",
+      "tags": ["environments", "separation", "deployment"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Environment Management Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["spring", "node", "react", "terraform", "kubernetes"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Configuración separada por entorno en una aplicación Node.js",
+            "en": "Environment-separated configuration in a Node.js application"
+          },
+          "code": "# Ejemplo de configuración separada por entorno en Node.js\n\n# 1. Estructura de directorios para configuración por entorno\nsrc/\n├── config/\n│   ├── index.js          # Carga la configuración según entorno\n│   ├── default.js        # Configuración base común a todos los entornos\n│   ├── development.js    # Desarrollo (sobrescribe valores específicos)\n│   ├── test.js           # Pruebas unitarias/integración\n│   ├── staging.js        # Entorno de pre-producción\n│   └── production.js     # Producción\n└── ...\n\n# 2. Implementación del cargador de configuración\n// src/config/index.js\nconst defaultConfig = require('./default');\nlet environmentConfig = {};\n\n// Determinar el entorno actual\nconst env = process.env.NODE_ENV || 'development';\n\n// Cargar la configuración específica del entorno\ntry {\n  environmentConfig = require(`./${env}`);\n  console.log(`Loaded configuration for ${env} environment`);\n} catch (error) {\n  console.warn(`No configuration file found for ${env}, using default only`);\n}\n\n// Combinar configuración base con la específica del entorno\nconst config = {\n  ...defaultConfig,\n  ...environmentConfig,\n  env // Incluir el nombre del entorno en la configuración\n};\n\nmodule.exports = config;\n\n# 3. Configuración base (valores por defecto)\n// src/config/default.js\nmodule.exports = {\n  server: {\n    port: 3000,\n    cors: {\n      origin: '*',\n      methods: ['GET', 'POST']\n    }\n  },\n  database: {\n    type: 'postgres',\n    host: 'localhost',\n    port: 5432,\n    name: 'app_db',\n    pool: {\n      min: 2,\n      max: 10\n    }\n  },\n  logging: {\n    level: 'info',\n    format: 'json'\n  },\n  cache: {\n    enabled: true,\n    ttl: 300 // 5 minutos\n  }\n};\n\n# 4. Configuración específica de producción\n// src/config/production.js\nmodule.exports = {\n  server: {\n    port: process.env.PORT || 8080,\n    cors: {\n      origin: ['https://app.example.com', 'https://admin.example.com'],\n      methods: ['GET', 'POST']\n    }\n  },\n  database: {\n    // Host/credenciales desde variables de entorno\n    host: process.env.DB_HOST,\n    port: parseInt(process.env.DB_PORT || '5432'),\n    name: process.env.DB_NAME,\n    user: process.env.DB_USER,\n    password: process.env.DB_PASSWORD,\n    pool: {\n      min: 5,\n      max: 30\n    }\n  },\n  logging: {\n    level: 'warn', // Menos verboso en producción\n    format: 'json'\n  },\n  cache: {\n    enabled: true,\n    ttl: 900 // 15 minutos - más largo en producción\n  }\n};\n\n# 5. Uso en la aplicación\n// src/server.js\nconst config = require('./config');\nconst express = require('express');\n\nconst app = express();\n\n// Usar la configuración\napp.listen(config.server.port, () => {\n  console.log(`Server running in ${config.env} mode on port ${config.server.port}`);\n});\n\n// Configuración de CORS basada en entorno\nconst cors = require('cors');\napp.use(cors(config.server.cors));\n\n// La configuración ya tiene los valores específicos del entorno"
+        }
+      ],
+      "relatedInstructions": ["cm001", "cm006", "ci003"]
+    }
+  ]
+}
