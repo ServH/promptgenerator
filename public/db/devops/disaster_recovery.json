@@ -1,0 +1,82 @@
+{
+  "instructions": [
+    {
+      "id": "dr001",
+      "title": {
+        "es": "Desarrollar un plan de recuperación ante desastres (DRP)",
+        "en": "Develop a Disaster Recovery Plan (DRP)"
+      },
+      "description": {
+        "es": "Crear un plan completo para recuperar sistemas tras un desastre",
+        "en": "Create a comprehensive plan to recover systems after a disaster"
+      },
+      "text": {
+        "es": "Desarrolla un plan documentado de recuperación ante desastres (DRP) que defina los procedimientos, roles, y recursos necesarios para restaurar los sistemas críticos tras un incidente. Establece objetivos claros de tiempo de recuperación (RTO) y punto de recuperación (RPO) para cada sistema según su criticidad para el negocio.",
+        "en": "Develop a documented Disaster Recovery Plan (DRP) that defines the procedures, roles, and resources required to restore critical systems after an incident. Establish clear Recovery Time Objectives (RTO) and Recovery Point Objectives (RPO) for each system according to its business criticality."
+      },
+      "importance": "high",
+      "category": "disaster_recovery",
+      "subcategory": "planning",
+      "tags": ["planning", "governance", "business_continuity"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Disaster Recovery Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Estructura básica de un plan de recuperación ante desastres",
+            "en": "Basic structure of a disaster recovery plan"
+          },
+          "code": "# Plan de Recuperación ante Desastres - Aplicación XYZ\n\n## 1. Información General\n   - Propietario del Plan: [Nombre, Email, Teléfono]\n   - Última Actualización: [Fecha]\n   - Versión: [1.0]\n\n## 2. Objetivos de Recuperación\n   - Base de datos principal: RPO = 15 min, RTO = 2 horas\n   - Servicios de API: RPO = N/A, RTO = 1 hora\n   - Frontend: RPO = N/A, RTO = 4 horas\n\n## 3. Equipo de Respuesta\n   - Coordinador DR: [Nombre, Contacto]\n   - Equipo de Infraestructura: [Nombres, Contactos]\n   - Equipo de Aplicaciones: [Nombres, Contactos]\n\n## 4. Escenarios y Procedimientos\n   - Fallo de centro de datos principal\n   - Pérdida de base de datos\n   - Ciberataque\n\n## 5. Procedimientos de Recuperación\n   [Procedimientos detallados paso a paso]\n\n## 6. Procedimientos de Prueba\n   [Cronograma y métodos de prueba]\n\n## 7. Checklist de Comprobación\n   [Lista de verificación post-recuperación]"
+        }
+      ],
+      "relatedInstructions": ["dr002", "dr003", "dr010"]
+    },
+    {
+      "id": "dr002",
+      "title": {
+        "es": "Implementar backups automatizados",
+        "en": "Implement automated backups"
+      },
+      "description": {
+        "es": "Configurar backups automatizados con políticas de retención apropiadas",
+        "en": "Set up automated backups with appropriate retention policies"
+      },
+      "text": {
+        "es": "Implementa un sistema automatizado de backups para todos los datos críticos, incluyendo bases de datos, configuraciones y archivos esenciales. Define políticas de retención apropiadas basadas en los objetivos de punto de recuperación (RPO) y requisitos de cumplimiento. Asegúrate de que los backups sean verificados regularmente mediante pruebas de restauración.",
+        "en": "Implement an automated backup system for all critical data, including databases, configurations, and essential files. Define appropriate retention policies based on Recovery Point Objectives (RPO) and compliance requirements. Ensure backups are regularly verified through restoration tests."
+      },
+      "importance": "high",
+      "category": "disaster_recovery",
+      "subcategory": "data_protection",
+      "tags": ["backup", "automation", "compliance"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Backup Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Configuración de backups automatizados para PostgreSQL",
+            "en": "Setting up automated backups for PostgreSQL"
+          },
+          "code": "# Ejemplo de script para backup automatizado de PostgreSQL\n\n#!/bin/bash\n\n# Variables de configuración\nDATE=$(date +\"%Y-%m-%d_%H-%M\")\nBACKUP_DIR=\"/backup/postgres\"\nDB_NAME=\"myapplication\"\nUSER=\"postgres\"\nRETENTION_DAYS=14\n\n# Crear directorio si no existe\nmkdir -p $BACKUP_DIR\n\n# Ejecutar backup\nPGPASSWORD=\"$PG_PASSWORD\" pg_dump -U $USER -Fc $DB_NAME > \"$BACKUP_DIR/$DB_NAME-$DATE.dump\"\n\n# Verificar el resultado\nif [ $? -eq 0 ]; then\n  echo \"Backup completado exitosamente: $BACKUP_DIR/$DB_NAME-$DATE.dump\"\nelse\n  echo \"Error al crear backup\" >&2\n  exit 1\nfi\n\n# Eliminar backups antiguos\nfind $BACKUP_DIR -name \"$DB_NAME-*.dump\" -type f -mtime +$RETENTION_DAYS -delete\n\n# Script para verificar el backup (ejecutar semanalmente)\n# pg_restore -U $USER -d ${DB_NAME}_test --clean \"$BACKUP_DIR/$DB_NAME-$DATE.dump\""
+        }
+      ],
+      "relatedInstructions": ["dr001", "dr007", "infra008"]
+    }
+  ]
+}
