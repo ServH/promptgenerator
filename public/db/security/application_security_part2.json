@@ -1,0 +1,394 @@
+{
+  "instructions": [
+    {
+      "id": "sec_app_009",
+      "title": {
+        "es": "Protección contra enumeración de recursos",
+        "en": "Resource enumeration protection"
+      },
+      "description": {
+        "es": "Prevenir la enumeración de recursos y datos sensibles",
+        "en": "Prevent enumeration of resources and sensitive data"
+      },
+      "text": {
+        "es": "Implementa medidas para prevenir la enumeración de recursos y datos sensibles. Utiliza identificadores no secuenciales y no predecibles, emplea respuestas con tiempos constantes para prevenir ataques de temporización, y asegúrate de que los errores de acceso no revelen la existencia de recursos. Esto dificulta a los atacantes la exploración sistemática de tu sistema para encontrar objetivos vulnerables.",
+        "en": "Implement measures to prevent enumeration of resources and sensitive data. Use non-sequential and unpredictable identifiers, employ constant-time responses to prevent timing attacks, and ensure that access errors do not reveal the existence of resources. This makes it harder for attackers to systematically explore your system to find vulnerable targets."
+      },
+      "importance": "medium",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["data_protection", "api_security", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Security Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Previniendo la enumeración de recursos en una API",
+            "en": "Preventing resource enumeration in an API"
+          },
+          "code": "UUIDs aleatorios + mensajes genéricos + tiempos de respuesta constantes + detección de patrones de enumeración"
+        }
+      ],
+      "relatedInstructions": ["sec_data_002", "sec_app_004"]
+    },
+    {
+      "id": "sec_app_010",
+      "title": {
+        "es": "Protección del lado del cliente",
+        "en": "Client-side protection"
+      },
+      "description": {
+        "es": "Implementar medidas de seguridad en el lado del cliente",
+        "en": "Implement security measures on the client side"
+      },
+      "text": {
+        "es": "Implementa medidas de seguridad en el lado del cliente, pero nunca confíes únicamente en ellas para la seguridad crítica. Utiliza Subresource Integrity (SRI) para scripts y estilos externos, implementa Content Security Policy (CSP) para mitigar XSS, y considera técnicas de ofuscación para código crítico. Recuerda que todas las validaciones del lado del cliente deben ser replicadas en el servidor.",
+        "en": "Implement client-side security measures, but never rely solely on them for critical security. Use Subresource Integrity (SRI) for external scripts and styles, implement Content Security Policy (CSP) to mitigate XSS, and consider obfuscation techniques for critical code. Remember that all client-side validations must be replicated on the server."
+      },
+      "importance": "medium",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["frontend", "web_security", "defense_in_depth"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Frontend Security"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web", "mobile"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando seguridad del lado del cliente en una aplicación web",
+            "en": "Implementing client-side security in a web application"
+          },
+          "code": "SRI para scripts externos + CSP restrictiva + sanitización de datos dinámicos + validación replicada en servidor"
+        }
+      ],
+      "relatedInstructions": ["sec_vuln_003", "sec_app_008"]
+    },
+    {
+      "id": "sec_app_011",
+      "title": {
+        "es": "Seguridad en aplicaciones móviles",
+        "en": "Mobile application security"
+      },
+      "description": {
+        "es": "Implementar medidas de seguridad específicas para aplicaciones móviles",
+        "en": "Implement specific security measures for mobile applications"
+      },
+      "text": {
+        "es": "Implementa medidas de seguridad específicas para aplicaciones móviles, como almacenamiento seguro de datos sensibles en almacenamiento cifrado, validación de certificados SSL/TLS para prevenir ataques MitM, protección contra jailbreak/root, y ofuscación de código. Considera las amenazas particulares del entorno móvil, como la posibilidad de robo de dispositivos y redes no confiables.",
+        "en": "Implement specific security measures for mobile applications, such as secure storage of sensitive data in encrypted storage, SSL/TLS certificate validation to prevent MitM attacks, jailbreak/root detection, and code obfuscation. Consider the unique threats of the mobile environment, such as the possibility of device theft and untrusted networks."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["mobile", "data_protection", "specialized"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Mobile Security"
+      },
+      "compatibility": {
+        "frameworks": ["react_native", "flutter", "ionic"],
+        "languages": ["all"],
+        "environments": ["mobile"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando seguridad en una aplicación móvil",
+            "en": "Implementing security in a mobile application"
+          },
+          "code": "Keychain/Keystore + SSL pinning + detección jailbreak/root + bloqueo con biometría + ofuscación de código"
+        }
+      ],
+      "relatedInstructions": ["sec_auth_003", "sec_data_001"]
+    },
+    {
+      "id": "sec_app_012",
+      "title": {
+        "es": "Seguridad en microservicios",
+        "en": "Microservices security"
+      },
+      "description": {
+        "es": "Implementar medidas de seguridad específicas para arquitecturas de microservicios",
+        "en": "Implement specific security measures for microservices architectures"
+      },
+      "text": {
+        "es": "Implementa medidas de seguridad específicas para arquitecturas de microservicios, incluyendo autenticación y autorización entre servicios, cifrado de comunicaciones, segmentación de red, aislamiento de servicios, y monitoreo centralizado. Considera el principio de mínima confianza entre servicios y evita dependencias circulares o de alta complejidad que puedan aumentar la superficie de ataque.",
+        "en": "Implement specific security measures for microservices architectures, including service-to-service authentication and authorization, encrypted communications, network segmentation, service isolation, and centralized monitoring. Consider the principle of minimal trust between services and avoid circular or highly complex dependencies that can increase the attack surface."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["microservices", "architecture", "specialized"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Security Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["server", "cloud"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando seguridad en una arquitectura de microservicios",
+            "en": "Implementing security in a microservices architecture"
+          },
+          "code": "JWT/mTLS entre servicios + identidad centralizada + segmentación de red + cifrado TLS + límites de recursos por servicio"
+        }
+      ],
+      "relatedInstructions": ["sec_auth_002", "sec_app_006"]
+    },
+    {
+      "id": "sec_app_013",
+      "title": {
+        "es": "Seguridad en contenedores",
+        "en": "Container security"
+      },
+      "description": {
+        "es": "Implementar medidas de seguridad para entornos de contenedores",
+        "en": "Implement security measures for containerized environments"
+      },
+      "text": {
+        "es": "Implementa medidas de seguridad específicas para entornos de contenedores, incluyendo el uso de imágenes base mínimas y confiables, escaneo de vulnerabilidades, principio de menor privilegio, limitación de recursos, y segmentación de red. Nunca incluyas secretos o credenciales en imágenes de contenedores y considera el uso de soluciones de gestión de secretos externos.",
+        "en": "Implement specific security measures for containerized environments, including using minimal and trusted base images, vulnerability scanning, least privilege principle, resource limitations, and network segmentation. Never include secrets or credentials in container images and consider using external secret management solutions."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["containers", "devops", "specialized"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Security Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["container", "cloud"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Asegurando contenedores Docker en producción",
+            "en": "Securing Docker containers in production"
+          },
+          "code": "Imágenes Alpine/distroless + usuarios no privilegiados + escaneo de vulnerabilidades + límites de recursos + gestión externa de secretos"
+        }
+      ],
+      "relatedInstructions": ["sec_app_002", "sec_app_014"]
+    },
+    {
+      "id": "sec_app_014",
+      "title": {
+        "es": "Gestión segura de secretos",
+        "en": "Secure secrets management"
+      },
+      "description": {
+        "es": "Implementar prácticas seguras para gestión de credenciales y secretos",
+        "en": "Implement secure practices for credentials and secrets management"
+      },
+      "text": {
+        "es": "Implementa una gestión segura de secretos y credenciales. Nunca almacenes secretos en código fuente, archivos de configuración sin protección o variables de entorno visibles públicamente. Utiliza servicios dedicados de gestión de secretos, almacenes de claves o soluciones específicas para gestionar credenciales con rotación periódica, acceso auditado y principio de mínimo privilegio.",
+        "en": "Implement secure management of secrets and credentials. Never store secrets in source code, unprotected configuration files, or publicly visible environment variables. Use dedicated secret management services, key vaults, or purpose-built solutions to manage credentials with periodic rotation, audited access, and least privilege principle."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["credentials", "secrets", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Security Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando gestión segura de secretos en una aplicación",
+            "en": "Implementing secure secrets management in an application"
+          },
+          "code": "Bóveda de secretos + rotación periódica + acceso auditado + secretos nunca en código fuente ni versionados"
+        }
+      ],
+      "relatedInstructions": ["sec_data_001", "sec_app_002"]
+    },
+    {
+      "id": "sec_app_015",
+      "title": {
+        "es": "Registro y monitoreo de seguridad",
+        "en": "Security logging and monitoring"
+      },
+      "description": {
+        "es": "Implementar registro y monitoreo efectivos para detectar y responder a incidentes",
+        "en": "Implement effective logging and monitoring to detect and respond to incidents"
+      },
+      "text": {
+        "es": "Implementa registro y monitoreo de seguridad comprensivos para detectar, investigar y responder a actividades sospechosas o incidentes de seguridad. Registra eventos relevantes como inicios de sesión, cambios de privilegios, accesos a datos sensibles y errores de sistema, pero evita incluir datos sensibles en los registros. Establece alertas para patrones anómalos y mantén un sistema de monitoreo continuo.",
+        "en": "Implement comprehensive security logging and monitoring to detect, investigate, and respond to suspicious activities or security incidents. Log relevant events such as logins, privilege changes, access to sensitive data, and system errors, but avoid including sensitive data in logs. Set up alerts for anomalous patterns and maintain continuous monitoring."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["monitoring", "incident_response", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Security Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando registro y monitoreo de seguridad",
+            "en": "Implementing security logging and monitoring"
+          },
+          "code": "Registro de eventos críticos + formato estructurado + alertas de patrones anómalos + correlación de eventos + retención adecuada"
+        }
+      ],
+      "relatedInstructions": ["sec_app_001", "sec_data_003"]
+    },
+    {
+      "id": "sec_app_016",
+      "title": {
+        "es": "Seguridad en desarrollo colaborativo",
+        "en": "Collaborative development security"
+      },
+      "description": {
+        "es": "Implementar prácticas seguras en entornos de desarrollo colaborativo",
+        "en": "Implement secure practices in collaborative development environments"
+      },
+      "text": {
+        "es": "Implementa prácticas de seguridad en entornos de desarrollo colaborativo, incluyendo revisiones de código, análisis automatizado de vulnerabilidades, protección de ramas principales con políticas de fusión, y escaneo de dependencias. Define estándares de seguridad claros para el equipo y cultiva una cultura donde la seguridad sea responsabilidad compartida de todos los desarrolladores.",
+        "en": "Implement security practices in collaborative development environments, including code reviews, automated vulnerability analysis, protection of main branches with merge policies, and dependency scanning. Define clear security standards for the team and cultivate a culture where security is a shared responsibility of all developers."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["sdlc", "collaboration", "devops"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Security Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando seguridad en un entorno de desarrollo colaborativo",
+            "en": "Implementing security in a collaborative development environment"
+          },
+          "code": "Revisiones de código obligatorias + escaneo automatizado de seguridad + protección de ramas + SAST/DAST integrado + verificación de dependencias"
+        }
+      ],
+      "relatedInstructions": ["sec_app_005", "sec_vuln_001"]
+    },
+    {
+      "id": "sec_app_017",
+      "title": {
+        "es": "Actualización y parcheado",
+        "en": "Updates and patching"
+      },
+      "description": {
+        "es": "Mantener sistemas y dependencias actualizados para mitigar vulnerabilidades",
+        "en": "Keep systems and dependencies updated to mitigate vulnerabilities"
+      },
+      "text": {
+        "es": "Implementa un proceso consistente para mantener todas las dependencias, bibliotecas, frameworks y sistemas operativos actualizados con los últimos parches de seguridad. Establece un procedimiento para monitorear anuncios de vulnerabilidades, evaluar su impacto, y aplicar actualizaciones de forma oportuna. Considera la automatización de este proceso cuando sea posible.",
+        "en": "Implement a consistent process to keep all dependencies, libraries, frameworks, and operating systems updated with the latest security patches. Establish a procedure to monitor vulnerability announcements, assess their impact, and apply updates in a timely manner. Consider automating this process when possible."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["maintenance", "vulnerability_management", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Security Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando un proceso de actualización y parcheado",
+            "en": "Implementing an update and patching process"
+          },
+          "code": "Monitoreo automatizado de CVEs + verificación de dependencias en CI/CD + actualización periódica programada + entornos de prueba para actualizaciones"
+        }
+      ],
+      "relatedInstructions": ["sec_vuln_001", "sec_app_005"]
+    },
+    {
+      "id": "sec_app_018",
+      "title": {
+        "es": "Principio de mínima superficie de ataque",
+        "en": "Minimum attack surface principle"
+      },
+      "description": {
+        "es": "Reducir la superficie de ataque expuesta al eliminar componentes innecesarios",
+        "en": "Reduce exposed attack surface by eliminating unnecessary components"
+      },
+      "text": {
+        "es": "Implementa el principio de mínima superficie de ataque reduciendo al mínimo los componentes, servicios, puertos, y funcionalidades expuestos. Deshabilita o elimina características innecesarias, dependencias no utilizadas, y servicios que no son esenciales para las operaciones requeridas. Cada componente adicional aumenta el riesgo potencial, por lo que mantén tu sistema lo más simple y enfocado posible.",
+        "en": "Implement the minimum attack surface principle by minimizing exposed components, services, ports, and features. Disable or remove unnecessary features, unused dependencies, and services that are not essential for required operations. Each additional component increases potential risk, so keep your system as simple and focused as possible."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["architecture", "deployment", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Security Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando el principio de mínima superficie de ataque",
+            "en": "Implementing the minimum attack surface principle"
+          },
+          "code": "Imágenes minimalistas + eliminar dependencias no utilizadas + deshabilitar servicios no necesarios + cerrar puertos innecesarios + limitar API expuestas"
+        }
+      ],
+      "relatedInstructions": ["sec_app_001", "sec_app_002"]
+    }
+  ]
+}
