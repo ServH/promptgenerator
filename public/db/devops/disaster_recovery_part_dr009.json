@@ -1,0 +1,43 @@
+{
+  "instructions": [
+    {
+      "id": "dr009",
+      "title": {
+        "es": "Implementar monitoreo de salud y alertas anticipadas",
+        "en": "Implement health monitoring and early warnings"
+      },
+      "description": {
+        "es": "Establecer sistemas de monitoreo para detectar señales tempranas de posibles fallos",
+        "en": "Set up monitoring systems to detect early signs of potential failures"
+      },
+      "text": {
+        "es": "Implementa sistemas robustos de monitoreo que puedan detectar señales tempranas de degradación o fallos inminentes antes de que causen interrupciones completas. Configura alertas anticipadas basadas en umbrales que indiquen comportamientos anómalos y permitan intervenciones preventivas para evitar la necesidad de procedimientos completos de recuperación ante desastres.",
+        "en": "Implement robust monitoring systems that can detect early signs of degradation or imminent failures before they cause complete disruptions. Set up early warning alerts based on thresholds that indicate anomalous behaviors and allow preventive interventions to avoid the need for full disaster recovery procedures."
+      },
+      "importance": "medium",
+      "category": "disaster_recovery",
+      "subcategory": "monitoring",
+      "tags": ["monitoring", "proactive", "prevention"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Monitoring Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["prometheus", "cloudwatch", "datadog", "nagios"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Configuración de alertas preventivas en Prometheus",
+            "en": "Setting up preventive alerts in Prometheus"
+          },
+          "code": "# Ejemplo de reglas de alerta en Prometheus para detección temprana\n\ngroups:\n- name: disaster_recovery_early_warnings\n  rules:\n  # Alerta de tendencia de almacenamiento\n  - alert: DiskSpaceTrendingToFull\n    expr: predict_linear(node_filesystem_free_bytes[6h], 24 * 3600) < 0\n    for: 30m\n    labels:\n      severity: warning\n    annotations:\n      summary: \"Tendencia crítica de espacio en disco\"\n      description: \"El disco {{ $labels.device }} en {{ $labels.instance }} se quedará sin espacio en menos de 24 horas según la tendencia actual.\"\n\n  # Alerta de contención de conexiones de base de datos\n  - alert: DBConnectionsApproachingLimit\n    expr: sum(mysql_global_status_threads_connected) / sum(mysql_global_variables_max_connections) * 100 > 80\n    for: 15m\n    labels:\n      severity: warning\n    annotations:\n      summary: \"Conexiones de MySQL acercándose al límite\"\n      description: \"Las conexiones de base de datos están al {{ $value }}% del límite máximo durante más de 15 minutos.\"\n\n  # Alerta de latencia creciente\n  - alert: APIResponseTimeIncreasing\n    expr: rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m]) > 0.5 and rate(http_request_duration_seconds_sum[1h]) / rate(http_request_duration_seconds_count[1h]) < 0.2\n    for: 10m\n    labels:\n      severity: warning\n    annotations:\n      summary: \"Aumento significativo en tiempo de respuesta de API\"\n      description: \"El tiempo de respuesta de API ha aumentado más del doble en comparación con la media de la última hora.\"\n  \n  # Alerta de tasa de errores creciente\n  - alert: ErrorRateIncreasing\n    expr: sum(rate(http_requests_total{status=~\"5..\"}[5m])) / sum(rate(http_requests_total[5m])) > 0.01 and sum(rate(http_requests_total{status=~\"5..\"}[5m])) / sum(rate(http_requests_total[5m])) > 2 * sum(rate(http_requests_total{status=~\"5..\"}[60m])) / sum(rate(http_requests_total[60m]))\n    for: 5m\n    labels:\n      severity: warning\n    annotations:\n      summary: \"Tasa de errores aumentando\"\n      description: \"La tasa de errores HTTP 5xx ha superado el 1% y es el doble que la media de la última hora.\""
+        }
+      ],
+      "relatedInstructions": ["dr006", "dr010", "mon002"]
+    }
+  ]
+}
