@@ -1,0 +1,316 @@
+{
+  "instructions": [
+    {
+      "id": "sec_app_001",
+      "title": {
+        "es": "Principio de defensa en profundidad",
+        "en": "Defense in depth principle"
+      },
+      "description": {
+        "es": "Implementar múltiples capas de seguridad para proteger los sistemas",
+        "en": "Implement multiple security layers to protect systems"
+      },
+      "text": {
+        "es": "Implementa el principio de defensa en profundidad utilizando múltiples capas de controles de seguridad (físicos, técnicos y administrativos) de modo que si una capa falla, otra proporcione protección. No dependas de una sola medida de seguridad, sin importar cuán robusta parezca.",
+        "en": "Implement the defense in depth principle by using multiple layers of security controls (physical, technical, and administrative) so that if one layer fails, another will provide protection. Do not rely on a single security measure, no matter how robust it seems."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["security_architecture", "best_practices", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Security Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando defensa en profundidad para proteger datos sensibles",
+            "en": "Implementing defense in depth to protect sensitive data"
+          },
+          "code": "Autenticación + autorización + cifrado en tránsito + cifrado en reposo + firewalls + monitoreo de acceso"
+        }
+      ],
+      "relatedInstructions": ["sec_auth_001", "sec_data_001"]
+    },
+    {
+      "id": "sec_app_002",
+      "title": {
+        "es": "Principio de privilegio mínimo",
+        "en": "Principle of least privilege"
+      },
+      "description": {
+        "es": "Otorgar solo los permisos mínimos necesarios para realizar tareas",
+        "en": "Grant only the minimum permissions necessary to perform tasks"
+      },
+      "text": {
+        "es": "Aplica siempre el principio de privilegio mínimo a todos los aspectos de tu aplicación. Los usuarios, procesos, servicios y sistemas deben operar con el nivel mínimo de privilegios necesarios para realizar sus funciones. Este enfoque reduce la superficie de ataque y limita el daño potencial de vulnerabilidades o compromisos de seguridad.",
+        "en": "Always apply the principle of least privilege to all aspects of your application. Users, processes, services, and systems should operate with the minimum level of privileges needed to perform their functions. This approach reduces the attack surface and limits the potential damage from vulnerabilities or security compromises."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["access_control", "best_practices", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Security Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Aplicando el principio de privilegio mínimo a una aplicación web",
+            "en": "Applying the principle of least privilege to a web application"
+          },
+          "code": "Roles específicos por función + tokens de acceso de alcance limitado + procesos con usuarios no privilegiados"
+        }
+      ],
+      "relatedInstructions": ["sec_auth_003", "sec_app_003"]
+    },
+    {
+      "id": "sec_app_003",
+      "title": {
+        "es": "Falla segura",
+        "en": "Fail secure"
+      },
+      "description": {
+        "es": "Diseñar sistemas para manejar fallos de manera segura",
+        "en": "Design systems to handle failures securely"
+      },
+      "text": {
+        "es": "Diseña tu aplicación para que falle de manera segura. En caso de error, el sistema debe volver a un estado seguro por defecto, en lugar de exponer información sensible o permitir acceso no autorizado. Los errores no deben revelar detalles de implementación interna, credenciales o información que pueda ser útil para un atacante.",
+        "en": "Design your application to fail securely. In case of error, the system should default to a secure state, rather than exposing sensitive information or allowing unauthorized access. Errors should not reveal internal implementation details, credentials, or information that might be useful to an attacker."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["error_handling", "resilience", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Security Principles"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando el principio de falla segura en manejo de errores",
+            "en": "Implementing fail-secure principle in error handling"
+          },
+          "code": "Mensajes de error genéricos para el usuario + registro detallado para depuración + timeouts adecuados + cierre de sesión automático por inactividad"
+        }
+      ],
+      "relatedInstructions": ["sec_vuln_002", "sec_app_001"]
+    },
+    {
+      "id": "sec_app_004",
+      "title": {
+        "es": "Validación de entrada en todas las capas",
+        "en": "Input validation at all layers"
+      },
+      "description": {
+        "es": "Validar entradas en cada capa de la aplicación",
+        "en": "Validate inputs at every layer of the application"
+      },
+      "text": {
+        "es": "Implementa validación de entrada en cada capa de tu aplicación, no solo en la interfaz de usuario. Cada componente debe validar sus entradas de forma independiente, incluso si otros componentes ya han realizado validaciones. Este enfoque en profundidad ayuda a proteger contra ataques que eluden las validaciones de la capa frontal o que se originan desde puntos intermedios.",
+        "en": "Implement input validation at every layer of your application, not just at the user interface. Each component should validate its inputs independently, even if other components have already performed validations. This depth approach helps protect against attacks that bypass front-layer validations or originate from intermediate points."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["input_validation", "defense_in_depth", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Security Principles"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Validación de entrada en múltiples capas de una aplicación web",
+            "en": "Input validation at multiple layers of a web application"
+          },
+          "code": "Validación cliente + validación API + validación capa de servicio + restricciones de base de datos"
+        }
+      ],
+      "relatedInstructions": ["sec_input_001", "sec_app_001"]
+    },
+    {
+      "id": "sec_app_005",
+      "title": {
+        "es": "Seguridad por diseño",
+        "en": "Security by design"
+      },
+      "description": {
+        "es": "Integrar seguridad desde las primeras etapas del desarrollo",
+        "en": "Integrate security from the earliest stages of development"
+      },
+      "text": {
+        "es": "Incorpora la seguridad desde el inicio del ciclo de desarrollo de software, no como un añadido posterior. Identifica y resuelve las amenazas potenciales durante las fases de diseño y planificación. Realiza modelado de amenazas y considera los requisitos de seguridad con la misma prioridad que los requisitos funcionales del sistema.",
+        "en": "Incorporate security from the start of the software development lifecycle, not as an afterthought. Identify and address potential threats during design and planning phases. Perform threat modeling and consider security requirements with the same priority as the system's functional requirements."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["sdlc", "planning", "threat_modeling"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Security Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando seguridad por diseño en un proyecto de software",
+            "en": "Implementing security by design in a software project"
+          },
+          "code": "Modelado de amenazas temprano + definición de requisitos de seguridad + revisiones de seguridad en el proceso de revisión de código"
+        }
+      ],
+      "relatedInstructions": ["sec_app_001", "sec_vuln_001"]
+    },
+    {
+      "id": "sec_app_006",
+      "title": {
+        "es": "Seguridad en APIs",
+        "en": "API security"
+      },
+      "description": {
+        "es": "Implementar medidas de seguridad específicas para APIs",
+        "en": "Implement specific security measures for APIs"
+      },
+      "text": {
+        "es": "Protege tus APIs implementando controles específicos como autenticación robusta, limitación de tasa, validación estricta de entrada, y manejo adecuado de errores. Documenta tus APIs con especificaciones como OpenAPI, pero asegúrate de no exponer información sensible. Considera el uso de gateways de API para centralizar la seguridad y monitoreo.",
+        "en": "Secure your APIs by implementing specific controls such as robust authentication, rate limiting, strict input validation, and proper error handling. Document your APIs with specifications like OpenAPI, but ensure you don't expose sensitive information. Consider using API gateways to centralize security and monitoring."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["api", "web_security", "backend"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "API Security"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["web", "server"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando seguridad en una API REST",
+            "en": "Implementing security in a REST API"
+          },
+          "code": "Tokens JWT + limitación de tasa + validación de esquemas + encabezados de seguridad + monitoreo de patrones + registro de auditoría"
+        }
+      ],
+      "relatedInstructions": ["sec_auth_002", "sec_input_001"]
+    },
+    {
+      "id": "sec_app_007",
+      "title": {
+        "es": "Gestión segura de sesiones",
+        "en": "Secure session management"
+      },
+      "description": {
+        "es": "Implementar prácticas seguras para gestión de sesiones",
+        "en": "Implement secure practices for session management"
+      },
+      "text": {
+        "es": "Implementa gestión segura de sesiones utilizando identificadores únicos, aleatorios y que no puedan ser predichos. Establece tiempos de expiración adecuados, mecanismos de renovación seguros, y la capacidad de revocar sesiones. Utiliza cookies seguras con los atributos HttpOnly, Secure y SameSite y considera la implementación de detección de robo de sesión.",
+        "en": "Implement secure session management using unique, random, and unpredictable identifiers. Set appropriate expiration times, secure renewal mechanisms, and the ability to revoke sessions. Use secure cookies with HttpOnly, Secure, and SameSite attributes and consider implementing session theft detection."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["session_management", "web_security", "frontend"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Session Security"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando gestión segura de sesiones en una aplicación web",
+            "en": "Implementing secure session management in a web application"
+          },
+          "code": "Tokens aleatorios + expiración adecuada + regeneración periódica + cookies HttpOnly/Secure/SameSite + detección de anomalías"
+        }
+      ],
+      "relatedInstructions": ["sec_auth_001", "sec_app_003"]
+    },
+    {
+      "id": "sec_app_008",
+      "title": {
+        "es": "Encabezados de seguridad HTTP",
+        "en": "HTTP security headers"
+      },
+      "description": {
+        "es": "Implementar encabezados HTTP para mejorar la seguridad",
+        "en": "Implement HTTP headers to enhance security"
+      },
+      "text": {
+        "es": "Configura encabezados HTTP de seguridad apropiados para mejorar la postura de seguridad de tu aplicación web. Esto incluye Content-Security-Policy (CSP) para mitigar XSS, Strict-Transport-Security (HSTS) para forzar HTTPS, X-Content-Type-Options para prevenir MIME sniffing, X-Frame-Options para prevenir clickjacking, y otros. Estos encabezados proporcionan capas adicionales de defensa contra varios ataques comunes.",
+        "en": "Configure appropriate HTTP security headers to enhance the security posture of your web application. This includes Content-Security-Policy (CSP) to mitigate XSS, Strict-Transport-Security (HSTS) to enforce HTTPS, X-Content-Type-Options to prevent MIME sniffing, X-Frame-Options to prevent clickjacking, and others. These headers provide additional layers of defense against various common attacks."
+      },
+      "importance": "high",
+      "category": "security",
+      "subcategory": "application_security",
+      "tags": ["web_security", "headers", "frontend"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Web Security"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Configurando encabezados de seguridad HTTP",
+            "en": "Configuring HTTP security headers"
+          },
+          "code": "CSP para mitigar XSS + HSTS para forzar HTTPS + X-Content-Type-Options:nosniff + X-Frame-Options:DENY"
+        }
+      ],
+      "relatedInstructions": ["sec_vuln_003", "sec_app_001"]
+    }
+  ]
+}
