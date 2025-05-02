@@ -1,0 +1,199 @@
+{
+  "instructions": [
+    {
+      "id": "cm006",
+      "title": {
+        "es": "Implementar infraestructura modular",
+        "en": "Implement modular infrastructure"
+      },
+      "description": {
+        "es": "Diseñar la infraestructura en módulos reutilizables y componibles",
+        "en": "Design infrastructure in reusable and composable modules"
+      },
+      "text": {
+        "es": "Estructura la infraestructura como código utilizando módulos reutilizables que encapsulen componentes específicos como redes, computación, bases de datos o seguridad. Define interfaces claras entre módulos con inputs y outputs bien documentados. Este enfoque modular promueve la reutilización, facilita el mantenimiento, y permite combinar componentes de diferentes maneras para diferentes entornos o proyectos.",
+        "en": "Structure infrastructure as code using reusable modules that encapsulate specific components such as networking, compute, databases, or security. Define clear interfaces between modules with well-documented inputs and outputs. This modular approach promotes reuse, facilitates maintenance, and allows combining components in different ways for different environments or projects."
+      },
+      "importance": "medium",
+      "category": "configuration_management",
+      "subcategory": "architecture",
+      "tags": ["modularity", "reusability", "maintainability"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Infrastructure Architecture Patterns"
+      },
+      "compatibility": {
+        "frameworks": ["terraform", "cloudformation", "pulumi"],
+        "languages": ["hcl", "yaml", "json", "python"],
+        "environments": ["cloud", "hybrid"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Módulo reutilizable de Terraform para base de datos",
+            "en": "Reusable Terraform module for a database"
+          },
+          "code": "# Ejemplo de módulo de Terraform para una base de datos PostgreSQL en AWS\n# Directorio: modules/database/postgresql/\n\n# 1. Definición de variables de entrada (inputs)\n# file: variables.tf\nvariable \"identifier\" {\n  description = \"The identifier for the database instance\"\n  type        = string\n}\n\nvariable \"instance_class\" {\n  description = \"The instance type for the database\"\n  type        = string\n  default     = \"db.t3.medium\"\n}\n\nvariable \"allocated_storage\" {\n  description = \"The amount of storage (in GB) to allocate\"\n  type        = number\n  default     = 20\n}\n\nvariable \"engine_version\" {\n  description = \"The PostgreSQL engine version to use\"\n  type        = string\n  default     = \"13.4\"\n}\n\nvariable \"database_name\" {\n  description = \"The name of the database to create\"\n  type        = string\n}\n\nvariable \"username\" {\n  description = \"The master username for the database\"\n  type        = string\n  sensitive   = true\n}\n\nvariable \"password\" {\n  description = \"The master password for the database\"\n  type        = string\n  sensitive   = true\n}\n\nvariable \"subnet_ids\" {\n  description = \"The list of subnet IDs for the database subnet group\"\n  type        = list(string)\n}\n\nvariable \"vpc_security_group_ids\" {\n  description = \"The list of security group IDs for the database\"\n  type        = list(string)\n}\n\nvariable \"backup_retention_period\" {\n  description = \"The number of days to retain backups\"\n  type        = number\n  default     = 7\n}\n\nvariable \"tags\" {\n  description = \"Tags to apply to all resources\"\n  type        = map(string)\n  default     = {}\n}\n\n# 2. Definición de recursos\n# file: main.tf\nresource \"aws_db_subnet_group\" \"this\" {\n  name       = \"${var.identifier}-subnet-group\"\n  subnet_ids = var.subnet_ids\n  tags       = var.tags\n}\n\nresource \"aws_db_instance\" \"this\" {\n  identifier             = var.identifier\n  engine                 = \"postgres\"\n  engine_version         = var.engine_version\n  instance_class         = var.instance_class\n  allocated_storage      = var.allocated_storage\n  name                   = var.database_name\n  username               = var.username\n  password               = var.password\n  vpc_security_group_ids = var.vpc_security_group_ids\n  db_subnet_group_name   = aws_db_subnet_group.this.name\n  backup_retention_period = var.backup_retention_period\n  storage_encrypted      = true\n  deletion_protection    = true\n  skip_final_snapshot    = false\n  final_snapshot_identifier = \"${var.identifier}-final-snapshot\"\n  tags                   = var.tags\n}\n\n# 3. Definición de salidas (outputs)\n# file: outputs.tf\noutput \"endpoint\" {\n  description = \"The connection endpoint for the database\"\n  value       = aws_db_instance.this.endpoint\n}\n\noutput \"arn\" {\n  description = \"The ARN of the database\"\n  value       = aws_db_instance.this.arn\n}\n\noutput \"id\" {\n  description = \"The ID of the database instance\"\n  value       = aws_db_instance.this.id\n}\n\noutput \"db_name\" {\n  description = \"The database name\"\n  value       = var.database_name\n}\n\n# 4. Uso del módulo en un proyecto\n# En el directorio raíz del proyecto: main.tf\nmodule \"production_database\" {\n  source = \"./modules/database/postgresql\"\n  \n  identifier        = \"my-app-production-db\"\n  instance_class    = \"db.m5.large\"\n  allocated_storage = 50\n  engine_version    = \"13.4\"\n  database_name     = \"app_production\"\n  username          = var.db_username\n  password          = var.db_password\n  subnet_ids        = module.vpc.private_subnet_ids\n  vpc_security_group_ids = [module.security_groups.db_sg_id]\n  backup_retention_period = 14\n  \n  tags = {\n    Environment = \"production\"\n    Project     = \"my-app\"\n    Terraform   = \"true\"\n  }\n}\n\n# Uso del mismo módulo para otro entorno\nmodule \"staging_database\" {\n  source = \"./modules/database/postgresql\"\n  \n  identifier        = \"my-app-staging-db\"\n  instance_class    = \"db.t3.small\"  # Menor capacidad para staging\n  allocated_storage = 20\n  engine_version    = \"13.4\"\n  database_name     = \"app_staging\"\n  username          = var.db_username\n  password          = var.db_password\n  subnet_ids        = module.vpc.private_subnet_ids\n  vpc_security_group_ids = [module.security_groups.db_sg_id]\n  backup_retention_period = 7       # Menos días de retención\n  \n  tags = {\n    Environment = \"staging\"\n    Project     = \"my-app\"\n    Terraform   = \"true\"\n  }\n}"
+        }
+      ],
+      "relatedInstructions": ["cm001", "cm002", "infra004"]
+    },
+    {
+      "id": "cm007",
+      "title": {
+        "es": "Implementar gestión de configuración centralizada",
+        "en": "Implement centralized configuration management"
+      },
+      "description": {
+        "es": "Utilizar un sistema centralizado para gestionar configuraciones a escala",
+        "en": "Use a centralized system to manage configurations at scale"
+      },
+      "text": {
+        "es": "Implementa un sistema centralizado de gestión de configuración para mantener y distribuir configuraciones consistentes a múltiples servidores o servicios. Utiliza herramientas como Ansible, Chef, Puppet, o servicios nativos de la nube para automatizar la aplicación de configuraciones, garantizando consistencia y facilitando la administración a escala.",
+        "en": "Implement a centralized configuration management system to maintain and distribute consistent configurations to multiple servers or services. Use tools like Ansible, Chef, Puppet, or cloud-native services to automate the application of configurations, ensuring consistency and facilitating administration at scale."
+      },
+      "importance": "medium",
+      "category": "configuration_management",
+      "subcategory": "tools",
+      "tags": ["centralization", "automation", "scaling"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Configuration Management Tools"
+      },
+      "compatibility": {
+        "frameworks": ["ansible", "chef", "puppet", "saltstack"],
+        "languages": ["yaml", "ruby", "python"],
+        "environments": ["cloud", "on-premise", "hybrid"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Playbook de Ansible para configurar servidores web",
+            "en": "Ansible playbook for configuring web servers"
+          },
+          "code": "# Ejemplo de playbook de Ansible para configurar servidores web Nginx\n# file: webserver.yml\n---\n- name: Configure Nginx web servers\n  hosts: webservers\n  become: true\n  vars:\n    nginx_port: 80\n    app_domain: \"example.com\"\n    enable_https: true\n    ssl_certificate: \"/etc/ssl/certs/example.com.crt\"\n    ssl_key: \"/etc/ssl/private/example.com.key\"\n    max_worker_connections: 1024\n    worker_processes: \"{{ ansible_processor_vcpus }}\"\n  \n  tasks:\n    - name: Install required packages\n      apt:\n        name:\n          - nginx\n          - certbot\n          - python3-certbot-nginx\n          - fail2ban\n        state: present\n        update_cache: yes\n      when: ansible_os_family == \"Debian\"\n    \n    - name: Install required packages (RHEL/CentOS)\n      yum:\n        name:\n          - nginx\n          - certbot-nginx\n          - fail2ban\n        state: present\n      when: ansible_os_family == \"RedHat\"\n    \n    - name: Create nginx configuration directory\n      file:\n        path: \"/etc/nginx/sites-available\"\n        state: directory\n        mode: '0755'\n      when: ansible_os_family == \"RedHat\"\n    \n    - name: Create nginx enabled sites directory\n      file:\n        path: \"/etc/nginx/sites-enabled\"\n        state: directory\n        mode: '0755'\n      when: ansible_os_family == \"RedHat\"\n    \n    - name: Configure Nginx global settings\n      template:\n        src: templates/nginx.conf.j2\n        dest: /etc/nginx/nginx.conf\n        owner: root\n        group: root\n        mode: '0644'\n      notify: restart nginx\n    \n    - name: Configure virtual host\n      template:\n        src: templates/vhost.conf.j2\n        dest: /etc/nginx/sites-available/{{ app_domain }}.conf\n        owner: root\n        group: root\n        mode: '0644'\n      notify: restart nginx\n    \n    - name: Enable virtual host\n      file:\n        src: /etc/nginx/sites-available/{{ app_domain }}.conf\n        dest: /etc/nginx/sites-enabled/{{ app_domain }}.conf\n        state: link\n      notify: restart nginx\n    \n    - name: Configure fail2ban\n      template:\n        src: templates/jail.local.j2\n        dest: /etc/fail2ban/jail.local\n        owner: root\n        group: root\n        mode: '0644'\n      notify: restart fail2ban\n    \n    - name: Ensure nginx is running and enabled\n      service:\n        name: nginx\n        state: started\n        enabled: yes\n    \n    - name: Ensure fail2ban is running and enabled\n      service:\n        name: fail2ban\n        state: started\n        enabled: yes\n    \n    - name: Obtain SSL Certificate with Certbot (if HTTPS enabled)\n      command: >\n        certbot --nginx -d {{ app_domain }} -d www.{{ app_domain }}\n        --non-interactive --agree-tos --email webmaster@{{ app_domain }}\n        --redirect\n      args:\n        creates: \"{{ ssl_certificate }}\"\n      when: enable_https\n    \n  handlers:\n    - name: restart nginx\n      service:\n        name: nginx\n        state: restarted\n    \n    - name: restart fail2ban\n      service:\n        name: fail2ban\n        state: restarted\n\n# Archivo de template: templates/nginx.conf.j2\n# user nginx;\nworker_processes {{ worker_processes }};\n\nerror_log /var/log/nginx/error.log warn;\npid /var/run/nginx.pid;\n\nevents {\n    worker_connections {{ max_worker_connections }};\n}\n\nhttp {\n    include /etc/nginx/mime.types;\n    default_type application/octet-stream;\n\n    log_format main '$remote_addr - $remote_user [$time_local] \"$request\" '\n                      '$status $body_bytes_sent \"$http_referer\" '\n                      '\"$http_user_agent\" \"$http_x_forwarded_for\"';\n\n    access_log /var/log/nginx/access.log main;\n\n    sendfile on;\n    tcp_nopush on;\n    tcp_nodelay on;\n    keepalive_timeout 65;\n    types_hash_max_size 2048;\n    server_tokens off;\n\n    # Gzip Settings\n    gzip on;\n    gzip_disable \"msie6\";\n    gzip_vary on;\n    gzip_proxied any;\n    gzip_comp_level 6;\n    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;\n\n    include /etc/nginx/conf.d/*.conf;\n    include /etc/nginx/sites-enabled/*;\n}"
+        }
+      ],
+      "relatedInstructions": ["cm001", "cm005", "infra003"]
+    },
+    {
+      "id": "cm008",
+      "title": {
+        "es": "Implementar validación de configuración",
+        "en": "Implement configuration validation"
+      },
+      "description": {
+        "es": "Validar automáticamente configuraciones antes de aplicarlas",
+        "en": "Automatically validate configurations before applying them"
+      },
+      "text": {
+        "es": "Implementa validación automática de configuraciones antes de su aplicación en entornos reales. Utiliza herramientas de linting, testing y validación específicas de la plataforma para detectar errores, problemas de formato, vulnerabilidades o incumplimiento de políticas. Integra estas verificaciones en el flujo de trabajo de CI/CD para prevenir despliegues con configuraciones incorrectas.",
+        "en": "Implement automatic validation of configurations before they are applied to real environments. Use linting tools, testing, and platform-specific validation to detect errors, formatting issues, vulnerabilities, or policy violations. Integrate these checks into the CI/CD workflow to prevent deployments with incorrect configurations."
+      },
+      "importance": "medium",
+      "category": "configuration_management",
+      "subcategory": "validation",
+      "tags": ["testing", "quality", "security"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Configuration Validation Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["terraform", "kubernetes", "ansible", "cloudformation"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Pipeline de CI para validar configuraciones de Terraform",
+            "en": "CI pipeline for validating Terraform configurations"
+          },
+          "code": "# Ejemplo de pipeline de CI para validación de Terraform mediante GitHub Actions\n\n# Los componentes clave incluyen:\n# 1. Triggers: Ejecutar en push a ramas principales y pull requests\n# 2. Validaciones: Formato, sintaxis, buenas prácticas y seguridad\n# 3. Herramientas utilizadas: Terraform CLI, TFLint, tfsec y Checkov\n# 4. Retroalimentación: Comentarios automáticos en PRs con resultados\n\n# El pipeline realiza las siguientes verificaciones:\n# - Formato correcto del código (terraform fmt)\n# - Validación sintáctica (terraform validate)\n# - Convenciones de codificación (TFLint)\n# - Problemas de seguridad (tfsec y Checkov)\n# - Previsualización de cambios (terraform plan)\n\n# Se generan informes en los PRs que muestran:\n# - Estado de las verificaciones de formato y validación\n# - Plan de Terraform con cambios propuestos\n# - Detalles sobre errores o advertencias encontrados\n\n# Las reglas de TFLint verifican:\n# - Variables documentadas y tipadas\n# - Convenciones de nomenclatura\n# - Versiones requeridas de Terraform y proveedores\n# - Declaraciones no utilizadas\n# - Sintaxis de comentarios correcta"
+        }
+      ],
+      "relatedInstructions": ["cm001", "cm005", "ci001"]
+    },
+    {
+      "id": "cm009",
+      "title": {
+        "es": "Implementar gestión de cambios de configuración",
+        "en": "Implement configuration change management"
+      },
+      "description": {
+        "es": "Establecer procesos formales para gestionar cambios de configuración",
+        "en": "Establish formal processes for managing configuration changes"
+      },
+      "text": {
+        "es": "Establece procesos formales para gestionar los cambios en las configuraciones de infraestructura y aplicaciones. Documenta los procedimientos de solicitud, aprobación, implementación y verificación de cambios. Utiliza herramientas de gestión de cambios integradas con el control de versiones, sistemas de tickets y CI/CD para mantener trazabilidad y cumplimiento con políticas organizacionales.",
+        "en": "Establish formal processes to manage changes in infrastructure and application configurations. Document the procedures for requesting, approving, implementing, and verifying changes. Use change management tools integrated with version control, ticketing systems, and CI/CD to maintain traceability and compliance with organizational policies."
+      },
+      "importance": "medium",
+      "category": "configuration_management",
+      "subcategory": "governance",
+      "tags": ["change_management", "compliance", "governance"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Change Management Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Procedimiento de gestión de cambios para infraestructura",
+            "en": "Change management procedure for infrastructure"
+          },
+          "code": "# Estructura recomendada para un procedimiento de gestión de cambios de configuración\n\n# 1. Categorización de cambios en tres tipos según impacto y riesgo:\n#    - Cambios Estándar: Rutinarios, pre-aprobados y de bajo riesgo\n#    - Cambios Normales: Requieren evaluación formal y proceso de aprobación\n#    - Cambios de Emergencia: Para restauración de servicio, con aprobación posterior\n\n# 2. Flujo del proceso para cambios normales:\n#    - Solicitud formal (RFC) con información completa del cambio\n#    - Revisión técnica y evaluación de impacto\n#    - Aprobación según nivel de riesgo (sistema de niveles)\n#    - Implementación supervisada con plan documentado\n#    - Verificación post-implementación y validación\n#    - Documentación y cierre formal\n\n# 3. Elementos clave de una solicitud de cambio (RFC):\n#    - Información general (solicitante, sistemas afectados, fechas)\n#    - Descripción y justificación detallada\n#    - Plan de implementación paso a paso\n#    - Plan de verificación y rollback\n#    - Análisis de riesgos con mitigaciones\n\n# 4. Integración con herramientas:\n#    - Sistema de tickets (Jira/ServiceNow) para seguimiento\n#    - Control de versiones (GitHub/GitLab) para revisión de código\n#    - CI/CD para validación y aplicación automatizada\n\n# 5. Métricas de calidad para evaluar el proceso:\n#    - Porcentaje de cambios exitosos vs fallidos\n#    - Necesidad de rollback\n#    - Cumplimiento de tiempos estimados\n#    - Incidentes post-implementación"
+        }
+      ],
+      "relatedInstructions": ["cm002", "cm008", "gov001"]
+    },
+    {
+      "id": "cm010",
+      "title": {
+        "es": "Implementar registros de auditoría de configuración",
+        "en": "Implement configuration audit logging"
+      },
+      "description": {
+        "es": "Mantener registros detallados de todos los cambios de configuración",
+        "en": "Maintain detailed logs of all configuration changes"
+      },
+      "text": {
+        "es": "Implementa un sistema de registro de auditoría que capture detalladamente todos los cambios realizados en configuraciones de infraestructura y aplicaciones. Documenta quién realizó cada cambio, cuándo, qué se modificó exactamente y por qué. Estos registros deben ser inmutables, almacenarse de forma segura y retenerse según políticas de cumplimiento. Utiliza estos registros para facilitar el análisis forense en caso de incidentes y para demostrar cumplimiento normativo.",
+        "en": "Implement an audit logging system that captures detailed information about all changes made to infrastructure and application configurations. Document who made each change, when, what was modified exactly, and why. These logs should be immutable, securely stored, and retained according to compliance policies. Use these logs to facilitate forensic analysis in case of incidents and to demonstrate regulatory compliance."
+      },
+      "importance": "medium",
+      "category": "configuration_management",
+      "subcategory": "compliance",
+      "tags": ["audit", "logging", "compliance"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Compliance Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Sistema de registro de auditoría para cambios de infraestructura",
+            "en": "Audit logging system for infrastructure changes"
+          },
+          "code": "# Componentes clave de un sistema de registro de auditoría para cambios de configuración:\n\n# 1. Información a capturar en cada registro:\n#    - Identificador único del cambio\n#    - Usuario/identidad que realizó el cambio\n#    - Fecha y hora exacta (con zona horaria)\n#    - Estado anterior y posterior al cambio\n#    - Método/herramienta utilizada para el cambio\n#    - ID de solicitud de cambio relacionada\n#    - Razón o justificación del cambio\n\n# 2. Características del sistema de registro:\n#    - Inmutabilidad (imposibilidad de modificación)\n#    - Integridad (hash criptográfico de registros)\n#    - Retención configurable según políticas\n#    - Búsqueda y filtrado avanzados\n#    - Control de acceso granular\n\n# 3. Implementaciones comunes:\n#    - AWS CloudTrail para cambios en la nube AWS\n#    - Azure Activity Log + Log Analytics\n#    - Evento git push con webhooks personalizados\n#    - Mecanismos de auditoria nativos de Kubernetes\n#    - Bases de datos de solo anexar (append-only)\n\n# 4. Integraciones recomendadas:\n#    - SIEM (Security Information and Event Management)\n#    - Sistemas de monitorización y alertas\n#    - Herramientas de generación de informes de cumplimiento\n#    - Sistemas de gestión de cambios\n\n# 5. Prácticas recomendadas:\n#    - Cifrado en tránsito y en reposo\n#    - Sincronización horaria precisa (NTP)\n#    - Preservación en múltiples ubicaciones\n#    - Revisiones periódicas de integridad"
+        }
+      ],
+      "relatedInstructions": ["cm001", "cm009", "sec002"]
+    }
+  ]
+}
