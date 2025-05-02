@@ -1,6 +1,201 @@
 {
   "instructions": [
     {
+      "id": "net001",
+      "title": {
+        "es": "Implementar segmentación de red",
+        "en": "Implement network segmentation"
+      },
+      "description": {
+        "es": "Dividir la infraestructura de red en subredes o zonas lógicas separadas",
+        "en": "Divide network infrastructure into separate logical subnets or zones"
+      },
+      "text": {
+        "es": "Implementa segmentación de red para dividir la infraestructura en zonas o subredes distintas basadas en requisitos de seguridad, funcionales y operativos. Utiliza redes privadas virtuales (VPCs), subredes y grupos de seguridad para aislar diferentes componentes y aplicar controles de acceso específicos. Esta práctica reduce la superficie de ataque, contiene brechas de seguridad potenciales y facilita la gestión del tráfico de red.",
+        "en": "Implement network segmentation to divide infrastructure into distinct zones or subnets based on security, functional, and operational requirements. Use virtual private clouds (VPCs), subnets, and security groups to isolate different components and apply specific access controls. This practice reduces the attack surface, contains potential security breaches, and facilitates network traffic management."
+      },
+      "importance": "high",
+      "category": "networking",
+      "subcategory": "security",
+      "tags": ["segmentation", "security", "isolation"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Network Security Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["vpc", "nsg", "acl", "kubernetes"],
+        "languages": ["all"],
+        "environments": ["cloud", "on-premise", "hybrid"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Arquitectura de red segmentada en AWS",
+            "en": "Segmented network architecture in AWS"
+          },
+          "code": "# Componentes clave para implementar segmentación de red efectiva en AWS:\n\n# 1. Estructura de VPC multicapa:\n#    - VPC única con múltiples CIDR no superpuestos\n#    - Subredes públicas para recursos con acceso directo a internet (balanceadores, bastiones)\n#    - Subredes privadas para aplicaciones y servicios internos\n#    - Subredes aisladas para bases de datos y almacenamiento\n#    - Zonas de disponibilidad múltiples para alta disponibilidad\n\n# 2. Control de flujo de tráfico:\n#    - Internet Gateway para comunicación pública saliente/entrante\n#    - NAT Gateway para permitir tráfico saliente desde subredes privadas\n#    - Transit Gateway para interconexión de múltiples VPCs\n#    - Network ACLs para control de acceso sin estado a nivel de subred\n#    - Security Groups para control de acceso con estado a nivel de instancia\n\n# 3. Consideraciones de diseño:\n#    - Segmentación por función (web, aplicación, datos)\n#    - Segmentación por entorno (desarrollo, pruebas, producción)\n#    - Tamaño de subredes planificado para crecimiento futuro\n#    - Comunicación entre segmentos estrictamente controlada\n#    - Implementación del principio de privilegio mínimo"
+        }
+      ],
+      "relatedInstructions": ["net002", "net007", "sec001"]
+    },
+    {
+      "id": "net002",
+      "title": {
+        "es": "Implementar redes privadas virtuales (VPN)",
+        "en": "Implement virtual private networks (VPN)"
+      },
+      "description": {
+        "es": "Configurar conexiones seguras encriptadas entre redes separadas",
+        "en": "Set up secure encrypted connections between separate networks"
+      },
+      "text": {
+        "es": "Implementa soluciones de red privada virtual (VPN) para establecer canales de comunicación seguros entre diferentes redes o para conectar usuarios remotos a recursos internos. Utiliza protocolos de encriptación robustos, autenticación fuerte y configuraciones seguras. Las VPNs permiten extender redes privadas de forma segura a través de internet, protegiendo datos en tránsito y facilitando el acceso remoto seguro a recursos corporativos.",
+        "en": "Implement virtual private network (VPN) solutions to establish secure communication channels between different networks or to connect remote users to internal resources. Use robust encryption protocols, strong authentication, and secure configurations. VPNs allow secure extension of private networks across the internet, protecting data in transit and facilitating secure remote access to corporate resources."
+      },
+      "importance": "high",
+      "category": "networking",
+      "subcategory": "connectivity",
+      "tags": ["security", "remote_access", "encryption"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Secure Connectivity Patterns"
+      },
+      "compatibility": {
+        "frameworks": ["openvpn", "wireguard", "ipsec", "ssl_vpn"],
+        "languages": ["all"],
+        "environments": ["cloud", "on-premise", "hybrid"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Configuración de VPN site-to-site en entornos cloud",
+            "en": "Site-to-site VPN configuration in cloud environments"
+          },
+          "code": "# Aspectos clave para implementación de VPN site-to-site en entornos cloud:\n\n# 1. Componentes principales:\n#    - Gateway VPN en cada extremo (on-premises y cloud)\n#    - Túneles redundantes para alta disponibilidad\n#    - Rutas definidas para determinar qué tráfico atraviesa la VPN\n#    - Tablas de ruteo actualizadas en ambos extremos\n\n# 2. Configuraciones de seguridad:\n#    - Protocolos de encriptación fuertes (AES-256 recomendado)\n#    - Autenticación mediante clave pre-compartida o certificados\n#    - IKEv2 (Internet Key Exchange) para negociación segura de claves\n#    - Perfect Forward Secrecy (PFS) habilitado\n#    - Política de seguridad IPsec con parámetros adecuados\n\n# 3. Consideraciones de monitoreo:\n#    - Estado del túnel (up/down)\n#    - Latencia y rendimiento del túnel\n#    - Volúmenes de tráfico\n#    - Errores de negociación o caídas de túnel\n#    - Alertas automatizadas para problemas\n\n# 4. Prácticas recomendadas:\n#    - Implementar túneles redundantes en diferentes zonas\n#    - Configurar rutas estáticas o BGP según necesidades\n#    - Documentar rangos de IPs en ambos extremos\n#    - Realizar pruebas periódicas de failover\n#    - Mantener credenciales en sistema seguro de gestión"
+        }
+      ],
+      "relatedInstructions": ["net001", "net006", "sec002"]
+    },
+    {
+      "id": "net003",
+      "title": {
+        "es": "Implementar balanceo de carga",
+        "en": "Implement load balancing"
+      },
+      "description": {
+        "es": "Distribuir tráfico de red entre múltiples servidores o servicios",
+        "en": "Distribute network traffic across multiple servers or services"
+      },
+      "text": {
+        "es": "Implementa soluciones de balanceo de carga para distribuir eficientemente el tráfico entre múltiples instancias de aplicación o servicios. Configura verificaciones de salud, algoritmos de distribución apropiados y políticas de persistencia según los requisitos de la aplicación. El balanceo de carga mejora la disponibilidad, escalabilidad y rendimiento de las aplicaciones, al tiempo que proporciona resistencia contra fallos de componentes individuales.",
+        "en": "Implement load balancing solutions to efficiently distribute traffic among multiple application instances or services. Configure health checks, appropriate distribution algorithms, and stickiness policies according to application requirements. Load balancing improves application availability, scalability, and performance, while providing resilience against individual component failures."
+      },
+      "importance": "high",
+      "category": "networking",
+      "subcategory": "performance",
+      "tags": ["high_availability", "scalability", "resilience"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "High Availability Patterns"
+      },
+      "compatibility": {
+        "frameworks": ["nginx", "haproxy", "alb", "nlb", "traefik", "envoy"],
+        "languages": ["all"],
+        "environments": ["cloud", "on-premise", "hybrid", "kubernetes"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Arquitectura de balanceo de carga en aplicaciones web",
+            "en": "Load balancing architecture for web applications"
+          },
+          "code": "# Conceptos clave para implementar balanceo de carga efectivo en aplicaciones web:\n\n# 1. Tipos de balanceadores según caso de uso:\n#    - Capa 4 (transporte): Basado en IP/puerto, menor latencia, ideal para TCP/UDP genérico\n#    - Capa 7 (aplicación): Basado en contenido HTTP, más inteligente, permite enrutamiento por path/header\n#    - Global: Distribución geográfica mediante DNS, ideal para disponibilidad multi-región\n#    - Interno: Para comunicación entre servicios dentro de la red privada\n\n# 2. Algoritmos de distribución comunes:\n#    - Round Robin: Distribución secuencial, simple pero efectiva para instancias homogéneas\n#    - Least Connections: Envía a servidor con menos conexiones activas\n#    - Least Response Time: Preferencia por servidores más rápidos\n#    - IP Hash: Consistencia para usuarios específicos (sesiones)\n#    - Weighted: Permite asignar capacidades diferentes a cada servidor\n\n# 3. Configuraciones críticas:\n#    - Health Checks: Verificación proactiva de disponibilidad de backends\n#    - Session Persistence: Mantener usuario en mismo servidor cuando sea necesario\n#    - Connection Draining: Permitir finalizar conexiones existentes durante actualizaciones\n#    - SSL Termination: Descarga de procesamiento criptográfico en balanceador\n#    - Timeouts: Configurados adecuadamente para evitar conexiones huérfanas\n\n# 4. Arquitectura de alta disponibilidad:\n#    - Balanceadores redundantes (primario/secundario)\n#    - Backends en múltiples zonas de disponibilidad\n#    - Monitoreo y alertas automatizadas\n#    - Auto-scaling basado en métricas de carga\n#    - Failover automático en caso de problemas"
+        }
+      ],
+      "relatedInstructions": ["net007", "infra003", "scal001"]
+    },
+    {
+      "id": "net004",
+      "title": {
+        "es": "Implementar redes definidas por software (SDN)",
+        "en": "Implement software-defined networking (SDN)"
+      },
+      "description": {
+        "es": "Separar el control de red de los dispositivos físicos mediante abstracciones programáticas",
+        "en": "Separate network control from physical devices using programmatic abstractions"
+      },
+      "text": {
+        "es": "Implementa redes definidas por software (SDN) para separar el plano de control del plano de datos en la infraestructura de red. Utiliza controladores centralizados e interfaces programáticas para gestionar componentes de red de forma dinámica y automatizada. SDN permite una mayor flexibilidad, automatización, y capacidad de respuesta a cambios en requisitos de red, facilitando la implementación de políticas consistentes en entornos complejos.",
+        "en": "Implement software-defined networking (SDN) to separate the control plane from the data plane in network infrastructure. Use centralized controllers and programmatic interfaces to manage network components dynamically and in an automated fashion. SDN enables greater flexibility, automation, and responsiveness to changing network requirements, facilitating consistent policy implementation in complex environments."
+      },
+      "importance": "medium",
+      "category": "networking",
+      "subcategory": "architecture",
+      "tags": ["automation", "programmability", "agility"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Modern Network Architecture"
+      },
+      "compatibility": {
+        "frameworks": ["openflow", "opendaylight", "vmware_nsx", "cisco_aci"],
+        "languages": ["python", "go", "java"],
+        "environments": ["cloud", "on-premise", "hybrid", "datacenter"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Arquitectura SDN para entornos cloud",
+            "en": "SDN architecture for cloud environments"
+          },
+          "code": "# Conceptos clave para implementar SDN en entornos cloud:\n\n# 1. Componentes fundamentales de la arquitectura SDN:\n#    - Plano de control: Controlador centralizado con visión global de la red\n#    - Plano de datos: Dispositivos de reenvío que manejan el tráfico real\n#    - APIs y northbound interfaces: Para programación y automatización\n#    - Southbound interfaces: Comunicación entre controlador y dispositivos (ej. OpenFlow)\n\n# 2. Beneficios principales de la implementación SDN:\n#    - Programabilidad: Configuración mediante código (Infrastructure as Code)\n#    - Automatización: Despliegue y gestión basados en políticas\n#    - Agilidad: Rápida adaptación a cambios en requisitos de negocio\n#    - Visibilidad: Monitoreo centralizado y análisis avanzado\n#    - Microsegmentación: Control granular de políticas de seguridad\n\n# 3. Implementaciones comunes en entornos cloud:\n#    - Overlay Networks: Redes virtualizadas sobre infraestructura física existente\n#    - Controladores multi-tenant: Aislamiento entre diferentes inquilinos\n#    - Integración con orquestadores: Kubernetes, OpenStack, VMware\n#    - Service mesh: Para control avanzado de tráfico entre microservicios\n\n# 4. Consideraciones operativas:\n#    - Alta disponibilidad de controladores SDN\n#    - Estrategias de actualización sin interrupciones\n#    - Monitoreo específico de componentes SDN\n#    - Pipelines de CI/CD para cambios de configuración de red\n#    - Modelos de pruebas automatizadas para políticas de red"
+        }
+      ],
+      "relatedInstructions": ["net001", "net008", "auto001"]
+    },
+    {
+      "id": "net005",
+      "title": {
+        "es": "Implementar redes de área amplia definidas por software (SD-WAN)",
+        "en": "Implement software-defined wide area networks (SD-WAN)"
+      },
+      "description": {
+        "es": "Optimizar la conectividad entre ubicaciones geográficamente dispersas",
+        "en": "Optimize connectivity between geographically dispersed locations"
+      },
+      "text": {
+        "es": "Implementa soluciones SD-WAN para optimizar la conectividad entre ubicaciones distribuidas mediante la abstracción de las conexiones físicas subyacentes. Configura políticas de enrutamiento inteligente basadas en aplicaciones, calidad de servicio (QoS) y balanceo de carga entre múltiples enlaces. SD-WAN mejora el rendimiento de aplicaciones críticas, simplifica la gestión de redes distribuidas y reduce costos al permitir el uso eficiente de múltiples tecnologías de transporte.",
+        "en": "Implement SD-WAN solutions to optimize connectivity between distributed locations by abstracting the underlying physical connections. Configure intelligent routing policies based on applications, quality of service (QoS), and load balancing across multiple links. SD-WAN improves the performance of critical applications, simplifies distributed network management, and reduces costs by enabling efficient use of multiple transport technologies."
+      },
+      "importance": "medium",
+      "category": "networking",
+      "subcategory": "wan",
+      "tags": ["distributed", "optimization", "connectivity"],
+      "source": {
+        "agentType": "general",
+        "repository": "system-prompts/devops",
+        "context": "Enterprise Networking"
+      },
+      "compatibility": {
+        "frameworks": ["cisco_sdwan", "velocloud", "silver_peak", "fortinet"],
+        "languages": ["all"],
+        "environments": ["multi_site", "branch_office", "hybrid_cloud"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Arquitectura SD-WAN para empresas distribuidas",
+            "en": "SD-WAN architecture for distributed enterprises"
+          },
+          "code": "# Elementos clave para implementar SD-WAN en empresas con múltiples ubicaciones:\n\n# 1. Componentes de la arquitectura SD-WAN:\n#    - Plano de orquestación: Gestión centralizada y políticas (en cloud o on-premises)\n#    - Plano de control: Distribución de políticas y visibilidad en tiempo real\n#    - Plano de datos: Dispositivos SD-WAN en cada ubicación para encapsulación y forwarding\n#    - Enlaces de transporte: MPLS, internet broadband, 4G/5G, satelital\n\n# 2. Políticas de enrutamiento inteligente:\n#    - Basadas en aplicación: Priorización por tipo de tráfico (voz, video, datos)\n#    - Monitoreo de performance: Latencia, jitter, pérdida de paquetes\n#    - Selección dinámica de ruta: Cambio automático ante degradación de enlace\n#    - Agregación de ancho de banda: Uso simultáneo de múltiples enlaces\n#    - Fail-over automático: Continuidad ante fallos de conexión\n\n# 3. Características de seguridad críticas:\n#    - Segmentación de tráfico end-to-end\n#    - Encriptación de datos en tránsito (IPsec)\n#    - Firewalls integrados y/o service chaining con NGFW\n#    - Integración con CASB para aplicaciones SaaS\n#    - Detección de intrusiones y protección de amenazas\n\n# 4. Consideraciones de diseño para multi-cloud:\n#    - Extensión a proveedores cloud (AWS, Azure, GCP)\n#    - Optimización de ruta para aplicaciones SaaS\n#    - Gestión de identidad y acceso unificada\n#    - Visibilidad global de rendimiento de aplicaciones\n#    - Automatización de despliegue mediante templates"
+        }
+      ],
+      "relatedInstructions": ["net002", "net004", "perf001"]
+    },
+    {
       "id": "net006",
       "title": {
         "es": "Implementar gestión de ancho de banda y calidad de servicio (QoS)",
