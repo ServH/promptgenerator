@@ -1,0 +1,199 @@
+{
+  "instructions": [
+    {
+      "id": "db_rel_006",
+      "title": {
+        "es": "Tipos de datos apropiados",
+        "en": "Appropriate data types"
+      },
+      "description": {
+        "es": "Seleccionar tipos de datos óptimos para cada columna",
+        "en": "Select optimal data types for each column"
+      },
+      "text": {
+        "es": "Selecciona los tipos de datos más apropiados para cada columna, considerando la naturaleza de los datos, rango esperado y requisitos de almacenamiento. Utiliza tipos enteros para IDs y claves, tipos de fecha/hora para timestamps, tipos de texto de longitud fija o variable según corresponda, y tipos especializados (como UUID, JSON, o geoespaciales) cuando sean necesarios. Los tipos de datos correctos mejoran el rendimiento, reducen el uso de almacenamiento y contribuyen a la integridad de los datos.",
+        "en": "Select the most appropriate data types for each column, considering the nature of the data, expected range, and storage requirements. Use integer types for IDs and keys, date/time types for timestamps, fixed-length or variable-length text types as appropriate, and specialized types (such as UUID, JSON, or geospatial) when needed. Correct data types improve performance, reduce storage usage, and contribute to data integrity."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["schema_design", "performance", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Seleccionando tipos de datos óptimos para una tabla de usuarios",
+            "en": "Selecting optimal data types for a users table"
+          },
+          "code": "CREATE TABLE users (id BIGINT PRIMARY KEY, username VARCHAR(50) NOT NULL, email VARCHAR(255) UNIQUE, created_at TIMESTAMP, last_login TIMESTAMP, settings JSONB);"
+        }
+      ],
+      "relatedInstructions": ["db_rel_001", "db_mod_002"]
+    },
+    {
+      "id": "db_rel_007",
+      "title": {
+        "es": "Restricciones y validaciones",
+        "en": "Constraints and validations"
+      },
+      "description": {
+        "es": "Implementar restricciones para garantizar la integridad de los datos",
+        "en": "Implement constraints to ensure data integrity"
+      },
+      "text": {
+        "es": "Implementa restricciones a nivel de base de datos para garantizar la integridad de los datos, incluyendo claves primarias, claves foráneas, restricciones UNIQUE, CHECK y NOT NULL. Estas restricciones proporcionan una capa de validación independiente de la aplicación, asegurando que solo datos válidos sean almacenados incluso cuando las validaciones de la aplicación fallan o son evitadas. Considera también triggers para validaciones más complejas que no pueden expresarse con restricciones simples.",
+        "en": "Implement database-level constraints to ensure data integrity, including primary keys, foreign keys, UNIQUE, CHECK, and NOT NULL constraints. These constraints provide a validation layer independent of the application, ensuring that only valid data is stored even when application validations fail or are bypassed. Also consider triggers for more complex validations that cannot be expressed with simple constraints."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["data_integrity", "schema_design", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando restricciones para garantizar la integridad de los datos",
+            "en": "Implementing constraints to ensure data integrity"
+          },
+          "code": "ALTER TABLE products ADD CONSTRAINT price_check CHECK (price > 0); ALTER TABLE users ADD CONSTRAINT email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$');"
+        }
+      ],
+      "relatedInstructions": ["db_rel_002", "db_rel_006"]
+    },
+    {
+      "id": "db_rel_008",
+      "title": {
+        "es": "Control de concurrencia",
+        "en": "Concurrency control"
+      },
+      "description": {
+        "es": "Gestionar el acceso concurrente a los datos para evitar conflictos",
+        "en": "Manage concurrent data access to prevent conflicts"
+      },
+      "text": {
+        "es": "Implementa mecanismos apropiados de control de concurrencia para gestionar el acceso simultáneo a los datos. Utiliza niveles de aislamiento de transacciones adecuados, bloqueos optimistas o pesimistas según los requisitos de la aplicación. Evita deadlocks diseñando transacciones para que adquieran recursos en un orden consistente y minimiza el tiempo que las transacciones mantienen bloqueos. Considera estrategias específicas para operaciones de larga duración para minimizar su impacto en el rendimiento general.",
+        "en": "Implement appropriate concurrency control mechanisms to manage simultaneous data access. Use suitable transaction isolation levels, optimistic or pessimistic locking based on application requirements. Avoid deadlocks by designing transactions to acquire resources in a consistent order and minimize the time transactions hold locks. Consider specific strategies for long-running operations to minimize their impact on overall performance."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["concurrency", "performance", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando control de concurrencia optimista",
+            "en": "Implementing optimistic concurrency control"
+          },
+          "code": "BEGIN TRANSACTION; SELECT * FROM products WHERE id = 1 AND version = 5; UPDATE products SET stock = stock - 1, version = version + 1 WHERE id = 1 AND version = 5; COMMIT TRANSACTION;"
+        }
+      ],
+      "relatedInstructions": ["db_rel_004", "db_rel_007"]
+    },
+    {
+      "id": "db_rel_009",
+      "title": {
+        "es": "Particionamiento de tablas",
+        "en": "Table partitioning"
+      },
+      "description": {
+        "es": "Particionar tablas grandes para mejorar el rendimiento y la mantenibilidad",
+        "en": "Partition large tables to improve performance and manageability"
+      },
+      "text": {
+        "es": "Implementa particionamiento de tablas para dividir tablas grandes en segmentos más pequeños y manejables basados en rangos, listas o hash de valores de columnas. El particionamiento puede mejorar significativamente el rendimiento de consultas que acceden solo a subconjuntos específicos de datos, facilitar operaciones de mantenimiento como archivado o purga de datos, y permitir la distribución de datos en múltiples dispositivos de almacenamiento. Considera patrones de acceso a datos cuando definas la estrategia de particionamiento.",
+        "en": "Implement table partitioning to divide large tables into smaller, more manageable segments based on ranges, lists, or hash of column values. Partitioning can significantly improve query performance for queries that access only specific subsets of data, facilitate maintenance operations such as archiving or purging data, and allow distribution of data across multiple storage devices. Consider data access patterns when defining the partitioning strategy."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["performance", "scalability", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Particionando una tabla por rango de fechas",
+            "en": "Partitioning a table by date range"
+          },
+          "code": "CREATE TABLE orders (id BIGINT, order_date DATE, customer_id BIGINT, amount DECIMAL(10,2)) PARTITION BY RANGE (order_date); CREATE TABLE orders_2023 PARTITION OF orders FOR VALUES FROM ('2023-01-01') TO ('2024-01-01');"
+        }
+      ],
+      "relatedInstructions": ["db_rel_003", "db_rel_010"]
+    },
+    {
+      "id": "db_rel_010",
+      "title": {
+        "es": "Vistas y funciones almacenadas",
+        "en": "Views and stored functions"
+      },
+      "description": {
+        "es": "Utilizar vistas y funciones para encapsular lógica y simplificar consultas",
+        "en": "Use views and functions to encapsulate logic and simplify queries"
+      },
+      "text": {
+        "es": "Utiliza vistas y funciones almacenadas para encapsular lógica de consulta compleja, proporcionar abstracciones consistentes sobre los datos subyacentes, y simplificar el acceso a información frecuentemente consultada. Las vistas materializadas pueden mejorar significativamente el rendimiento para consultas costosas con resultados relativamente estables. Las funciones permiten reutilizar lógica común y mantener la coherencia en cómo se realizan cálculos o transformaciones específicas en toda la aplicación.",
+        "en": "Use views and stored functions to encapsulate complex query logic, provide consistent abstractions over underlying data, and simplify access to frequently queried information. Materialized views can significantly improve performance for costly queries with relatively stable results. Functions allow reusing common logic and maintain consistency in how specific calculations or transformations are performed throughout the application."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["performance", "maintainability", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Creando una vista materializada para reportes frecuentes",
+            "en": "Creating a materialized view for frequent reports"
+          },
+          "code": "CREATE MATERIALIZED VIEW monthly_sales AS SELECT date_trunc('month', order_date) AS month, SUM(amount) AS total_sales FROM orders GROUP BY date_trunc('month', order_date); CREATE INDEX idx_monthly_sales_month ON monthly_sales(month);"
+        }
+      ],
+      "relatedInstructions": ["db_rel_005", "db_rel_011"]
+    }
+  ]
+}
