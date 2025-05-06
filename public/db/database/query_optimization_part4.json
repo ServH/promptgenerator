@@ -1,0 +1,199 @@
+{
+  "instructions": [
+    {
+      "id": "db_qry_021",
+      "title": {
+        "es": "Optimización de consultas de ventana",
+        "en": "Window function optimization"
+      },
+      "description": {
+        "es": "Estrategias para optimizar consultas que utilizan funciones de ventana",
+        "en": "Strategies for optimizing queries using window functions"
+      },
+      "text": {
+        "es": "Optimiza consultas que utilizan funciones de ventana (OVER, PARTITION BY, ORDER BY) para cálculos analíticos. Estas funciones son potentes pero pueden ser costosas en términos de rendimiento para grandes conjuntos de datos. Limita el tamaño del conjunto de datos aplicando filtros antes de las operaciones de ventana. Asegúrate de que las columnas utilizadas en PARTITION BY y ORDER BY estén indexadas apropiadamente. Considera materializar resultados intermedios para reutilizarlos en múltiples cálculos de ventana. Evalúa si es posible reestructurar consultas complejas con múltiples funciones de ventana en pasos más simples utilizando CTE o tablas temporales.",
+        "en": "Optimize queries using window functions (OVER, PARTITION BY, ORDER BY) for analytical calculations. These functions are powerful but can be performance-intensive for large datasets. Limit the dataset size by applying filters before window operations. Ensure columns used in PARTITION BY and ORDER BY are appropriately indexed. Consider materializing intermediate results for reuse in multiple window calculations. Evaluate whether complex queries with multiple window functions can be restructured into simpler steps using CTEs or temporary tables."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "analytical_queries", "advanced"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Performance"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Optimizando consultas con funciones de ventana",
+            "en": "Optimizing queries with window functions"
+          },
+          "code": "-- Filtrar antes de aplicar funciones de ventana\nWITH filtered_data AS (\n  SELECT * FROM sales\n  WHERE sale_date >= '2023-01-01'\n)\nSELECT \n  product_id,\n  sale_date,\n  amount,\n  SUM(amount) OVER(PARTITION BY product_id ORDER BY sale_date) as running_total\nFROM filtered_data\nORDER BY product_id, sale_date;"
+        }
+      ],
+      "relatedInstructions": ["db_qry_005", "db_qry_009"]
+    },
+    {
+      "id": "db_qry_022",
+      "title": {
+        "es": "Técnicas de optimización para cargas específicas",
+        "en": "Workload-specific optimization techniques"
+      },
+      "description": {
+        "es": "Optimizar consultas según el tipo específico de carga de trabajo",
+        "en": "Optimize queries based on specific workload types"
+      },
+      "text": {
+        "es": "Aplica técnicas de optimización específicas según el tipo de carga de trabajo de la base de datos. Para cargas de trabajo OLTP (procesamiento de transacciones), prioriza índices selectivos, transacciones cortas y optimización para operaciones de lectura/escritura de una sola fila. Para cargas OLAP (procesamiento analítico), enfócate en índices columnares, particionamiento efectivo y materialización de resultados precalculados para mejorar consultas complejas. Para cargas de trabajo de búsqueda, utiliza índices de texto completo, diccionarios personalizados y optimización de búsqueda facetada. Ajusta las configuraciones del motor de base de datos (memoria, cachés, paralelismo) según las características específicas de la carga de trabajo.",
+        "en": "Apply optimization techniques specific to the database workload type. For OLTP (transaction processing) workloads, prioritize selective indexes, short transactions, and optimization for single-row read/write operations. For OLAP (analytical processing) workloads, focus on columnar indexes, effective partitioning, and materialization of pre-calculated results to improve complex queries. For search workloads, use full-text indexes, custom dictionaries, and faceted search optimization. Adjust database engine settings (memory, caches, parallelism) according to the specific workload characteristics."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "architecture", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Configurando base de datos para diferentes tipos de cargas",
+            "en": "Configuring database for different workload types"
+          },
+          "code": "-- Configuración para OLTP (PostgreSQL)\nALTER SYSTEM SET shared_buffers = '8GB';\nALTER SYSTEM SET effective_cache_size = '24GB';\nALTER SYSTEM SET work_mem = '64MB';\nALTER SYSTEM SET max_connections = 200;\n\n-- Configuración para OLAP (PostgreSQL)\nALTER SYSTEM SET shared_buffers = '12GB';\nALTER SYSTEM SET effective_cache_size = '36GB';\nALTER SYSTEM SET work_mem = '1GB';\nALTER SYSTEM SET max_parallel_workers_per_gather = 8;\nALTER SYSTEM SET max_connections = 40;"
+        }
+      ],
+      "relatedInstructions": ["db_qry_015", "db_qry_013"]
+    },
+    {
+      "id": "db_qry_023",
+      "title": {
+        "es": "Optimización de consultas en tiempo real",
+        "en": "Real-time query optimization"
+      },
+      "description": {
+        "es": "Estrategias para optimizar consultas con requisitos de tiempo real",
+        "en": "Strategies for optimizing queries with real-time requirements"
+      },
+      "text": {
+        "es": "Implementa estrategias específicas para optimizar consultas con requisitos de tiempo real o baja latencia. Utiliza índices en memoria, caché de resultados y estructuras de datos optimizadas para lecturas rápidas. Considera la replicación de datos para distribuir la carga de lectura y mantener operaciones de escritura separadas de las consultas analíticas. Para consultas frecuentes y predecibles, implementa resultados precalculados que se actualicen de manera incremental. Monitorea y optimiza los recursos del sistema para garantizar la disponibilidad constante de CPU, memoria e I/O para consultas críticas. Implementa políticas de timeout y degradación gradual para mantener la respuesta del sistema incluso bajo carga extrema.",
+        "en": "Implement specific strategies to optimize queries with real-time or low-latency requirements. Use in-memory indexes, result caching, and data structures optimized for fast reads. Consider data replication to distribute read load and keep write operations separate from analytical queries. For frequent and predictable queries, implement pre-calculated results that update incrementally. Monitor and optimize system resources to ensure consistent availability of CPU, memory, and I/O for critical queries. Implement timeout policies and graceful degradation to maintain system responsiveness even under extreme load."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "real_time", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando estrategias para consultas en tiempo real",
+            "en": "Implementing strategies for real-time queries"
+          },
+          "code": "-- PostgreSQL: Crear índice en memoria\nCREATE INDEX CONCURRENTLY idx_transactions_realtime ON transactions USING hash(id);\n\n-- Redis: Mantener datos precalculados para acceso de baja latencia\n// Actualizar contador en tiempo real\nREDIS> INCR site:pageviews:homepage\n\n// Consultar con latencia submilisegundo\nREDIS> GET site:pageviews:homepage"
+        }
+      ],
+      "relatedInstructions": ["db_qry_013", "db_qry_010"]
+    },
+    {
+      "id": "db_qry_024",
+      "title": {
+        "es": "Técnicas de particionamiento para optimización",
+        "en": "Partitioning techniques for optimization"
+      },
+      "description": {
+        "es": "Usar particionamiento de tablas para mejorar el rendimiento de consultas",
+        "en": "Use table partitioning to improve query performance"
+      },
+      "text": {
+        "es": "Utiliza técnicas de particionamiento de tablas para mejorar el rendimiento de consultas, especialmente para conjuntos de datos muy grandes. El particionamiento puede significativamente mejorar el rendimiento mediante la poda de particiones, que permite que las consultas accedan solo a las particiones relevantes en lugar de escanear la tabla completa. Implementa estrategias de particionamiento basadas en los patrones de acceso más comunes: particionamiento por rango para datos secuenciales como fechas, particionamiento por hash para distribución uniforme, o particionamiento por lista para categorías discretas. Asegúrate de que las consultas incluyan la columna de particionamiento en sus predicados para aprovechar la poda de particiones. Considera subparticionamiento para datos extremadamente grandes o para optimizar diferentes patrones de acceso.",
+        "en": "Use table partitioning techniques to improve query performance, especially for very large datasets. Partitioning can significantly improve performance through partition pruning, which allows queries to access only relevant partitions instead of scanning the entire table. Implement partitioning strategies based on the most common access patterns: range partitioning for sequential data like dates, hash partitioning for even distribution, or list partitioning for discrete categories. Ensure queries include the partitioning column in their predicates to leverage partition pruning. Consider subpartitioning for extremely large data or to optimize different access patterns."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "scalability", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando particionamiento para optimizar consultas",
+            "en": "Implementing partitioning to optimize queries"
+          },
+          "code": "-- PostgreSQL: Particionamiento por rango de fechas\nCREATE TABLE sales (\n  id SERIAL,\n  sale_date DATE NOT NULL,\n  amount DECIMAL(10,2),\n  product_id INT\n) PARTITION BY RANGE (sale_date);\n\n-- Crear particiones individuales\nCREATE TABLE sales_2023_q1 PARTITION OF sales\n  FOR VALUES FROM ('2023-01-01') TO ('2023-04-01');\n\nCREATE TABLE sales_2023_q2 PARTITION OF sales\n  FOR VALUES FROM ('2023-04-01') TO ('2023-07-01');\n\n-- Consulta que se beneficia de la poda de particiones\nSELECT * FROM sales WHERE sale_date BETWEEN '2023-02-01' AND '2023-03-31';"
+        }
+      ],
+      "relatedInstructions": ["db_rel_009", "db_qry_019"]
+    },
+    {
+      "id": "db_qry_025",
+      "title": {
+        "es": "Optimización para claves externas y restricciones",
+        "en": "Optimization for foreign keys and constraints"
+      },
+      "description": {
+        "es": "Estrategias para optimizar el rendimiento con claves externas y restricciones",
+        "en": "Strategies for optimizing performance with foreign keys and constraints"
+      },
+      "text": {
+        "es": "Implementa estrategias específicas para optimizar el rendimiento de las bases de datos que utilizan restricciones de integridad como claves externas, restricciones CHECK y UNIQUE. Equilibra la integridad de datos con el rendimiento creando índices para todas las columnas utilizadas en restricciones de clave externa, especialmente en tablas que frecuentemente reciben operaciones de inserción o actualización. Evalúa cuidadosamente las acciones en cascada (CASCADE, SET NULL) y su impacto en el rendimiento durante operaciones por lotes grandes. Considera deshabilitar temporalmente las restricciones durante cargas masivas de datos, pero asegúrate de validar los datos antes de reactivarlas. Para sistemas de alta concurrencia, optimiza el aislamiento de transacciones y el bloqueo relacionado con las verificaciones de restricciones.",
+        "en": "Implement specific strategies to optimize the performance of databases using integrity constraints such as foreign keys, CHECK, and UNIQUE constraints. Balance data integrity with performance by creating indexes for all columns used in foreign key constraints, especially on tables that frequently receive insert or update operations. Carefully evaluate cascade actions (CASCADE, SET NULL) and their performance impact during large batch operations. Consider temporarily disabling constraints during bulk data loads, but ensure data validation before re-enabling them. For high-concurrency systems, optimize transaction isolation and locking related to constraint checking."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "data_integrity", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Performance"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Optimizando rendimiento con claves externas",
+            "en": "Optimizing performance with foreign keys"
+          },
+          "code": "-- Asegurar que las claves externas tengan índices\nCREATE INDEX idx_orders_customer_id ON orders(customer_id);\n\n-- Deshabilitar temporalmente restricciones para carga masiva\nBEGIN TRANSACTION;\n\nALTER TABLE orders DISABLE TRIGGER ALL;\n\n-- Carga masiva de datos aquí\nCOPY orders FROM '/tmp/orders.csv' WITH CSV HEADER;\n\n-- Reactivar restricciones y validar\nALTER TABLE orders ENABLE TRIGGER ALL;\n\n-- Verificar integridad antes de confirmar\nSELECT COUNT(*) FROM orders o LEFT JOIN customers c ON o.customer_id = c.id WHERE c.id IS NULL;\n\nCOMMIT;"
+        }
+      ],
+      "relatedInstructions": ["db_rel_002", "db_rel_007"]
+    }
+  ]
+}
