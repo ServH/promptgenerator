@@ -116,6 +116,203 @@
         }
       ],
       "relatedInstructions": ["react001", "react002", "react004"]
+    },
+    {
+      "id": "react007",
+      "title": {
+        "es": "Hooks personalizados reutilizables",
+        "en": "Reusable custom hooks"
+      },
+      "description": {
+        "es": "Extraer lógica compleja en hooks personalizados para mejorar la reutilización de código",
+        "en": "Extract complex logic into custom hooks to improve code reuse"
+      },
+      "text": {
+        "es": "Crea hooks personalizados para encapsular y reutilizar lógica compleja en tus aplicaciones React. Los hooks personalizados son funciones JavaScript que pueden usar otros hooks de React y deben comenzar con 'use' (por ejemplo, useFetch, useLocalStorage). Esto permite extraer la lógica del ciclo de vida y estado de los componentes, facilitando la reutilización en diferentes partes de la aplicación y mejorando la legibilidad y mantenibilidad del código. Los hooks personalizados bien diseñados hacen que la lógica sea independiente de la interfaz de usuario y simplifican las pruebas.",
+        "en": "Create custom hooks to encapsulate and reuse complex logic in your React applications. Custom hooks are JavaScript functions that can use other React hooks and should start with 'use' (e.g., useFetch, useLocalStorage). This allows extracting lifecycle and state logic from components, enabling reuse across different parts of the application and improving code readability and maintainability. Well-designed custom hooks make logic independent of the UI and simplify testing."
+      },
+      "importance": "high",
+      "category": "hooks",
+      "subcategory": "custom",
+      "tags": ["frontend", "react", "code_organization"],
+      "source": {
+        "agentType": "windsurf",
+        "repository": "Windsurf/Windsurf.txt",
+        "context": "Web Development section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "nextjs", "gatsby"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplos de hooks personalizados comunes",
+            "en": "Examples of common custom hooks"
+          },
+          "code": "import { useState, useEffect, useCallback, useRef } from 'react';\n\n// Custom hook for fetching data\nexport function useFetch(url, options = {}) {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n  \n  const fetchData = useCallback(async () => {\n    try {\n      setLoading(true);\n      setError(null);\n      \n      const response = await fetch(url, options);\n      \n      if (!response.ok) {\n        throw new Error(`HTTP error! Status: ${response.status}`);\n      }\n      \n      const result = await response.json();\n      setData(result);\n    } catch (err) {\n      setError(err.message || 'An error occurred while fetching data');\n    } finally {\n      setLoading(false);\n    }\n  }, [url, options]);\n  \n  useEffect(() => {\n    fetchData();\n  }, [fetchData]);\n  \n  // Return values and a refetch function\n  return { data, loading, error, refetch: fetchData };\n}\n\n// Custom hook for managing local storage\nexport function useLocalStorage(key, initialValue) {\n  // State to store our value\n  const [storedValue, setStoredValue] = useState(() => {\n    if (typeof window === 'undefined') {\n      return initialValue;\n    }\n    \n    try {\n      const item = window.localStorage.getItem(key);\n      return item ? JSON.parse(item) : initialValue;\n    } catch (error) {\n      console.error(error);\n      return initialValue;\n    }\n  });\n  \n  // Function to update stored value and localStorage\n  const setValue = (value) => {\n    try {\n      // Allow value to be a function\n      const valueToStore =\n        value instanceof Function ? value(storedValue) : value;\n      \n      setStoredValue(valueToStore);\n      \n      if (typeof window !== 'undefined') {\n        window.localStorage.setItem(key, JSON.stringify(valueToStore));\n      }\n    } catch (error) {\n      console.error(error);\n    }\n  };\n  \n  return [storedValue, setValue];\n}"
+        }
+      ],
+      "relatedInstructions": ["react003", "react004"]
+    },
+    {
+      "id": "react008",
+      "title": {
+        "es": "Reglas de los hooks",
+        "en": "Rules of hooks"
+      },
+      "description": {
+        "es": "Seguir las reglas de los hooks de React para evitar bugs y comportamientos inesperados",
+        "en": "Follow React hooks rules to avoid bugs and unexpected behavior"
+      },
+      "text": {
+        "es": "Sigue estrictamente las dos reglas principales de los hooks de React para evitar bugs y comportamientos inesperados: 1) Llama a los hooks solo en el nivel superior de componentes funcionales o custom hooks, nunca dentro de bucles, condicionales o funciones anidadas; 2) Llama a los hooks solo desde componentes funcionales de React o custom hooks, no desde funciones regulares de JavaScript. Para facilitar el cumplimiento de estas reglas, considera usar el linter 'eslint-plugin-react-hooks' que detecta automáticamente violaciones a estas reglas.",
+        "en": "Strictly follow the two main rules of React hooks to avoid bugs and unexpected behavior: 1) Only call hooks at the top level of functional components or custom hooks, never inside loops, conditions, or nested functions; 2) Only call hooks from React functional components or custom hooks, not from regular JavaScript functions. To help enforce these rules, consider using the 'eslint-plugin-react-hooks' linter which automatically detects violations of these rules."
+      },
+      "importance": "high",
+      "category": "hooks",
+      "subcategory": "rules",
+      "tags": ["frontend", "react", "best_practices"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "React Hooks section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "nextjs", "gatsby"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplos de uso correcto e incorrecto de hooks",
+            "en": "Examples of correct and incorrect hooks usage"
+          },
+          "code": "import React, { useState, useEffect } from 'react';\n\n// ✅ CORRECT: Hooks called at the top level\nfunction GoodComponent() {\n  const [count, setCount] = useState(0);\n  const [user, setUser] = useState(null);\n  \n  useEffect(() => {\n    document.title = `You clicked ${count} times`;\n  }, [count]);\n  \n  useEffect(() => {\n    fetchUser().then(user => setUser(user));\n  }, []);\n  \n  return (\n    <div>\n      <p>You clicked {count} times</p>\n      <button onClick={() => setCount(count + 1)}>\n        Click me\n      </button>\n      {user && <p>Hello, {user.name}</p>}\n    </div>\n  );\n}\n\n// ❌ INCORRECT: Hook inside a condition\nfunction BadConditionalComponent() {\n  const [count, setCount] = useState(0);\n  \n  // This violates the first rule - hooks must be called at the top level\n  if (count > 5) {\n    // Error: React Hooks must be called in a React function component or a custom React Hook function\n    useEffect(() => {\n      document.title = 'Count is greater than 5';\n    }, []);\n  }\n  \n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + 1)}>Increment</button>\n    </div>\n  );\n}\n\n// ❌ INCORRECT: Hook inside a loop\nfunction BadLoopComponent({ items }) {\n  // This violates the first rule - hooks must be called at the top level\n  items.forEach(item => {\n    // Error: React Hooks must be called in a React function component or a custom React Hook function\n    const [isSelected, setIsSelected] = useState(false);\n    // ...\n  });\n  \n  return <div>This won't work</div>;\n}\n\n// ❌ INCORRECT: Hook inside a nested function\nfunction BadNestedComponent() {\n  const [count, setCount] = useState(0);\n  \n  function handleClick() {\n    // This violates the first rule - hooks must be called at the top level\n    // Error: React Hooks must be called in a React function component or a custom React Hook function\n    const [clickTime, setClickTime] = useState(new Date());\n    setClickTime(new Date());\n    setCount(count + 1);\n  }\n  \n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={handleClick}>Increment</button>\n    </div>\n  );\n}"
+        }
+      ],
+      "relatedInstructions": ["react003", "react007"]
+    }
+  ],
+  "state_management": [
+    {
+      "id": "react004",
+      "title": {
+        "es": "Gestión adecuada del estado",
+        "en": "Proper state management"
+      },
+      "description": {
+        "es": "Elegir la solución de gestión de estado adecuada según la complejidad de la aplicación",
+        "en": "Choose the appropriate state management solution based on application complexity"
+      },
+      "text": {
+        "es": "Selecciona el enfoque de gestión de estado adecuado según la complejidad de tu aplicación React. Para componentes simples o estados localizados, utiliza useState y useReducer. Para estados que necesitan ser compartidos entre componentes cercanos, considera utilizar el patrón de elevación de estado (lifting state up) o Context API. Para aplicaciones más complejas con estados globales, evalúa soluciones como Redux, Zustand o Jotai según tus necesidades específicas de rendimiento y legibilidad.",
+        "en": "Select the appropriate state management approach based on your React application's complexity. For simple components or localized state, use useState and useReducer. For state that needs to be shared between nearby components, consider using the lifting state up pattern or Context API. For more complex applications with global state, evaluate solutions like Redux, Zustand, or Jotai based on your specific performance and readability needs."
+      },
+      "importance": "high",
+      "category": "state_management",
+      "subcategory": "selection",
+      "tags": ["frontend", "react", "architecture"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "React Component section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "nextjs", "gatsby"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de escalamiento de soluciones de gestión de estado",
+            "en": "Example of scaling state management solutions"
+          },
+          "code": "// 1. Local Component State (useState)\n// Ideal for simple UI state that doesn't need to be shared\nimport React, { useState } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  \n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + 1)}>Increment</button>\n    </div>\n  );\n}\n\n// 2. Using useReducer for more complex local state\nimport { useReducer } from 'react';\n\nconst initialState = { count: 0, lastAction: null };\n\nfunction reducer(state, action) {\n  switch (action.type) {\n    case 'increment':\n      return { count: state.count + 1, lastAction: 'increment' };\n    case 'decrement':\n      return { count: state.count - 1, lastAction: 'decrement' };\n    default:\n      throw new Error();\n  }\n}\n\nfunction ComplexCounter() {\n  const [state, dispatch] = useReducer(reducer, initialState);\n  \n  return (\n    <div>\n      <p>Count: {state.count}</p>\n      <p>Last action: {state.lastAction || 'None'}</p>\n      <button onClick={() => dispatch({ type: 'increment' })}>+</button>\n      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>\n    </div>\n  );\n}\n\n// 3. Context API for sharing state between components\nimport { createContext, useContext } from 'react';\n\nconst CountContext = createContext(null);\n\nfunction CountProvider({ children }) {\n  const [count, setCount] = useState(0);\n  return (\n    <CountContext.Provider value={{ count, setCount }}>\n      {children}\n    </CountContext.Provider>\n  );\n}\n\nfunction DisplayCount() {\n  const { count } = useContext(CountContext);\n  return <div>Current count: {count}</div>;\n}\n\nfunction Controls() {\n  const { setCount } = useContext(CountContext);\n  return (\n    <div>\n      <button onClick={() => setCount(prev => prev + 1)}>Increment</button>\n      <button onClick={() => setCount(0)}>Reset</button>\n    </div>\n  );\n}\n\nfunction App() {\n  return (\n    <CountProvider>\n      <DisplayCount />\n      <Controls />\n    </CountProvider>\n  );\n}\n\n// 4. External state libraries for more complex apps (example with Zustand)\n// npm install zustand\nimport create from 'zustand';\n\nconst useStore = create(set => ({\n  count: 0,\n  increment: () => set(state => ({ count: state.count + 1 })),\n  decrement: () => set(state => ({ count: state.count - 1 })),\n  reset: () => set({ count: 0 })\n}));\n\nfunction ZustandCounter() {\n  const { count, increment, decrement, reset } = useStore();\n  \n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={increment}>+</button>\n      <button onClick={decrement}>-</button>\n      <button onClick={reset}>Reset</button>\n    </div>\n  );\n}"
+        }
+      ],
+      "relatedInstructions": ["react001", "react005", "react006"]
+    },
+    {
+      "id": "react005",
+      "title": {
+        "es": "Evitar re-renderizados innecesarios",
+        "en": "Avoid unnecessary re-renders"
+      },
+      "description": {
+        "es": "Optimizar el rendimiento previniendo re-renderizados innecesarios",
+        "en": "Optimize performance by preventing unnecessary re-renders"
+      },
+      "text": {
+        "es": "Optimiza el rendimiento de tus componentes React minimizando los re-renderizados innecesarios. Utiliza React.memo para componentes funcionales, shouldComponentUpdate para componentes de clase, o useMemo para memorizar cálculos costosos. Extrae componentes que usan useState o useReducer para limitar el alcance de las actualizaciones. Evita crear nuevas funciones o objetos en cada renderizado utilizando useCallback y useMemo. Organiza tu estado para minimizar actualizaciones que afecten a toda la aplicación y considera bibliotecas de gestión de estado inmutables para cambios de estado eficientes.",
+        "en": "Optimize your React components' performance by minimizing unnecessary re-renders. Use React.memo for functional components, shouldComponentUpdate for class components, or useMemo to memoize expensive calculations. Extract components that use useState or useReducer to limit the scope of updates. Avoid creating new functions or objects on each render by using useCallback and useMemo. Structure your state to minimize app-wide updates and consider immutable state management libraries for efficient state changes."
+      },
+      "importance": "high",
+      "category": "performance",
+      "subcategory": "rendering",
+      "tags": ["frontend", "react", "optimization"],
+      "source": {
+        "agentType": "windsurf",
+        "repository": "Windsurf/Windsurf.txt",
+        "context": "Web Development section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "nextjs", "gatsby"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de optimización de renderizado con React.memo y useCallback",
+            "en": "Example of render optimization with React.memo and useCallback"
+          },
+          "code": "import React, { useState, useCallback, useMemo } from 'react';\n\n// Without optimization - will re-render even when props don't change\nfunction ItemList({ items, onItemClick }) {\n  console.log('ItemList rendering');\n  \n  return (\n    <ul>\n      {items.map(item => (\n        <li key={item.id} onClick={() => onItemClick(item.id)}>\n          {item.name}\n        </li>\n      ))}\n    </ul>\n  );\n}\n\n// With optimization - uses React.memo to prevent unnecessary re-renders\nconst MemoizedItemList = React.memo(function ItemList({ items, onItemClick }) {\n  console.log('Memoized ItemList rendering');\n  \n  return (\n    <ul>\n      {items.map(item => (\n        <li key={item.id} onClick={() => onItemClick(item.id)}>\n          {item.name}\n        </li>\n      ))}\n    </ul>\n  );\n});\n\n// Parent component\nfunction ParentComponent() {\n  const [items, setItems] = useState([\n    { id: 1, name: 'Item 1' },\n    { id: 2, name: 'Item 2' },\n    { id: 3, name: 'Item 3' }\n  ]);\n  const [count, setCount] = useState(0);\n  \n  // Without useCallback - a new function is created on each render\n  const handleItemClick = (id) => {\n    console.log(`Item ${id} clicked`);\n  };\n  \n  // With useCallback - the function is only recreated when dependencies change\n  const memoizedHandleItemClick = useCallback((id) => {\n    console.log(`Item ${id} clicked`);\n  }, []); // Empty dependency array means this function is created once\n  \n  // Using useMemo for expensive calculations\n  const expensiveComputation = useMemo(() => {\n    console.log('Running expensive computation');\n    // Simulate expensive operation\n    return items.reduce((result, item) => result + item.id, 0);\n  }, [items]); // Only recalculate when items change\n  \n  return (\n    <div>\n      <h1>Count: {count}</h1>\n      <button onClick={() => setCount(count + 1)}>Increment</button>\n      \n      <h2>Sum of item IDs: {expensiveComputation}</h2>\n      \n      <h3>Non-Memoized List (re-renders on every count change):</h3>\n      <ItemList items={items} onItemClick={handleItemClick} />\n      \n      <h3>Memoized List with non-memoized callback (still re-renders):</h3>\n      <MemoizedItemList items={items} onItemClick={handleItemClick} />\n      \n      <h3>Fully Optimized List (doesn't re-render when count changes):</h3>\n      <MemoizedItemList items={items} onItemClick={memoizedHandleItemClick} />\n    </div>\n  );\n}"
+        }
+      ],
+      "relatedInstructions": ["react003", "react004", "react008"]
+    },
+    {
+      "id": "react006",
+      "title": {
+        "es": "Uso de Context API eficientemente",
+        "en": "Efficient Context API usage"
+      },
+      "description": {
+        "es": "Optimizar el uso de Context API para evitar renderizaciones innecesarias",
+        "en": "Optimize Context API usage to avoid unnecessary renders"
+      },
+      "text": {
+        "es": "Implementa Context API de manera eficiente en React para evitar renderizaciones innecesarias. Separa los contextos por dominio o funcionalidad en lugar de tener un contexto global gigante. Divide el estado y las actualizaciones en contextos distintos para que los componentes solo se suscriban a los cambios que realmente necesitan. Considera usar bibliotecas como Zustand o Jotai para casos más complejos que requieran mejor rendimiento. Utiliza el hook useMemo para memoizar los valores del contexto y evitar renderizaciones innecesarias cuando el estado padre cambia pero los valores del contexto no.",
+        "en": "Implement Context API efficiently in React to avoid unnecessary renders. Separate contexts by domain or functionality rather than having one giant global context. Split state and updates into distinct contexts so components only subscribe to changes they actually need. Consider using libraries like Zustand or Jotai for more complex cases that require better performance. Use the useMemo hook to memoize context values and prevent unnecessary renders when parent state changes but context values don't."
+      },
+      "importance": "medium",
+      "category": "state_management",
+      "subcategory": "context",
+      "tags": ["frontend", "react", "optimization"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "React Component section"
+      },
+      "compatibility": {
+        "frameworks": ["react", "nextjs", "gatsby"],
+        "languages": ["javascript", "typescript"],
+        "environments": ["web"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Ejemplo de contexto optimizado vs. no optimizado",
+            "en": "Example of optimized vs. non-optimized context"
+          },
+          "code": "import React, { createContext, useState, useContext, useMemo } from 'react';\n\n// NON-OPTIMIZED APPROACH: Single large context\n\nconst AppContext = createContext();\n\nfunction AppProvider({ children }) {\n  const [user, setUser] = useState(null);\n  const [theme, setTheme] = useState('light');\n  const [notifications, setNotifications] = useState([]);\n  const [settings, setSettings] = useState({});\n  \n  // Every time any state changes, ALL consumers will re-render\n  const value = {\n    user, setUser,\n    theme, setTheme,\n    notifications, setNotifications,\n    settings, setSettings\n  };\n  \n  return (\n    <AppContext.Provider value={value}>\n      {children}\n    </AppContext.Provider>\n  );\n}\n\nfunction ProfileComponent() {\n  // This component only needs user data but will re-render \n  // when theme, notifications, or settings change\n  const { user } = useContext(AppContext);\n  \n  return <div>{user ? user.name : 'Not logged in'}</div>;\n}\n\n// OPTIMIZED APPROACH: Separate contexts by domain\n\nconst UserContext = createContext();\nconst ThemeContext = createContext();\nconst NotificationContext = createContext();\nconst SettingsContext = createContext();\n\nfunction OptimizedAppProvider({ children }) {\n  const [user, setUser] = useState(null);\n  const [theme, setTheme] = useState('light');\n  const [notifications, setNotifications] = useState([]);\n  const [settings, setSettings] = useState({});\n  \n  // Memoize values to prevent unnecessary re-renders\n  const userValue = useMemo(() => ({ user, setUser }), [user]);\n  const themeValue = useMemo(() => ({ theme, setTheme }), [theme]);\n  const notificationValue = useMemo(\n    () => ({ notifications, setNotifications }), \n    [notifications]\n  );\n  const settingsValue = useMemo(\n    () => ({ settings, setSettings }), \n    [settings]\n  );\n  \n  return (\n    <UserContext.Provider value={userValue}>\n      <ThemeContext.Provider value={themeValue}>\n        <NotificationContext.Provider value={notificationValue}>\n          <SettingsContext.Provider value={settingsValue}>\n            {children}\n          </SettingsContext.Provider>\n        </NotificationContext.Provider>\n      </ThemeContext.Provider>\n    </UserContext.Provider>\n  );\n}\n\nfunction OptimizedProfileComponent() {\n  // This component will only re-render when user data changes\n  const { user } = useContext(UserContext);\n  \n  return <div>{user ? user.name : 'Not logged in'}</div>;\n}\n\nfunction ThemeToggleComponent() {\n  // This component will only re-render when theme changes\n  const { theme, setTheme } = useContext(ThemeContext);\n  \n  return (\n    <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>\n      Toggle to {theme === 'light' ? 'dark' : 'light'}\n    </button>\n  );\n}\n\n// BONUS: Context selector pattern for more fine-grained control\n\nfunction useUserName() {\n  const { user } = useContext(UserContext);\n  return user ? user.name : null;\n}\n\nfunction UserNameDisplay() {\n  // This component will only re-render when user.name changes\n  const userName = useUserName();\n  \n  return <span>{userName || 'Guest'}</span>;\n}"
+        }
+      ],
+      "relatedInstructions": ["react004", "react005"]
     }
   ]
 }

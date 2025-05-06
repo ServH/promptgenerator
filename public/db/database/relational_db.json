@@ -1,0 +1,589 @@
+{
+  "instructions": [
+    {
+      "id": "db_rel_001",
+      "title": {
+        "es": "Normalización adecuada",
+        "en": "Proper normalization"
+      },
+      "description": {
+        "es": "Aplicar niveles apropiados de normalización a esquemas de bases de datos",
+        "en": "Apply appropriate levels of normalization to database schemas"
+      },
+      "text": {
+        "es": "Aplica niveles apropiados de normalización (1NF, 2NF, 3NF, BCNF) a los esquemas de bases de datos relacionales para reducir la redundancia, mejorar la integridad de los datos y facilitar el mantenimiento. Sin embargo, considera desnormalizar estratégicamente en casos específicos donde el rendimiento de lectura es crítico, teniendo en cuenta el equilibrio entre normalización y requisitos de rendimiento.",
+        "en": "Apply appropriate levels of normalization (1NF, 2NF, 3NF, BCNF) to relational database schemas to reduce redundancy, improve data integrity, and facilitate maintenance. However, consider strategic denormalization in specific cases where read performance is critical, balancing normalization against performance requirements."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["data_modeling", "schema_design", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Aplicando normalización a un esquema de base de datos",
+            "en": "Applying normalization to a database schema"
+          },
+          "code": "1NF: eliminar grupos repetitivos + 2NF: eliminar dependencias parciales + 3NF: eliminar dependencias transitivas + BCNF: todas las dependencias determinadas por claves candidatas"
+        }
+      ],
+      "relatedInstructions": ["db_mod_001", "db_rel_002"]
+    },
+    {
+      "id": "db_rel_002",
+      "title": {
+        "es": "Integridad referencial",
+        "en": "Referential integrity"
+      },
+      "description": {
+        "es": "Mantener integridad referencial entre tablas relacionadas",
+        "en": "Maintain referential integrity between related tables"
+      },
+      "text": {
+        "es": "Implementa y mantén la integridad referencial entre tablas relacionadas utilizando restricciones de clave foránea con acciones apropiadas en cascada (CASCADE, SET NULL, RESTRICT, etc.). Esto asegura que las relaciones entre tablas permanezcan consistentes y previene datos huérfanos. Las acciones en cascada deben reflejar las reglas de negocio sobre cómo los cambios en una tabla afectan a los datos relacionados.",
+        "en": "Implement and maintain referential integrity between related tables using foreign key constraints with appropriate cascade actions (CASCADE, SET NULL, RESTRICT, etc.). This ensures that relationships between tables remain consistent and prevents orphaned data. Cascade actions should reflect business rules about how changes in one table should affect related data."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["data_integrity", "schema_design", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando integridad referencial con acciones en cascada",
+            "en": "Implementing referential integrity with cascade actions"
+          },
+          "code": "FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE RESTRICT ON UPDATE CASCADE"
+        }
+      ],
+      "relatedInstructions": ["db_rel_001", "db_rel_003"]
+    },
+    {
+      "id": "db_rel_003",
+      "title": {
+        "es": "Índices apropiados",
+        "en": "Appropriate indexing"
+      },
+      "description": {
+        "es": "Crear y mantener índices estratégicos para optimizar el rendimiento",
+        "en": "Create and maintain strategic indexes to optimize performance"
+      },
+      "text": {
+        "es": "Crea y mantén índices estratégicos basados en patrones de consulta reales. Los índices deben establecerse en columnas frecuentemente utilizadas en cláusulas WHERE, JOIN y ORDER BY. Considera índices compuestos para consultas que filtran o unen por múltiples columnas en un orden específico. Evita el exceso de índices, ya que pueden degradar el rendimiento de operaciones de escritura y aumentar el uso de almacenamiento.",
+        "en": "Create and maintain strategic indexes based on actual query patterns. Indexes should be established on columns frequently used in WHERE clauses, JOINs, and ORDER BY clauses. Consider composite indexes for queries that filter or join on multiple columns in a specific order. Avoid over-indexing, as it can degrade write performance and increase storage usage."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["performance", "query_optimization", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Creando índices estratégicos para optimizar consultas frecuentes",
+            "en": "Creating strategic indexes to optimize frequent queries"
+          },
+          "code": "CREATE INDEX idx_customers_email ON customers(email); CREATE INDEX idx_orders_customer_date ON orders(customer_id, order_date);"
+        }
+      ],
+      "relatedInstructions": ["db_qry_001", "db_rel_005"]
+    },
+    {
+      "id": "db_rel_004",
+      "title": {
+        "es": "Transacciones ACID",
+        "en": "ACID transactions"
+      },
+      "description": {
+        "es": "Utilizar transacciones para mantener la integridad y consistencia de los datos",
+        "en": "Use transactions to maintain data integrity and consistency"
+      },
+      "text": {
+        "es": "Utiliza transacciones para operaciones que requieren cambios múltiples en la base de datos, asegurando las propiedades ACID (Atomicidad, Consistencia, Aislamiento, Durabilidad). Esto garantiza que una serie de operaciones se completen todas con éxito o ninguna de ellas, manteniendo la base de datos en un estado consistente. Ajusta los niveles de aislamiento según el equilibrio necesario entre consistencia y rendimiento.",
+        "en": "Use transactions for operations that require multiple changes to the database, ensuring ACID properties (Atomicity, Consistency, Isolation, Durability). This guarantees that a series of operations either all complete successfully or none of them do, maintaining the database in a consistent state. Adjust isolation levels according to the necessary balance between consistency and performance."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["data_integrity", "concurrency", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Utilizando transacciones para mantener la consistencia de los datos",
+            "en": "Using transactions to maintain data consistency"
+          },
+          "code": "BEGIN TRANSACTION; UPDATE accounts SET balance = balance - 100 WHERE id = 1; UPDATE accounts SET balance = balance + 100 WHERE id = 2; COMMIT TRANSACTION;"
+        }
+      ],
+      "relatedInstructions": ["db_rel_002", "db_rel_008"]
+    },
+    {
+      "id": "db_rel_005",
+      "title": {
+        "es": "Consultas optimizadas",
+        "en": "Optimized queries"
+      },
+      "description": {
+        "es": "Escribir consultas SQL eficientes para optimizar el rendimiento",
+        "en": "Write efficient SQL queries to optimize performance"
+      },
+      "text": {
+        "es": "Escribe consultas SQL eficientes seleccionando solo las columnas necesarias, utilizando JOINs adecuados en lugar de subconsultas cuando sea posible, y aplicando cláusulas WHERE efectivas antes de realizar operaciones costosas. Evita funciones en columnas indexadas, usa CTE o tablas temporales para consultas complejas, y considera paginación para conjuntos de resultados grandes. Utiliza herramientas de análisis de consultas para identificar y optimizar consultas lentas.",
+        "en": "Write efficient SQL queries by selecting only necessary columns, using appropriate JOINs instead of subqueries when possible, and applying effective WHERE clauses before performing costly operations. Avoid functions on indexed columns, use CTEs or temporary tables for complex queries, and consider pagination for large result sets. Use query analysis tools to identify and optimize slow queries."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["performance", "query_optimization", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Performance"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Optimizando una consulta SQL para mejorar el rendimiento",
+            "en": "Optimizing an SQL query to improve performance"
+          },
+          "code": "SELECT u.id, u.name, COUNT(o.id) FROM users u JOIN orders o ON u.id = o.user_id WHERE u.status = 'active' GROUP BY u.id, u.name LIMIT 100 OFFSET 0;"
+        }
+      ],
+      "relatedInstructions": ["db_qry_002", "db_rel_003"]
+    },
+    {
+      "id": "db_rel_006",
+      "title": {
+        "es": "Tipos de datos apropiados",
+        "en": "Appropriate data types"
+      },
+      "description": {
+        "es": "Seleccionar tipos de datos óptimos para cada columna",
+        "en": "Select optimal data types for each column"
+      },
+      "text": {
+        "es": "Selecciona los tipos de datos más apropiados para cada columna, considerando la naturaleza de los datos, rango esperado y requisitos de almacenamiento. Utiliza tipos enteros para IDs y claves, tipos de fecha/hora para timestamps, tipos de texto de longitud fija o variable según corresponda, y tipos especializados (como UUID, JSON, o geoespaciales) cuando sean necesarios. Los tipos de datos correctos mejoran el rendimiento, reducen el uso de almacenamiento y contribuyen a la integridad de los datos.",
+        "en": "Select the most appropriate data types for each column, considering the nature of the data, expected range, and storage requirements. Use integer types for IDs and keys, date/time types for timestamps, fixed-length or variable-length text types as appropriate, and specialized types (such as UUID, JSON, or geospatial) when needed. Correct data types improve performance, reduce storage usage, and contribute to data integrity."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["schema_design", "performance", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Seleccionando tipos de datos óptimos para una tabla de usuarios",
+            "en": "Selecting optimal data types for a users table"
+          },
+          "code": "CREATE TABLE users (id BIGINT PRIMARY KEY, username VARCHAR(50) NOT NULL, email VARCHAR(255) UNIQUE, created_at TIMESTAMP, last_login TIMESTAMP, settings JSONB);"
+        }
+      ],
+      "relatedInstructions": ["db_rel_001", "db_mod_002"]
+    },
+    {
+      "id": "db_rel_007",
+      "title": {
+        "es": "Restricciones y validaciones",
+        "en": "Constraints and validations"
+      },
+      "description": {
+        "es": "Implementar restricciones para garantizar la integridad de los datos",
+        "en": "Implement constraints to ensure data integrity"
+      },
+      "text": {
+        "es": "Implementa restricciones a nivel de base de datos para garantizar la integridad de los datos, incluyendo claves primarias, claves foráneas, restricciones UNIQUE, CHECK y NOT NULL. Estas restricciones proporcionan una capa de validación independiente de la aplicación, asegurando que solo datos válidos sean almacenados incluso cuando las validaciones de la aplicación fallan o son evitadas. Considera también triggers para validaciones más complejas que no pueden expresarse con restricciones simples.",
+        "en": "Implement database-level constraints to ensure data integrity, including primary keys, foreign keys, UNIQUE, CHECK, and NOT NULL constraints. These constraints provide a validation layer independent of the application, ensuring that only valid data is stored even when application validations fail or are bypassed. Also consider triggers for more complex validations that cannot be expressed with simple constraints."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["data_integrity", "schema_design", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando restricciones para garantizar la integridad de los datos",
+            "en": "Implementing constraints to ensure data integrity"
+          },
+          "code": "ALTER TABLE products ADD CONSTRAINT price_check CHECK (price > 0); ALTER TABLE users ADD CONSTRAINT email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$');"
+        }
+      ],
+      "relatedInstructions": ["db_rel_002", "db_rel_006"]
+    },
+    {
+      "id": "db_rel_008",
+      "title": {
+        "es": "Control de concurrencia",
+        "en": "Concurrency control"
+      },
+      "description": {
+        "es": "Gestionar el acceso concurrente a los datos para evitar conflictos",
+        "en": "Manage concurrent data access to prevent conflicts"
+      },
+      "text": {
+        "es": "Implementa mecanismos apropiados de control de concurrencia para gestionar el acceso simultáneo a los datos. Utiliza niveles de aislamiento de transacciones adecuados, bloqueos optimistas o pesimistas según los requisitos de la aplicación. Evita deadlocks diseñando transacciones para que adquieran recursos en un orden consistente y minimiza el tiempo que las transacciones mantienen bloqueos. Considera estrategias específicas para operaciones de larga duración para minimizar su impacto en el rendimiento general.",
+        "en": "Implement appropriate concurrency control mechanisms to manage simultaneous data access. Use suitable transaction isolation levels, optimistic or pessimistic locking based on application requirements. Avoid deadlocks by designing transactions to acquire resources in a consistent order and minimize the time transactions hold locks. Consider specific strategies for long-running operations to minimize their impact on overall performance."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["concurrency", "performance", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando control de concurrencia optimista",
+            "en": "Implementing optimistic concurrency control"
+          },
+          "code": "BEGIN TRANSACTION; SELECT * FROM products WHERE id = 1 AND version = 5; UPDATE products SET stock = stock - 1, version = version + 1 WHERE id = 1 AND version = 5; COMMIT TRANSACTION;"
+        }
+      ],
+      "relatedInstructions": ["db_rel_004", "db_rel_007"]
+    },
+    {
+      "id": "db_rel_009",
+      "title": {
+        "es": "Particionamiento de tablas",
+        "en": "Table partitioning"
+      },
+      "description": {
+        "es": "Particionar tablas grandes para mejorar el rendimiento y la mantenibilidad",
+        "en": "Partition large tables to improve performance and manageability"
+      },
+      "text": {
+        "es": "Implementa particionamiento de tablas para dividir tablas grandes en segmentos más pequeños y manejables basados en rangos, listas o hash de valores de columnas. El particionamiento puede mejorar significativamente el rendimiento de consultas que acceden solo a subconjuntos específicos de datos, facilitar operaciones de mantenimiento como archivado o purga de datos, y permitir la distribución de datos en múltiples dispositivos de almacenamiento. Considera patrones de acceso a datos cuando definas la estrategia de particionamiento.",
+        "en": "Implement table partitioning to divide large tables into smaller, more manageable segments based on ranges, lists, or hash of column values. Partitioning can significantly improve query performance for queries that access only specific subsets of data, facilitate maintenance operations such as archiving or purging data, and allow distribution of data across multiple storage devices. Consider data access patterns when defining the partitioning strategy."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["performance", "scalability", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Particionando una tabla por rango de fechas",
+            "en": "Partitioning a table by date range"
+          },
+          "code": "CREATE TABLE orders (id BIGINT, order_date DATE, customer_id BIGINT, amount DECIMAL(10,2)) PARTITION BY RANGE (order_date); CREATE TABLE orders_2023 PARTITION OF orders FOR VALUES FROM ('2023-01-01') TO ('2024-01-01');"
+        }
+      ],
+      "relatedInstructions": ["db_rel_003", "db_rel_010"]
+    },
+    {
+      "id": "db_rel_010",
+      "title": {
+        "es": "Vistas y funciones almacenadas",
+        "en": "Views and stored functions"
+      },
+      "description": {
+        "es": "Utilizar vistas y funciones para encapsular lógica y simplificar consultas",
+        "en": "Use views and functions to encapsulate logic and simplify queries"
+      },
+      "text": {
+        "es": "Utiliza vistas y funciones almacenadas para encapsular lógica de consulta compleja, proporcionar abstracciones consistentes sobre los datos subyacentes, y simplificar el acceso a información frecuentemente consultada. Las vistas materializadas pueden mejorar significativamente el rendimiento para consultas costosas con resultados relativamente estables. Las funciones permiten reutilizar lógica común y mantener la coherencia en cómo se realizan cálculos o transformaciones específicas en toda la aplicación.",
+        "en": "Use views and stored functions to encapsulate complex query logic, provide consistent abstractions over underlying data, and simplify access to frequently queried information. Materialized views can significantly improve performance for costly queries with relatively stable results. Functions allow reusing common logic and maintain consistency in how specific calculations or transformations are performed throughout the application."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["performance", "maintainability", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Creando una vista materializada para reportes frecuentes",
+            "en": "Creating a materialized view for frequent reports"
+          },
+          "code": "CREATE MATERIALIZED VIEW monthly_sales AS SELECT date_trunc('month', order_date) AS month, SUM(amount) AS total_sales FROM orders GROUP BY date_trunc('month', order_date); CREATE INDEX idx_monthly_sales_month ON monthly_sales(month);"
+        }
+      ],
+      "relatedInstructions": ["db_rel_005", "db_rel_011"]
+    },
+    {
+      "id": "db_rel_011",
+      "title": {
+        "es": "Procedimientos almacenados",
+        "en": "Stored procedures"
+      },
+      "description": {
+        "es": "Implementar procedimientos almacenados para operaciones complejas o frecuentes",
+        "en": "Implement stored procedures for complex or frequent operations"
+      },
+      "text": {
+        "es": "Implementa procedimientos almacenados para encapsular operaciones de base de datos complejas o frecuentes que involucran múltiples pasos, lógica condicional o manejo de transacciones. Los procedimientos almacenados pueden mejorar el rendimiento reduciendo el tráfico de red, proporcionar una capa de abstracción sobre el esquema subyacente, y centralizar la lógica crítica de negocio a nivel de base de datos. Sin embargo, deben usarse juiciosamente, ya que pueden dificultar la portabilidad y el mantenimiento si se usa en exceso.",
+        "en": "Implement stored procedures to encapsulate complex or frequent database operations that involve multiple steps, conditional logic, or transaction handling. Stored procedures can improve performance by reducing network traffic, provide an abstraction layer over the underlying schema, and centralize critical business logic at the database level. However, they should be used judiciously as they can make portability and maintenance more challenging if overused."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["performance", "maintainability", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Creando un procedimiento almacenado para procesar un pedido",
+            "en": "Creating a stored procedure to process an order"
+          },
+          "code": "CREATE PROCEDURE process_order(p_customer_id INT, p_product_id INT, p_quantity INT) BEGIN DECLARE v_in_stock INT; START TRANSACTION; SELECT stock INTO v_in_stock FROM products WHERE id = p_product_id; IF v_in_stock >= p_quantity THEN UPDATE products SET stock = stock - p_quantity WHERE id = p_product_id; INSERT INTO orders (customer_id, product_id, quantity) VALUES (p_customer_id, p_product_id, p_quantity); COMMIT; ELSE ROLLBACK; END IF; END;"
+        }
+      ],
+      "relatedInstructions": ["db_rel_010", "db_rel_004"]
+    },
+    {
+      "id": "db_rel_012",
+      "title": {
+        "es": "Manejo de valores NULL",
+        "en": "NULL value handling"
+      },
+      "description": {
+        "es": "Gestionar adecuadamente los valores NULL en el diseño y consultas",
+        "en": "Properly handle NULL values in design and queries"
+      },
+      "text": {
+        "es": "Gestiona adecuadamente los valores NULL en el diseño de esquema y consultas SQL. Utiliza restricciones NOT NULL para columnas que siempre deberían tener un valor, pero permite NULLs cuando representan información desconocida o inaplicable de manera semántica. En consultas, ten en cuenta que las comparaciones con NULL requieren operadores específicos (IS NULL, IS NOT NULL) y que NULL en expresiones lógicas sigue reglas de lógica ternaria. Considera valores predeterminados significativos como alternativa a NULL cuando sea apropiado.",
+        "en": "Properly handle NULL values in schema design and SQL queries. Use NOT NULL constraints for columns that should always have a value, but allow NULLs when they semantically represent unknown or inapplicable information. In queries, be aware that comparisons with NULL require specific operators (IS NULL, IS NOT NULL) and that NULL in logical expressions follows three-valued logic rules. Consider meaningful default values as an alternative to NULL when appropriate."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["data_integrity", "query_optimization", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Manejando valores NULL correctamente en consultas SQL",
+            "en": "Handling NULL values correctly in SQL queries"
+          },
+          "code": "SELECT name, COALESCE(phone, 'No Phone') FROM customers WHERE email IS NOT NULL AND (status IS NULL OR status = 'active');"
+        }
+      ],
+      "relatedInstructions": ["db_rel_007", "db_rel_005"]
+    },
+    {
+      "id": "db_rel_013",
+      "title": {
+        "es": "Auditoria de datos",
+        "en": "Data auditing"
+      },
+      "description": {
+        "es": "Implementar mecanismos de auditoría para rastrear cambios en los datos",
+        "en": "Implement auditing mechanisms to track data changes"
+      },
+      "text": {
+        "es": "Implementa mecanismos de auditoría para rastrear quién ha modificado los datos, cuándo y qué cambios se hicieron. Esto puede lograrse mediante tablas de historial, triggers de base de datos que registran cambios, o usando características específicas del sistema de gestión de bases de datos como logging de transacciones o registros temporales. La auditoría es crucial para cumplimiento normativo, depuración, seguridad y para mantener una visión histórica de cómo han evolucionado los datos con el tiempo.",
+        "en": "Implement auditing mechanisms to track who has modified data, when, and what changes were made. This can be achieved through history tables, database triggers that log changes, or using specific database management system features such as transaction logging or temporal records. Auditing is crucial for regulatory compliance, debugging, security, and maintaining a historical view of how data has evolved over time."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["data_integrity", "security", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando un sistema de auditoría usando triggers",
+            "en": "Implementing an audit system using triggers"
+          },
+          "code": "CREATE TABLE users_audit (id SERIAL, user_id INT, changed_at TIMESTAMP, operation CHAR(1), old_data JSONB, new_data JSONB); CREATE TRIGGER users_audit_trigger AFTER INSERT OR UPDATE OR DELETE ON users FOR EACH ROW EXECUTE FUNCTION audit_users_changes();"
+        }
+      ],
+      "relatedInstructions": ["db_rel_007", "sec_data_001"]
+    },
+    {
+      "id": "db_rel_014",
+      "title": {
+        "es": "Gestión de conexiones",
+        "en": "Connection management"
+      },
+      "description": {
+        "es": "Implementar gestión eficiente de conexiones a la base de datos",
+        "en": "Implement efficient database connection management"
+      },
+      "text": {
+        "es": "Implementa una gestión eficiente de conexiones a la base de datos utilizando pools de conexiones para reducir la sobrecarga de establecer nuevas conexiones para cada operación. Configura los parámetros del pool (tamaño mínimo, máximo, tiempo de vida, etc.) según las características de la carga de trabajo y los recursos disponibles. Asegúrate de que las conexiones se liberan adecuadamente después de su uso, especialmente en caso de errores, para evitar fugas de conexiones.",
+        "en": "Implement efficient database connection management using connection pools to reduce the overhead of establishing new connections for each operation. Configure pool parameters (minimum size, maximum size, lifetime, etc.) according to workload characteristics and available resources. Ensure connections are properly released after use, especially in error cases, to prevent connection leaks."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["performance", "resources", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Configurando un pool de conexiones para una aplicación web",
+            "en": "Setting up a connection pool for a web application"
+          },
+          "code": "// Configuración de pool de conexiones\nconst pool = createPool({\n  host: 'localhost',\n  user: 'app_user',\n  password: 'password',\n  database: 'mydb',\n  min: 5,\n  max: 20,\n  idleTimeoutMillis: 30000,\n  connectionTimeoutMillis: 2000\n});"
+        }
+      ],
+      "relatedInstructions": ["db_rel_008", "db_rel_005"]
+    },
+    {
+      "id": "db_rel_015",
+      "title": {
+        "es": "Diseño para alta disponibilidad",
+        "en": "High availability design"
+      },
+      "description": {
+        "es": "Diseñar bases de datos para alta disponibilidad y tolerancia a fallos",
+        "en": "Design databases for high availability and fault tolerance"
+      },
+      "text": {
+        "es": "Diseña bases de datos relacionales con alta disponibilidad y tolerancia a fallos mediante la implementación de técnicas como replicación, clustering, y respaldos automatizados con verificación de integridad. Configura soluciones de failover automático para minimizar tiempos de inactividad en caso de fallos de hardware o software. Define claramente los objetivos de punto de recuperación (RPO) y tiempo de recuperación (RTO) basados en los requisitos de la aplicación y utiliza soluciones apropiadas para cumplir con estos objetivos.",
+        "en": "Design relational databases with high availability and fault tolerance by implementing techniques such as replication, clustering, and automated backups with integrity verification. Configure automatic failover solutions to minimize downtime in case of hardware or software failures. Clearly define recovery point objectives (RPO) and recovery time objectives (RTO) based on application requirements and use appropriate solutions to meet these objectives."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "relational_db",
+      "tags": ["availability", "disaster_recovery", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Configurando replicación de bases de datos para alta disponibilidad",
+            "en": "Setting up database replication for high availability"
+          },
+          "code": "-- Configuración de replicación maestro-esclavo en PostgreSQL\nCREATE USER replication_user REPLICATION PASSWORD 'secure_password';\n-- En postgresql.conf (nodo principal): wal_level = replica\n-- En pg_hba.conf (nodo principal): host replication replication_user replica_ip/32 md5"
+        }
+      ],
+      "relatedInstructions": ["db_bkp_001", "db_rel_016"]
+    }
+  ]
+}
