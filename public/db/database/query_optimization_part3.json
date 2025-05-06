@@ -1,0 +1,199 @@
+{
+  "instructions": [
+    {
+      "id": "db_qry_016",
+      "title": {
+        "es": "Optimización de subconsultas correlacionadas",
+        "en": "Correlated subquery optimization"
+      },
+      "description": {
+        "es": "Optimizar subconsultas correlacionadas para mejorar el rendimiento",
+        "en": "Optimize correlated subqueries to improve performance"
+      },
+      "text": {
+        "es": "Optimiza subconsultas correlacionadas, que son subconsultas que referencian columnas de tablas externas y típicamente se ejecutan una vez por cada fila de la consulta externa. Siempre que sea posible, reescribe estas consultas como JOINs para mejorar el rendimiento. Para consultas EXISTS y NOT EXISTS, asegúrate de seleccionar solo las columnas necesarias (o usa SELECT 1) y establece índices apropiados en las columnas de correlación. En algunos casos, considera materializar resultados intermedios en tablas temporales. Evalúa los planes de ejecución para comprobar si el motor de la base de datos realiza optimizaciones automáticas como semi-joins o anti-joins para estas subconsultas.",
+        "en": "Optimize correlated subqueries, which are subqueries that reference columns from outer tables and typically execute once for each row of the outer query. Whenever possible, rewrite these queries as JOINs to improve performance. For EXISTS and NOT EXISTS queries, ensure you select only necessary columns (or use SELECT 1) and establish appropriate indexes on correlation columns. In some cases, consider materializing intermediate results in temporary tables. Evaluate execution plans to check if the database engine performs automatic optimizations such as semi-joins or anti-joins for these subqueries."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "query_design", "advanced"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Performance"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Reescribiendo una subconsulta correlacionada como JOIN",
+            "en": "Rewriting a correlated subquery as a JOIN"
+          },
+          "code": "-- Subconsulta correlacionada (menos eficiente)\nSELECT customer_id, name\nFROM customers c\nWHERE EXISTS (\n  SELECT 1 FROM orders o\n  WHERE o.customer_id = c.id\n  AND o.order_date > '2023-01-01'\n);\n\n-- Reescrita como JOIN (más eficiente)\nSELECT DISTINCT c.customer_id, c.name\nFROM customers c\nINNER JOIN orders o ON o.customer_id = c.id\nWHERE o.order_date > '2023-01-01';"
+        }
+      ],
+      "relatedInstructions": ["db_qry_004", "db_qry_003"]
+    },
+    {
+      "id": "db_qry_017",
+      "title": {
+        "es": "Uso de índices parciales",
+        "en": "Partial index usage"
+      },
+      "description": {
+        "es": "Optimizar consultas utilizando índices parciales para subconjuntos de datos",
+        "en": "Optimize queries using partial indexes for data subsets"
+      },
+      "text": {
+        "es": "Utiliza índices parciales (también conocidos como índices filtrados) para optimizar consultas que se ejecutan frecuentemente en subconjuntos específicos de datos. Los índices parciales incluyen solo entradas para filas que satisfacen una condición predefinida, lo que reduce su tamaño y mejora el rendimiento de mantenimiento y consulta. Son particularmente útiles para columnas con distribuciones sesgadas donde se consulta frecuentemente un subconjunto específico, como registros activos, datos recientes, o valores no nulos. Asegúrate de que los predicados en tus consultas coincidan con la condición del índice parcial para que el optimizador pueda utilizarlo.",
+        "en": "Use partial indexes (also known as filtered indexes) to optimize queries that frequently run on specific subsets of data. Partial indexes include only entries for rows that satisfy a predefined condition, reducing their size and improving maintenance and query performance. They are particularly useful for columns with skewed distributions where a specific subset is frequently queried, such as active records, recent data, or non-null values. Ensure predicates in your queries match the partial index condition so the optimizer can use it."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "index_design", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Creando y utilizando índices parciales",
+            "en": "Creating and using partial indexes"
+          },
+          "code": "-- PostgreSQL: Índice parcial solo para productos activos\nCREATE INDEX idx_products_active ON products(name) WHERE status = 'active';\n\n-- Consulta que puede usar el índice parcial\nSELECT id, name, price FROM products\nWHERE status = 'active' AND name LIKE 'Smart%';"
+        }
+      ],
+      "relatedInstructions": ["db_qry_002", "db_rel_003"]
+    },
+    {
+      "id": "db_qry_018",
+      "title": {
+        "es": "Optimización de funciones escalares",
+        "en": "Scalar function optimization"
+      },
+      "description": {
+        "es": "Técnicas para optimizar el uso de funciones escalares en consultas",
+        "en": "Techniques for optimizing scalar function usage in queries"
+      },
+      "text": {
+        "es": "Minimiza y optimiza el uso de funciones escalares en consultas SQL, especialmente dentro de cláusulas WHERE o JOIN, ya que pueden impedir el uso de índices y forzar escaneos de tabla completa. Cuando sea posible, reescribe las condiciones para evitar aplicar funciones a columnas indexadas. Considera la creación de columnas calculadas o columnas generadas que estén indexadas en lugar de aplicar funciones en tiempo de consulta. Para funciones definidas por el usuario (UDFs) utilizadas con frecuencia, evalúa la posibilidad de reescribirlas como funciones tabulares en línea, funciones inline, o vistas cuando sea posible para mejorar la capacidad de optimización de consultas.",
+        "en": "Minimize and optimize scalar function usage in SQL queries, especially within WHERE or JOIN clauses, as they can prevent index usage and force full table scans. When possible, rewrite conditions to avoid applying functions to indexed columns. Consider creating calculated or generated columns that are indexed instead of applying functions at query time. For frequently used user-defined functions (UDFs), evaluate rewriting them as inline table-valued functions, inline functions, or views when possible to improve query optimization capabilities."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "query_design", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Performance"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Optimizando el uso de funciones escalares",
+            "en": "Optimizing scalar function usage"
+          },
+          "code": "-- En lugar de usar función en la consulta (ineficiente)\nSELECT * FROM customers WHERE YEAR(registration_date) = 2023;\n\n-- Reescrita para permitir uso de índice (eficiente)\nSELECT * FROM customers \nWHERE registration_date >= '2023-01-01' \nAND registration_date < '2024-01-01';"
+        }
+      ],
+      "relatedInstructions": ["db_qry_002", "db_qry_008"]
+    },
+    {
+      "id": "db_qry_019",
+      "title": {
+        "es": "Optimización de consultas en bases de datos distribuidas",
+        "en": "Distributed database query optimization"
+      },
+      "description": {
+        "es": "Técnicas para optimizar consultas en entornos de bases de datos distribuidas",
+        "en": "Techniques for optimizing queries in distributed database environments"
+      },
+      "text": {
+        "es": "Implementa técnicas específicas para optimizar consultas en bases de datos distribuidas, donde los datos se reparten entre múltiples nodos o servidores. Minimiza operaciones de shuffle (redistribución de datos entre nodos) utilizando claves de partición adecuadas y localizando JOINs en la misma clave de partición siempre que sea posible. Reduce el movimiento de datos entre nodos aprovechando la localidad de datos y utilizando técnicas como semi-joins o filtrado en el origen. Considera la desnormalización estratégica o la duplicación de datos para reducir JOINs distribuidos. Utiliza índices y particiones de tablas para optimizar la poda de particiones (partition pruning), permitiendo que las consultas accedan solo a los nodos relevantes.",
+        "en": "Implement specific techniques to optimize queries in distributed databases, where data is spread across multiple nodes or servers. Minimize shuffle operations (data redistribution between nodes) by using appropriate partition keys and co-locating JOINs on the same partition key whenever possible. Reduce data movement between nodes by leveraging data locality and using techniques such as semi-joins or predicate pushdown. Consider strategic denormalization or data duplication to reduce distributed JOINs. Use table indexes and partitioning to optimize partition pruning, allowing queries to access only relevant nodes."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "distributed_systems", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Optimizando consultas en una base de datos distribuida",
+            "en": "Optimizing queries in a distributed database"
+          },
+          "code": "-- Particionar tablas en la misma clave para optimizar JOINs\nCREATE TABLE customers (\n  id INT PRIMARY KEY,\n  region_id INT,\n  name VARCHAR(100)\n) PARTITION BY HASH(region_id);\n\nCREATE TABLE orders (\n  id INT PRIMARY KEY,\n  customer_id INT,\n  region_id INT,\n  amount DECIMAL(10,2)\n) PARTITION BY HASH(region_id);\n\n-- JOIN eficiente que aprovecha co-localización por región\nSELECT c.name, SUM(o.amount)\nFROM customers c JOIN orders o\nON c.id = o.customer_id AND c.region_id = o.region_id\nGROUP BY c.name;"
+        }
+      ],
+      "relatedInstructions": ["db_qry_010", "db_nosql_005"]
+    },
+    {
+      "id": "db_qry_020",
+      "title": {
+        "es": "Optimización avanzada de índices",
+        "en": "Advanced index optimization"
+      },
+      "description": {
+        "es": "Técnicas avanzadas para diseñar y utilizar índices eficientemente",
+        "en": "Advanced techniques for designing and using indexes efficiently"
+      },
+      "text": {
+        "es": "Implementa técnicas avanzadas de indexación para optimizar consultas más allá de los índices básicos. Utiliza índices cubrientes (covering indexes) que incluyan todas las columnas necesarias para la consulta, permitiendo que se resuelvan completamente desde el índice sin acceder a las tablas base. Considera índices de columnas incluidas (included columns) que añaden columnas no clave al final del índice para cubrir más consultas. Optimiza el orden de las columnas en índices compuestos basándote en patrones de consulta específicos, colocando columnas de igualdad antes que columnas de rango. Evalúa el uso de índices específicos del motor como índices espaciales, de texto completo, o columnares según los requisitos de la aplicación.",
+        "en": "Implement advanced indexing techniques to optimize queries beyond basic indexes. Use covering indexes that include all columns needed for the query, allowing queries to be resolved entirely from the index without accessing base tables. Consider included column indexes that add non-key columns at the end of the index to cover more queries. Optimize column order in composite indexes based on specific query patterns, placing equality columns before range columns. Evaluate the use of engine-specific indexes such as spatial indexes, full-text indexes, or columnar indexes according to application requirements."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "index_design", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Creando índices avanzados para optimizar consultas",
+            "en": "Creating advanced indexes to optimize queries"
+          },
+          "code": "-- SQL Server: Índice cubriente con columnas incluidas\nCREATE INDEX idx_orders_customer_date ON orders(customer_id, order_date)\nINCLUDE (status, total_amount);\n\n-- Consulta que se beneficia del índice cubriente\nSELECT order_date, status, total_amount\nFROM orders\nWHERE customer_id = 123\nAND order_date BETWEEN '2023-01-01' AND '2023-12-31';"
+        }
+      ],
+      "relatedInstructions": ["db_qry_002", "db_rel_003"]
+    }
+  ]
+}
