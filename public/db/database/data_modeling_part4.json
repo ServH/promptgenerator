@@ -1,0 +1,199 @@
+{
+  "instructions": [
+    {
+      "id": "db_mod_016",
+      "title": {
+        "es": "Modelado de datos espaciales y geográficos",
+        "en": "Spatial and geographic data modeling"
+      },
+      "description": {
+        "es": "Técnicas para diseñar modelos que soporten datos espaciales y geográficos",
+        "en": "Techniques for designing models that support spatial and geographic data"
+      },
+      "text": {
+        "es": "Implementa técnicas específicas para modelar datos espaciales y geográficos, aprovechando las capacidades de bases de datos espaciales. Selecciona tipos de datos geométricos apropiados (puntos, líneas, polígonos, etc.) según los requisitos de la aplicación. Utiliza sistemas de referencia espacial (SRS) consistentes y documenta claramente qué sistema se utiliza (WGS84, proyecciones locales, etc.). Implementa índices espaciales para optimizar consultas geográficas como búsquedas por proximidad, contenido o intersección. Considera la precisión y exactitud necesarias, el almacenamiento de metadatos espaciales, y el equilibrio entre resolución y rendimiento. Evalúa necesidades de topología para aplicaciones que requieren análisis de relaciones espaciales complejas.",
+        "en": "Implement specific techniques for modeling spatial and geographic data, leveraging the capabilities of spatial databases. Select appropriate geometric data types (points, lines, polygons, etc.) according to application requirements. Use consistent spatial reference systems (SRS) and clearly document which system is being used (WGS84, local projections, etc.). Implement spatial indexes to optimize geographic queries such as proximity, containment, or intersection searches. Consider necessary precision and accuracy, storage of spatial metadata, and the balance between resolution and performance. Evaluate topology needs for applications requiring complex spatial relationship analysis."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["spatial_data", "gis", "specialized"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql", "nosql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando un modelo para almacenar ubicaciones de tiendas",
+            "en": "Implementing a model to store store locations"
+          },
+          "code": "-- PostgreSQL con PostGIS\nCREATE TABLE stores (\n  store_id SERIAL PRIMARY KEY,\n  name VARCHAR(100) NOT NULL,\n  location GEOMETRY(Point, 4326) NOT NULL, -- 4326 es el SRID para WGS84\n  address TEXT,\n  opening_hours JSONB\n);\n\n-- Índice espacial para búsquedas eficientes\nCREATE INDEX idx_stores_location ON stores USING GIST(location);\n\n-- Consulta: Encontrar tiendas en un radio de 5km\nSELECT store_id, name, ST_Distance(location, ST_SetSRID(ST_MakePoint(-73.935242, 40.730610), 4326)) as distance\nFROM stores\nWHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint(-73.935242, 40.730610), 4326), 5000)\nORDER BY distance;"
+        }
+      ],
+      "relatedInstructions": ["db_mod_003", "db_rel_006"]
+    },
+    {
+      "id": "db_mod_017",
+      "title": {
+        "es": "Modelado para sistemas multimodelo",
+        "en": "Multi-model system modeling"
+      },
+      "description": {
+        "es": "Técnicas para diseñar modelos en sistemas que combinan múltiples paradigmas de datos",
+        "en": "Techniques for designing models in systems that combine multiple data paradigms"
+      },
+      "text": {
+        "es": "Diseña modelos de datos para sistemas multimodelo que integran diferentes paradigmas de datos (relacional, documental, grafo, etc.) en una sola plataforma. Identifica qué aspectos de tus datos se adaptan mejor a cada paradigma: datos estructurados y transaccionales para modelos relacionales, datos semi-estructurados para documentos, relaciones complejas para grafos, y series temporales para modelos especializados. Establece estrategias claras para mantener la consistencia entre los diferentes modelos, considerando si el sistema multimodelo está integrado en un solo motor o distribuido entre varios. Diseña APIs o capas de acceso que abstraigan la complejidad multimodelo para los desarrolladores. Utiliza las capacidades de consulta nativas de cada modelo para optimizar el rendimiento y expresividad.",
+        "en": "Design data models for multi-model systems that integrate different data paradigms (relational, document, graph, etc.) in a single platform. Identify which aspects of your data are best suited to each paradigm: structured and transactional data for relational models, semi-structured data for documents, complex relationships for graphs, and time series for specialized models. Establish clear strategies for maintaining consistency between different models, considering whether the multi-model system is integrated in a single engine or distributed across several. Design APIs or access layers that abstract multi-model complexity for developers. Use native query capabilities of each model to optimize performance and expressiveness."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["architecture", "advanced", "specialized"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Diseñando un sistema multimodelo para una plataforma de redes sociales",
+            "en": "Designing a multi-model system for a social media platform"
+          },
+          "code": "/* Arquitectura multimodelo */\n// Relacional (PostgreSQL): Datos de usuarios, autenticación, configuraciones\nCREATE TABLE users (id, username, email, ...)\n\n// Documentos (MongoDB): Publicaciones con estructura variable\n{\n  \"post_id\": \"p123\",\n  \"user_id\": 456,\n  \"content\": { \"text\": \"...\", \"images\": [...], \"poll\": {...} },\n  \"metadata\": { ... }\n}\n\n// Grafo (Neo4j): Relaciones sociales y recomendaciones\n(user1:User)-[:FOLLOWS]->(user2:User)\n(user1:User)-[:LIKES]->(post:Post)\n\n// Series temporales (InfluxDB): Métricas de engagement\nmeasurement: user_activity\ntags: user_id=123, activity_type=login\nfields: duration=120, pages_viewed=5\ntimestamp: 2023-05-10T14:30:00Z"
+        }
+      ],
+      "relatedInstructions": ["db_mod_009", "db_mod_013"]
+    },
+    {
+      "id": "db_mod_018",
+      "title": {
+        "es": "Gestión de datos maestros (MDM)",
+        "en": "Master Data Management (MDM)"
+      },
+      "description": {
+        "es": "Estrategias para modelar y mantener datos maestros consistentes en toda la organización",
+        "en": "Strategies for modeling and maintaining consistent master data across the organization"
+      },
+      "text": {
+        "es": "Implementa estrategias específicas para la Gestión de Datos Maestros (MDM), modelando entidades empresariales críticas (clientes, productos, empleados, etc.) de forma coherente en toda la organización. Diseña un modelo de datos maestros que capture las características definitorias de cada entidad, incluyendo atributos, jerarquías, y relaciones entre entidades. Establece un sistema de identificadores únicos (como códigos de entidad global) para vincular las mismas entidades a través de diferentes sistemas. Implementa gobernanza de datos con procesos para gestionar el ciclo de vida de los datos maestros, incluyendo creación, validación, actualización, y desactivación. Considera arquitecturas como hub centralizado, repositorio consolidado, o registro y referencia según tus necesidades específicas de integración.",
+        "en": "Implement specific strategies for Master Data Management (MDM), modeling critical business entities (customers, products, employees, etc.) consistently across the organization. Design a master data model that captures the defining characteristics of each entity, including attributes, hierarchies, and relationships between entities. Establish a system of unique identifiers (such as global entity codes) to link the same entities across different systems. Implement data governance with processes to manage the master data lifecycle, including creation, validation, updating, and deactivation. Consider architectures such as centralized hub, consolidated repository, or registry and reference according to your specific integration needs."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["enterprise", "data_governance", "advanced"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Diseñando un modelo de datos maestros para clientes",
+            "en": "Designing a customer master data model"
+          },
+          "code": "/* Esquema de datos maestros de cliente */\n// Entidad principal\nCREATE TABLE mdm_customer (\n  global_customer_id VARCHAR(36) PRIMARY KEY,  // UUID global\n  status ENUM('active', 'inactive', 'merged') NOT NULL,\n  source_system VARCHAR(50),\n  creation_date TIMESTAMP,\n  last_updated TIMESTAMP,\n  golden_record_id VARCHAR(36)  // ID del registro definitivo\n);\n\n// Atributos core\nCREATE TABLE mdm_customer_attributes (\n  global_customer_id VARCHAR(36) REFERENCES mdm_customer(global_customer_id),\n  attribute_name VARCHAR(50),\n  attribute_value TEXT,\n  source_system VARCHAR(50),\n  confidence_score DECIMAL(3,2),  // Puntuación de calidad del dato\n  last_updated TIMESTAMP,\n  PRIMARY KEY(global_customer_id, attribute_name, source_system)\n);\n\n// Relaciones entre sistemas\nCREATE TABLE mdm_customer_xref (\n  global_customer_id VARCHAR(36) REFERENCES mdm_customer(global_customer_id),\n  system_name VARCHAR(50),\n  local_customer_id VARCHAR(100),\n  PRIMARY KEY(system_name, local_customer_id)\n);"
+        }
+      ],
+      "relatedInstructions": ["db_mod_001", "db_mod_013"]
+    },
+    {
+      "id": "db_mod_019",
+      "title": {
+        "es": "Modelado para búsqueda de texto completo",
+        "en": "Full-text search modeling"
+      },
+      "description": {
+        "es": "Técnicas para diseñar modelos optimizados para búsqueda de texto completo",
+        "en": "Techniques for designing models optimized for full-text search"
+      },
+      "text": {
+        "es": "Implementa técnicas específicas para modelar datos orientados a capacidades avanzadas de búsqueda de texto. Identifica qué campos requieren búsqueda de texto completo y sus características específicas (idiomas, tokenización especializada, etc.). Diseña esquemas que soporten metadatos enriquecidos como relevancia, categorías y etiquetas para mejorar la precisión y capacidad de filtrado. Implementa estructuras para características avanzadas como búsqueda facetada, autocompletado, corrección ortográfica, o búsqueda por sinónimos. Considera desnormalización estratégica para la eficiencia de búsqueda, prioriza qué campos deben indexarse completamente, y diseña procesos para mantener índices actualizados. Evalúa si usar capacidades integradas de la base de datos o soluciones especializadas como Elasticsearch o Solr para búsquedas complejas.",
+        "en": "Implement specific techniques for modeling data oriented to advanced text search capabilities. Identify which fields require full-text search and their specific characteristics (languages, specialized tokenization, etc.). Design schemas that support enriched metadata such as relevance, categories, and tags to improve precision and filtering capability. Implement structures for advanced features such as faceted search, autocomplete, spell correction, or synonym search. Consider strategic denormalization for search efficiency, prioritize which fields should be fully indexed, and design processes to keep indexes updated. Evaluate whether to use integrated database capabilities or specialized solutions such as Elasticsearch or Solr for complex searches."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["search", "text_processing", "specialized"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql", "nosql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Diseñando un modelo para búsqueda de productos",
+            "en": "Designing a model for product search"
+          },
+          "code": "// Elasticsearch: Modelo para búsqueda de productos\n{\n  \"settings\": {\n    \"analysis\": {\n      \"analyzer\": {\n        \"product_analyzer\": {\n          \"type\": \"custom\",\n          \"tokenizer\": \"standard\",\n          \"filter\": [\"lowercase\", \"synonym\", \"stop\"]\n        }\n      }\n    }\n  },\n  \"mappings\": {\n    \"properties\": {\n      \"product_id\": { \"type\": \"keyword\" },\n      \"name\": { \n        \"type\": \"text\",\n        \"analyzer\": \"product_analyzer\",\n        \"fields\": {\n          \"raw\": { \"type\": \"keyword\" }  // Para faceting y sorting\n        }\n      },\n      \"description\": { \"type\": \"text\", \"analyzer\": \"product_analyzer\" },\n      \"category\": { \"type\": \"keyword\" },  // Para filtrado exacto\n      \"tags\": { \"type\": \"keyword\" },      // Para filtrado exacto\n      \"price\": { \"type\": \"float\" },\n      \"stock\": { \"type\": \"integer\" },\n      \"created_at\": { \"type\": \"date\" }\n    }\n  }\n}"
+        }
+      ],
+      "relatedInstructions": ["db_qry_008", "db_mod_015"]
+    },
+    {
+      "id": "db_mod_020",
+      "title": {
+        "es": "Evolución de esquemas y migraciones",
+        "en": "Schema evolution and migrations"
+      },
+      "description": {
+        "es": "Estrategias para diseñar modelos que puedan evolucionar con el tiempo",
+        "en": "Strategies for designing models that can evolve over time"
+      },
+      "text": {
+        "es": "Implementa estrategias específicas para diseñar modelos de datos que puedan evolucionar mientras la aplicación crece y los requisitos cambian. Planifica la evolución del esquema desde el principio, anticipando posibles cambios futuros. Diseña migraciones incrementales en lugar de cambios disruptivos, priorizando cambios compatibles con versiones anteriores (como añadir columnas opcionales). Implementa versionado explícito de esquemas y documentación clara sobre la evolución. Utiliza patrones como expansión-contracción para cambios complejos: primero añadir nueva estructura, migrar datos y código, y finalmente eliminar la estructura antigua. Para bases de datos distribuidas o de alta disponibilidad, considera estrategias de migración rodante que eviten tiempo de inactividad. Mantén scripts de migración en control de versiones junto al código de la aplicación.",
+        "en": "Implement specific strategies for designing data models that can evolve as the application grows and requirements change. Plan for schema evolution from the beginning, anticipating potential future changes. Design incremental migrations rather than disruptive changes, prioritizing backward-compatible changes (such as adding optional columns). Implement explicit schema versioning and clear documentation about evolution. Use patterns like expand-contract for complex changes: first add new structure, migrate data and code, and finally remove the old structure. For distributed or high-availability databases, consider rolling migration strategies that avoid downtime. Maintain migration scripts in version control alongside application code."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["maintainability", "evolution", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando el patrón expansión-contracción para un cambio de esquema",
+            "en": "Implementing the expand-contract pattern for a schema change"
+          },
+          "code": "/* Expansión-contracción: dividir columna de nombre completo */\n\n// 1. Expansión: añadir nuevas columnas\nALTER TABLE users ADD COLUMN first_name VARCHAR(50);\nALTER TABLE users ADD COLUMN last_name VARCHAR(50);\n\n// 2. Migración: poblar nuevas columnas desde la existente\nUPDATE users SET \n  first_name = SPLIT_PART(full_name, ' ', 1),\n  last_name = SUBSTRING(full_name FROM POSITION(' ' IN full_name) + 1);\n\n// 3. Actualizar código para usar nuevas columnas\n// (Período con doble escritura y lectura de ambas versiones)\n\n// 4. Contracción: eliminar antigua columna cuando sea seguro\nALTER TABLE users DROP COLUMN full_name;"
+        }
+      ],
+      "relatedInstructions": ["db_mig_001", "db_mod_014"]
+    }
+  ]
+}
