@@ -1,0 +1,199 @@
+{
+  "instructions": [
+    {
+      "id": "db_qry_001",
+      "title": {
+        "es": "Análisis de plan de ejecución",
+        "en": "Execution plan analysis"
+      },
+      "description": {
+        "es": "Utilizar herramientas de análisis de planes de ejecución para optimizar consultas",
+        "en": "Use execution plan analysis tools to optimize queries"
+      },
+      "text": {
+        "es": "Utiliza herramientas de análisis de planes de ejecución (EXPLAIN, EXPLAIN ANALYZE, Query Execution Plan, etc.) para entender cómo el motor de base de datos procesa tus consultas. Identifica operaciones costosas como escaneos de tabla completa, uniones ineficientes o uso incorrecto de índices. Analiza el costo estimado, el tiempo real de ejecución y el uso de recursos para cada paso del plan. Utiliza esta información para ajustar consultas, crear índices apropiados y restructurar operaciones para lograr un rendimiento óptimo.",
+        "en": "Use execution plan analysis tools (EXPLAIN, EXPLAIN ANALYZE, Query Execution Plan, etc.) to understand how the database engine processes your queries. Identify costly operations such as full table scans, inefficient joins, or incorrect index usage. Analyze the estimated cost, actual execution time, and resource usage for each step of the plan. Use this information to adjust queries, create appropriate indexes, and restructure operations for optimal performance."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "query_analysis", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Analizando el plan de ejecución de una consulta en PostgreSQL",
+            "en": "Analyzing query execution plan in PostgreSQL"
+          },
+          "code": "EXPLAIN ANALYZE SELECT * FROM orders JOIN customers ON orders.customer_id = customers.id WHERE order_date > '2023-01-01';"
+        }
+      ],
+      "relatedInstructions": ["db_qry_002", "db_rel_003"]
+    },
+    {
+      "id": "db_qry_002",
+      "title": {
+        "es": "Consultas con predicados eficientes",
+        "en": "Efficient predicate queries"
+      },
+      "description": {
+        "es": "Diseñar predicados de consulta que utilizan índices eficientemente",
+        "en": "Design query predicates that efficiently use indexes"
+      },
+      "text": {
+        "es": "Diseña predicados de consulta (cláusulas WHERE, JOIN, etc.) que puedan utilizar índices eficientemente. Evita aplicar funciones a columnas indexadas en las condiciones de búsqueda, ya que esto impide el uso del índice. Prioriza condiciones de igualdad sobre rangos cuando sea posible, y ordena las condiciones colocando primero los filtros más selectivos. Utiliza operadores específicos de la base de datos para optimizar búsquedas de texto, patrones y rangos. Considera la cardinalidad y selectividad de las columnas al diseñar predicados compuestos.",
+        "en": "Design query predicates (WHERE clauses, JOINs, etc.) that can efficiently use indexes. Avoid applying functions to indexed columns in search conditions as this prevents index usage. Prioritize equality conditions over ranges when possible, and order conditions by placing the most selective filters first. Use database-specific operators to optimize text searches, pattern matching, and range queries. Consider column cardinality and selectivity when designing compound predicates."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "query_design", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Refactorizando consultas para mejorar el uso de índices",
+            "en": "Refactoring queries to improve index usage"
+          },
+          "code": "-- Ineficiente (no usa índice)\nSELECT * FROM users WHERE LOWER(email) = 'user@example.com';\n\n-- Eficiente (puede usar índice)\nSELECT * FROM users WHERE email = 'user@example.com';"
+        }
+      ],
+      "relatedInstructions": ["db_qry_001", "db_qry_003"]
+    },
+    {
+      "id": "db_qry_003",
+      "title": {
+        "es": "Optimización de JOIN",
+        "en": "JOIN optimization"
+      },
+      "description": {
+        "es": "Optimizar operaciones JOIN para mejorar el rendimiento de consultas",
+        "en": "Optimize JOIN operations to improve query performance"
+      },
+      "text": {
+        "es": "Optimiza las operaciones JOIN seleccionando el tipo de unión más eficiente (INNER, LEFT, RIGHT) según los requisitos específicos de la consulta y estructura de datos. Asegúrate de que las columnas utilizadas en condiciones de JOIN estén indexadas en ambas tablas. Ordena las tablas unidas de manera que la tabla más pequeña se procese primero cuando sea posible. Considera el uso de JOINs laterales o aplicados cuando necesites correlacionar subconsultas. Evita JOINs innecesarios y limita el número de tablas unidas en una sola consulta para reducir la complejidad.",
+        "en": "Optimize JOIN operations by selecting the most efficient join type (INNER, LEFT, RIGHT) based on specific query requirements and data structure. Ensure columns used in JOIN conditions are indexed on both tables. Order joined tables so that the smallest table is processed first when possible. Consider using lateral or applied JOINs when you need to correlate subqueries. Avoid unnecessary JOINs and limit the number of tables joined in a single query to reduce complexity."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "query_design", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Performance"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Optimizando un JOIN en una consulta compleja",
+            "en": "Optimizing a JOIN in a complex query"
+          },
+          "code": "-- Ordenar JOINs del más pequeño al más grande\nSELECT o.id, o.date, c.name\nFROM orders o\nINNER JOIN order_items oi ON o.id = oi.order_id\nINNER JOIN customers c ON o.customer_id = c.id\nWHERE o.status = 'completed';"
+        }
+      ],
+      "relatedInstructions": ["db_qry_002", "db_qry_004"]
+    },
+    {
+      "id": "db_qry_004",
+      "title": {
+        "es": "Subconsultas vs JOINs",
+        "en": "Subqueries vs JOINs"
+      },
+      "description": {
+        "es": "Elegir entre subconsultas y JOINs para un rendimiento óptimo",
+        "en": "Choose between subqueries and JOINs for optimal performance"
+      },
+      "text": {
+        "es": "Elige cuidadosamente entre subconsultas y JOINs basándote en los requerimientos específicos y el rendimiento esperado. Los JOINs generalmente ofrecen mejor rendimiento para operaciones que relacionan conjuntos de datos, especialmente cuando los índices están bien diseñados. Las subconsultas correlacionadas suelen ser menos eficientes que los JOINs equivalentes, pero las subconsultas no correlacionadas pueden ser efectivas para operaciones de filtrado o para expresiones EXISTS/NOT EXISTS. Utiliza planes de ejecución para comparar diferentes enfoques y seleccionar el más eficiente para tu caso de uso específico.",
+        "en": "Carefully choose between subqueries and JOINs based on specific requirements and expected performance. JOINs generally offer better performance for operations that relate datasets, especially when indexes are well-designed. Correlated subqueries are often less efficient than equivalent JOINs, but non-correlated subqueries can be effective for filtering operations or for EXISTS/NOT EXISTS expressions. Use execution plans to compare different approaches and select the most efficient one for your specific use case."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "query_design", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Comparando subconsulta vs JOIN para la misma operación",
+            "en": "Comparing subquery vs JOIN for the same operation"
+          },
+          "code": "-- Usando subconsulta (potencialmente menos eficiente)\nSELECT * FROM products\nWHERE category_id IN (SELECT id FROM categories WHERE active = true);\n\n-- Usando JOIN (generalmente más eficiente)\nSELECT p.* FROM products p\nINNER JOIN categories c ON p.category_id = c.id AND c.active = true;"
+        }
+      ],
+      "relatedInstructions": ["db_qry_003", "db_qry_005"]
+    },
+    {
+      "id": "db_qry_005",
+      "title": {
+        "es": "Optimización de agregaciones",
+        "en": "Aggregation optimization"
+      },
+      "description": {
+        "es": "Optimizar consultas con funciones de agregación y agrupación",
+        "en": "Optimize queries with aggregation functions and grouping"
+      },
+      "text": {
+        "es": "Optimiza consultas que utilizan funciones de agregación (COUNT, SUM, AVG, etc.) y cláusulas GROUP BY para mejorar el rendimiento. Filtra los datos antes de agrupar utilizando WHERE en lugar de HAVING cuando sea posible. Considera el uso de índices compuestos que incluyan las columnas de agrupación. Para cálculos complejos o frecuentes, evalúa el uso de vistas materializadas, tablas resumen precalculadas o columnas calculadas para evitar costosas agregaciones en tiempo de consulta. En bases de datos distribuidas, ten en cuenta la localidad de los datos para minimizar la transferencia entre nodos durante las agregaciones.",
+        "en": "Optimize queries using aggregation functions (COUNT, SUM, AVG, etc.) and GROUP BY clauses to improve performance. Filter data before grouping using WHERE instead of HAVING when possible. Consider using composite indexes that include the grouping columns. For complex or frequent calculations, evaluate using materialized views, pre-calculated summary tables, or calculated columns to avoid costly run-time aggregations. In distributed databases, consider data locality to minimize cross-node transfers during aggregations."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "query_design", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Performance"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Optimizando consultas con agregaciones",
+            "en": "Optimizing queries with aggregations"
+          },
+          "code": "-- Menos eficiente\nSELECT category_id, SUM(price) as total\nFROM products\nGROUP BY category_id\nHAVING category_id IN (1, 2, 3);\n\n-- Más eficiente\nSELECT category_id, SUM(price) as total\nFROM products\nWHERE category_id IN (1, 2, 3)\nGROUP BY category_id;"
+        }
+      ],
+      "relatedInstructions": ["db_qry_004", "db_qry_006"]
+    }
+  ]
+}
