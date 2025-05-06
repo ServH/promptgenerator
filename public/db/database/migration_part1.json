@@ -1,0 +1,199 @@
+{
+  "instructions": [
+    {
+      "id": "db_mig_001",
+      "title": {
+        "es": "Planificación de migraciones",
+        "en": "Migration planning"
+      },
+      "description": {
+        "es": "Estrategias para planificar migraciones de bases de datos exitosas",
+        "en": "Strategies for planning successful database migrations"
+      },
+      "text": {
+        "es": "Planifica migraciones de bases de datos de forma sistemática para minimizar riesgos y garantizar una transición exitosa. Comienza con un análisis detallado del esquema y datos actuales, identificando dependencias, restricciones y problemas potenciales. Define claramente el objetivo de la migración y los criterios de éxito. Establece un plan que incluya fases (desarrollo, pruebas, pre-producción, producción), estrategias de rollback, ventanas de mantenimiento si son necesarias, y puntos de verificación. Automatiza los scripts de migración para reducir errores y hacerlos reproducibles. Planifica pruebas exhaustivas, incluyendo comparaciones de datos pre/post migración, verificaciones de integridad y pruebas de rendimiento. Comunica el plan a todos los interesados, destacando los riesgos y planes de contingencia.",
+        "en": "Plan database migrations systematically to minimize risks and ensure a successful transition. Begin with a detailed analysis of the current schema and data, identifying dependencies, constraints, and potential issues. Clearly define the migration goal and success criteria. Establish a plan that includes phases (development, testing, pre-production, production), rollback strategies, maintenance windows if needed, and verification checkpoints. Automate migration scripts to reduce errors and make them reproducible. Plan comprehensive testing, including pre/post migration data comparisons, integrity checks, and performance tests. Communicate the plan to all stakeholders, highlighting risks and contingency plans."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "migration",
+      "tags": ["planning", "risk_management", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Migration"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Creando un plan de migración para actualizar PostgreSQL",
+            "en": "Creating a migration plan for PostgreSQL upgrade"
+          },
+          "code": "# Plan de Migración PostgreSQL 11 a 14\n\n1. Análisis previo: Identificar características obsoletas, cambios de sintaxis y opciones de compatibilidad\n2. Plan temporal: Desarrollo (2 semanas), Pruebas (2 semanas), Migración (fin de semana)\n3. Respaldo completo y verificación: pg_dump de toda la base antes de iniciar\n4. Prueba en ambiente de desarrollo: Instalar paralelo y migrar con pg_upgrade\n5. Validación de datos: Ejecutar comparación completa y pruebas automatizadas\n6. Rollback: Plan de restauración desde respaldo con tiempo estimado (6 horas)\n7. Comunicación: Notificación previa 2 semanas, recordatorio 3 días, ventana de mantenimiento 24h"
+        }
+      ],
+      "relatedInstructions": ["db_mig_002", "db_mod_020"]
+    },
+    {
+      "id": "db_mig_002",
+      "title": {
+        "es": "Estrategias de migración de esquemas",
+        "en": "Schema migration strategies"
+      },
+      "description": {
+        "es": "Técnicas para implementar cambios de esquema de manera segura y eficiente",
+        "en": "Techniques for implementing schema changes safely and efficiently"
+      },
+      "text": {
+        "es": "Implementa cambios de esquema de forma segura y eficiente utilizando estrategias probadas para migraciones. Utiliza herramientas de migración de esquemas para gestionar cambios incrementales y mantenlos en control de versiones junto con el código. Prioriza estrategias que minimicen el tiempo de inactividad, como migraciones rodantes para sistemas de alta disponibilidad. Para cambios complejos, implementa el patrón expansión-contracción: primero añade nuevas estructuras, migra gradualmente los datos y código para usar estas estructuras, y finalmente retira las antiguas cuando sea seguro. Considera las diferencias entre despliegues para nuevas aplicaciones (esquema inicial) y actualizaciones a aplicaciones existentes (migraciones incrementales). Automatiza las pruebas para verificar cada migración y garantiza que sean idempotentes (seguras para ejecutar múltiples veces).",
+        "en": "Implement schema changes safely and efficiently using proven migration strategies. Use schema migration tools to manage incremental changes and keep them in version control alongside code. Prioritize strategies that minimize downtime, such as rolling migrations for high-availability systems. For complex changes, implement the expand-contract pattern: first add new structures, gradually migrate data and code to use these structures, and finally retire the old ones when safe. Consider differences between deployments for new applications (initial schema) and updates to existing applications (incremental migrations). Automate testing to verify each migration and ensure they are idempotent (safe to run multiple times)."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "migration",
+      "tags": ["schema_evolution", "deployment", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Migration"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando migraciones con herramientas de migración",
+            "en": "Implementing migrations with migration tools"
+          },
+          "code": "// Ejemplo con Flyway (Java)\n-- V1.0.0__Initial_schema.sql\nCREATE TABLE users (\n  id SERIAL PRIMARY KEY,\n  username VARCHAR(50) NOT NULL,\n  created_at TIMESTAMP NOT NULL DEFAULT NOW()\n);\n\n-- V1.0.1__Add_email_to_users.sql\nALTER TABLE users ADD COLUMN email VARCHAR(100);\n\n-- V1.0.2__Make_email_unique.sql\nUPDATE users SET email = username || '@example.com' WHERE email IS NULL;\nALTER TABLE users ALTER COLUMN email SET NOT NULL;\nCREATE UNIQUE INDEX idx_users_email ON users(email);"
+        }
+      ],
+      "relatedInstructions": ["db_mig_001", "db_mig_004"]
+    },
+    {
+      "id": "db_mig_003",
+      "title": {
+        "es": "Migración de datos",
+        "en": "Data migration"
+      },
+      "description": {
+        "es": "Técnicas para transferir datos entre sistemas o esquemas diferentes",
+        "en": "Techniques for transferring data between different systems or schemas"
+      },
+      "text": {
+        "es": "Implementa técnicas efectivas para migrar datos entre diferentes sistemas o esquemas de base de datos, garantizando la integridad y completitud durante la transferencia. Desarrolla una estrategia que incluya extracción, transformación y carga (ETL) para adaptar los datos al nuevo esquema. Para grandes volúmenes, considera la migración por lotes para reducir impacto y riesgos. Implementa validaciones durante y después de la migración para verificar integridad, completitud y consistencia de los datos. Mantén registros detallados del proceso, incluyendo resolución de excepciones y transformaciones aplicadas. Preserva relaciones, restricciones e índices importantes en el sistema destino. Para migraciones complejas entre diferentes tecnologías, evalúa herramientas especializadas de migración que manejen las diferencias específicas entre los sistemas origen y destino.",
+        "en": "Implement effective techniques for migrating data between different database systems or schemas, ensuring integrity and completeness during transfer. Develop a strategy that includes extraction, transformation, and loading (ETL) to adapt data to the new schema. For large volumes, consider batch migration to reduce impact and risks. Implement validations during and after migration to verify data integrity, completeness, and consistency. Maintain detailed records of the process, including exception resolution and applied transformations. Preserve relationships, constraints, and important indexes in the target system. For complex migrations between different technologies, evaluate specialized migration tools that handle specific differences between source and target systems."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "migration",
+      "tags": ["data_transfer", "etl", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Migration"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Migrando datos entre diferentes tecnologías de base de datos",
+            "en": "Migrating data between different database technologies"
+          },
+          "code": "# Proceso ETL para migrar de MySQL a PostgreSQL\n\n1. Extracción: mysqldump --no-create-info --complete-insert db_name > data.sql\n\n2. Transformación (script Python):\n```python\ndef transform_data(input_file, output_file):\n    with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:\n        for line in infile:\n            # Convertir sintaxis específica de MySQL a PostgreSQL\n            line = line.replace('`', '\"')  # Reemplazar backticks con comillas dobles\n            line = re.sub(r'\\\\\\\\', r'\\\\', line)  # Ajustar escapes\n            # Convertir valores incompatibles (fechas, booleanos, etc.)\n            outfile.write(line)\n```\n\n3. Carga: psql -d target_db -f transformed_data.sql\n\n4. Validación: Consultas de conteo, sumas de comprobación y muestreo"
+        }
+      ],
+      "relatedInstructions": ["db_mig_005", "db_mig_002"]
+    },
+    {
+      "id": "db_mig_004",
+      "title": {
+        "es": "Zero-downtime migrations",
+        "en": "Zero-downtime migrations"
+      },
+      "description": {
+        "es": "Técnicas para realizar migraciones sin tiempo de inactividad para sistemas de alta disponibilidad",
+        "en": "Techniques for performing migrations without downtime for high-availability systems"
+      },
+      "text": {
+        "es": "Implementa técnicas avanzadas para realizar migraciones de base de datos sin interrumpir la disponibilidad del sistema, especialmente crucial para aplicaciones que requieren operación continua. Utiliza el patrón de expansión-contracción, realizando cambios en múltiples pasos pequeños y compatibles. Comienza con cambios que añaden estructuras sin impactar el código existente. Adapta gradualmente la aplicación para utilizar tanto las estructuras antiguas como las nuevas durante la transición (escritura dual). Cuando todo el tráfico use las nuevas estructuras, retira las antiguas. Considera utilizar mecanismos como vistas de base de datos, patrón de repositorio en el código, o capas de abstracción para aislar cambios. Para sistemas muy grandes, implementa migraciones progresivas por subconjuntos de datos o usuarios para minimizar riesgos y permitir rollback selectivo.",
+        "en": "Implement advanced techniques to perform database migrations without disrupting system availability, especially crucial for applications requiring continuous operation. Use the expand-contract pattern, making changes in multiple small, compatible steps. Begin with changes that add structures without impacting existing code. Gradually adapt the application to use both old and new structures during transition (dual writing). When all traffic uses the new structures, retire the old ones. Consider using mechanisms such as database views, repository pattern in code, or abstraction layers to isolate changes. For very large systems, implement progressive migrations by data or user subsets to minimize risks and allow selective rollback."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "migration",
+      "tags": ["high_availability", "deployment", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Migration"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando una migración sin tiempo de inactividad",
+            "en": "Implementing a zero-downtime migration"
+          },
+          "code": "# Migración sin tiempo de inactividad: dividir columna 'name' en 'first_name' y 'last_name'\n\n# 1. Expansión: añadir nuevas columnas sin afectar funcionalidad existente\nALTER TABLE users ADD COLUMN first_name VARCHAR(50);\nALTER TABLE users ADD COLUMN last_name VARCHAR(50);\n\n# 2. Migración de datos: completar nuevas columnas manteniendo datos originales\nUPDATE users SET \n  first_name = SUBSTRING_INDEX(name, ' ', 1),\n  last_name = SUBSTRING(name, LOCATE(' ', name) + 1);\n\n# 3. Código dual: modificar aplicación para escribir en ambas columnas\n# user.setName(fullName); -> user.setName(fullName); user.setFirstName(firstName); user.setLastName(lastName);\n\n# 4. Migrar lecturas: actualizar aplicación para usar nuevas columnas\n# getName() -> getFirstName() + \" \" + getLastName()\n\n# 5. Contracción: cuando todo el código use nuevas columnas, eliminar antigua\n# ALTER TABLE users DROP COLUMN name;"
+        }
+      ],
+      "relatedInstructions": ["db_mig_002", "db_mod_020"]
+    },
+    {
+      "id": "db_mig_005",
+      "title": {
+        "es": "Migración entre paradigmas de bases de datos",
+        "en": "Cross-paradigm database migration"
+      },
+      "description": {
+        "es": "Estrategias para migrar entre diferentes paradigmas (relacional, NoSQL, etc.)",
+        "en": "Strategies for migrating between different paradigms (relational, NoSQL, etc.)"
+      },
+      "text": {
+        "es": "Implementa estrategias específicas para migrar datos entre diferentes paradigmas de bases de datos, como de relacional a NoSQL o viceversa, abordando las diferencias fundamentales en estructuras y capacidades. Comienza con un mapeo conceptual completo entre los modelos origen y destino, identificando cómo representar relaciones, restricciones y consultas en el nuevo paradigma. Para migrar de relacional a NoSQL, considera técnicas como desnormalización, documentos embebidos, o referencias según los patrones de acceso. Para migrar de NoSQL a relacional, enfrenta retos como normalizar datos, imponer esquemas, y manejar estructuras variables. Cuando sea posible, adopta un enfoque incremental, migrando componentes independientes uno a uno. Implementa validaciones específicas para cada paradigma y verifica tanto la integridad de los datos como la equivalencia funcional de las operaciones.",
+        "en": "Implement specific strategies for migrating data between different database paradigms, such as from relational to NoSQL or vice versa, addressing fundamental differences in structures and capabilities. Begin with a comprehensive conceptual mapping between source and target models, identifying how to represent relationships, constraints, and queries in the new paradigm. For migrating from relational to NoSQL, consider techniques such as denormalization, embedded documents, or references based on access patterns. For migrating from NoSQL to relational, address challenges like normalizing data, enforcing schemas, and handling variable structures. When possible, adopt an incremental approach, migrating independent components one by one. Implement paradigm-specific validations and verify both data integrity and functional equivalence of operations."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "migration",
+      "tags": ["paradigm_shift", "architecture", "advanced"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Migration"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Migrando de SQL Server a MongoDB",
+            "en": "Migrating from SQL Server to MongoDB"
+          },
+          "code": "# Esquema de migración: SQL Server a MongoDB\n\n# Esquema relacional original (SQL Server)\n# Customers(id, name, email, address_id)\n# Addresses(id, street, city, postal_code, country)\n# Orders(id, customer_id, order_date, status)\n# OrderItems(order_id, product_id, quantity, price)\n\n# Mapeo a MongoDB (documentos con embebido)\n'''\n// Documento Customer con dirección embebida\n{\n  \"_id\": ObjectId(\"...\"),\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"address\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"Springfield\",\n    \"postal_code\": \"12345\",\n    \"country\": \"USA\"\n  }\n}\n\n// Documento Order con items embebidos\n{\n  \"_id\": ObjectId(\"...\"),\n  \"customer_id\": ObjectId(\"...\"), // Referencia al cliente\n  \"order_date\": ISODate(\"2023-05-20\"),\n  \"status\": \"shipped\",\n  \"items\": [\n    { \"product_id\": \"prod123\", \"quantity\": 2, \"price\": 29.99 },\n    { \"product_id\": \"prod456\", \"quantity\": 1, \"price\": 49.99 }\n  ],\n  \"total\": 109.97\n}\n'''"
+        }
+      ],
+      "relatedInstructions": ["db_mig_003", "db_mod_009"]
+    }
+  ]
+}
