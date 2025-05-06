@@ -1,0 +1,199 @@
+{
+  "instructions": [
+    {
+      "id": "db_mod_011",
+      "title": {
+        "es": "Modelado para data warehousing",
+        "en": "Data warehousing modeling"
+      },
+      "description": {
+        "es": "Técnicas para diseñar modelos de datos optimizados para almacenes de datos analíticos",
+        "en": "Techniques for designing data models optimized for analytical data warehouses"
+      },
+      "text": {
+        "es": "Implementa técnicas específicas para modelar almacenes de datos analíticos, optimizando para consultas complejas y análisis de grandes volúmenes de datos. Utiliza modelos dimensionales como esquemas en estrella (una tabla de hechos central conectada a múltiples dimensiones) o copo de nieve (dimensiones normalizadas). Diseña tablas de hechos con métricas de negocio clave conectadas a tablas de dimensiones que proporcionan contexto. Implementa dimensiones lentamente cambiantes (SCD) para manejar cambios a lo largo del tiempo. Considera agregaciones precalculadas en varios niveles de granularidad para mejorar el rendimiento de consultas analíticas comunes. Separa el entorno operativo del analítico, diseñando procesos ETL/ELT eficientes para mantener sincronizados los datos.",
+        "en": "Implement specific techniques for modeling analytical data warehouses, optimizing for complex queries and analysis of large data volumes. Use dimensional models such as star schemas (a central fact table connected to multiple dimensions) or snowflake schemas (normalized dimensions). Design fact tables with key business metrics connected to dimension tables that provide context. Implement slowly changing dimensions (SCD) to handle changes over time. Consider pre-calculated aggregations at various granularity levels to improve performance for common analytical queries. Separate operational from analytical environments, designing efficient ETL/ELT processes to keep data synchronized."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["analytics", "data_warehouse", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Diseñando un esquema en estrella para análisis de ventas",
+            "en": "Designing a star schema for sales analysis"
+          },
+          "code": "-- Tabla de hechos\nCREATE TABLE fact_sales (\n  sale_id INT PRIMARY KEY,\n  date_id INT REFERENCES dim_date(date_id),\n  product_id INT REFERENCES dim_product(product_id),\n  customer_id INT REFERENCES dim_customer(customer_id),\n  store_id INT REFERENCES dim_store(store_id),\n  quantity INT,\n  unit_price DECIMAL(10,2),\n  total_amount DECIMAL(10,2)\n);\n\n-- Tablas de dimensiones\nCREATE TABLE dim_date (...);     -- Jerarquía temporal (año, trimestre, mes, etc.)\nCREATE TABLE dim_product (...);  -- Jerarquía de productos (categoría, subcategoría, etc.)\nCREATE TABLE dim_customer (...); -- Atributos del cliente (segmento, región, etc.)\nCREATE TABLE dim_store (...);    -- Atributos de tienda (ubicación, tamaño, etc.)"
+        }
+      ],
+      "relatedInstructions": ["db_mod_002", "db_qry_005"]
+    },
+    {
+      "id": "db_mod_012",
+      "title": {
+        "es": "Modelado temporal y manejo del tiempo",
+        "en": "Temporal modeling and time handling"
+      },
+      "description": {
+        "es": "Técnicas para incorporar aspectos temporales en modelos de datos",
+        "en": "Techniques for incorporating temporal aspects in data models"
+      },
+      "text": {
+        "es": "Implementa técnicas específicas para manejar aspectos temporales en modelos de datos, capturando y consultando eficientemente cambios a lo largo del tiempo. Distingue entre tiempo válido (cuándo algo es verdadero en el mundo real) y tiempo de transacción (cuándo se registra en la base de datos), implementando modelos bitemporales cuando ambos sean relevantes. Considera diseños como tablas de históricos, tablas con períodos de validez, o bases de datos temporales nativas para mantener la historia completa de los datos. Utiliza tipos de datos temporales apropiados (DATE, TIMESTAMP) y funciones para consultas eficientes. Para tendencias futuras, considera columnas para registrar tiempo de expiración o validez anticipada. Implementa mecanismos para purgar o archivar datos históricos según políticas de retención.",
+        "en": "Implement specific techniques for handling temporal aspects in data models, efficiently capturing and querying changes over time. Distinguish between valid time (when something is true in the real world) and transaction time (when it is recorded in the database), implementing bitemporal models when both are relevant. Consider designs such as history tables, tables with validity periods, or native temporal databases to maintain the complete history of data. Use appropriate temporal data types (DATE, TIMESTAMP) and functions for efficient queries. For future trends, consider columns to record expiration time or anticipated validity. Implement mechanisms to purge or archive historical data according to retention policies."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["temporal_data", "versioning", "advanced"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql", "nosql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando una tabla con historial temporal",
+            "en": "Implementing a table with temporal history"
+          },
+          "code": "-- Tabla actual\nCREATE TABLE customers (\n  customer_id INT PRIMARY KEY,\n  name VARCHAR(100),\n  email VARCHAR(100),\n  status VARCHAR(20),\n  valid_from TIMESTAMP NOT NULL,  -- Inicio del período de validez\n  valid_to TIMESTAMP NOT NULL     -- Fin del período de validez\n);\n\n-- Consulta del estado en un momento específico\nSELECT * FROM customers\nWHERE customer_id = 123\nAND '2023-05-15 14:30:00' BETWEEN valid_from AND valid_to;"
+        }
+      ],
+      "relatedInstructions": ["db_mod_010", "db_rel_013"]
+    },
+    {
+      "id": "db_mod_013",
+      "title": {
+        "es": "Modelado para microservicios",
+        "en": "Microservices data modeling"
+      },
+      "description": {
+        "es": "Estrategias para diseñar modelos de datos en arquitecturas de microservicios",
+        "en": "Strategies for designing data models in microservices architectures"
+      },
+      "text": {
+        "es": "Implementa estrategias de modelado de datos específicas para arquitecturas de microservicios, donde cada servicio mantiene sus propios datos. Aplica el principio de Database-per-Service, donde cada microservicio tiene autonomía sobre su modelo de datos y almacenamiento. Diseña límites de contexto claros siguiendo Domain-Driven Design, asegurando que cada microservicio encapsule un único dominio o subdominio. Implementa patrones para manejar datos compartidos, como duplicación de datos controlada con sincronización eventual, servicios de composición de datos o el patrón Saga para transacciones distribuidas. Considera la coherencia eventual entre servicios y diseña mecanismos robustos para manejar fallos parciales. Construye una estrategia para consultas que abarcan múltiples servicios, como API Gateways o servicios dedicados a consultas.",
+        "en": "Implement data modeling strategies specific to microservices architectures, where each service maintains its own data. Apply the Database-per-Service principle, where each microservice has autonomy over its data model and storage. Design clear context boundaries following Domain-Driven Design, ensuring each microservice encapsulates a single domain or subdomain. Implement patterns for handling shared data, such as controlled data duplication with eventual synchronization, data composition services, or the Saga pattern for distributed transactions. Consider eventual consistency between services and design robust mechanisms for handling partial failures. Build a strategy for queries that span multiple services, such as API Gateways or dedicated query services."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["architecture", "microservices", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Diseñando modelos de datos para un sistema de comercio electrónico basado en microservicios",
+            "en": "Designing data models for a microservices-based e-commerce system"
+          },
+          "code": "// Microservicio de Catálogo - Base de datos independiente\n{\n  \"products\": [\n    {\n      \"product_id\": \"p123\",\n      \"name\": \"Smartphone XYZ\",\n      \"description\": \"...\",\n      \"price\": 599.99,\n      \"category_id\": \"cat45\",\n      \"inventory_count\": 120\n    }\n  ],\n  \"categories\": [ ... ]\n}\n\n// Microservicio de Pedidos - Base de datos independiente\n{\n  \"orders\": [\n    {\n      \"order_id\": \"o789\",\n      \"customer_id\": \"c456\",\n      \"status\": \"processing\",\n      \"items\": [\n        { \"product_id\": \"p123\", \"quantity\": 1, \"price\": 599.99 }\n      ],\n      \"total\": 599.99\n    }\n  ]\n}"
+        }
+      ],
+      "relatedInstructions": ["db_mod_006", "be_arch_007"]
+    },
+    {
+      "id": "db_mod_014",
+      "title": {
+        "es": "Modelado para multi-tenancy",
+        "en": "Multi-tenancy data modeling"
+      },
+      "description": {
+        "es": "Estrategias para diseñar modelos de datos en aplicaciones multi-inquilino",
+        "en": "Strategies for designing data models in multi-tenant applications"
+      },
+      "text": {
+        "es": "Implementa estrategias específicas para modelar datos en aplicaciones multi-inquilino donde la misma instancia de la aplicación sirve a múltiples clientes (inquilinos). Considera enfoques como bases de datos separadas para cada inquilino (máximo aislamiento, más costoso), esquemas separados dentro de la misma base de datos (buen balance entre aislamiento y costo), o modelo compartido con columna discriminadora de inquilino (más eficiente pero menor aislamiento). Implementa mecanismos robustos para garantizar el aislamiento de datos entre inquilinos, incluyendo filtrado automático mediante middleware. Diseña para extensibilidad, permitiendo personalizaciones específicas por inquilino como campos adicionales (usando JSON/JSONB o tablas de extensiones). Considera implicaciones de rendimiento y escalabilidad a medida que aumenta el número de inquilinos y volumen de datos.",
+        "en": "Implement specific strategies for modeling data in multi-tenant applications where the same application instance serves multiple customers (tenants). Consider approaches such as separate databases for each tenant (maximum isolation, more costly), separate schemas within the same database (good balance between isolation and cost), or shared model with tenant discriminator column (most efficient but less isolation). Implement robust mechanisms to guarantee data isolation between tenants, including automatic filtering through middleware. Design for extensibility, allowing tenant-specific customizations such as additional fields (using JSON/JSONB or extension tables). Consider performance and scalability implications as the number of tenants and data volume increases."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["architecture", "multi_tenant", "advanced"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando un modelo compartido con discriminador de inquilino",
+            "en": "Implementing a shared model with tenant discriminator"
+          },
+          "code": "-- Modelo con columna de tenant\nCREATE TABLE customers (\n  id SERIAL,\n  tenant_id INT NOT NULL,  -- Discriminador de inquilino\n  name VARCHAR(100),\n  email VARCHAR(100),\n  PRIMARY KEY(id, tenant_id)  -- Clave primaria compuesta\n);\n\n-- Índice para mejorar filtrado por tenant\nCREATE INDEX idx_customers_tenant ON customers(tenant_id);\n\n-- Extensibilidad con campos personalizados por tenant\nCREATE TABLE customer_extensions (\n  customer_id INT,\n  tenant_id INT,\n  field_name VARCHAR(50),\n  field_value TEXT,\n  PRIMARY KEY(customer_id, tenant_id, field_name),\n  FOREIGN KEY(customer_id, tenant_id) REFERENCES customers(id, tenant_id)\n);"
+        }
+      ],
+      "relatedInstructions": ["db_mod_001", "sec_data_001"]
+    },
+    {
+      "id": "db_mod_015",
+      "title": {
+        "es": "Diseño de esquemas JSON y documentos",
+        "en": "JSON and document schema design"
+      },
+      "description": {
+        "es": "Técnicas para diseñar eficientemente esquemas de documentos JSON o similares",
+        "en": "Techniques for efficiently designing JSON or similar document schemas"
+      },
+      "text": {
+        "es": "Implementa técnicas específicas para diseñar eficientemente esquemas de documentos en bases de datos documentales o columnas JSON/JSONB. Diseña documentos con enfoque en casos de uso frecuentes, agrupando datos que se consultan juntos. Equilibra la flexibilidad de esquemas dinámicos con la consistencia utilizando validación de esquemas (como JSON Schema). Establece convenciones de nomenclatura coherentes para propiedades. Para documentos anidados, considera la profundidad óptima evaluando patrones de acceso y actualización. Planifica la evolución del esquema utilizando estrategias como versionado de documentos o propiedades opcionales. Para rendimiento, evita documentos excesivamente grandes y prioriza acceso a propiedades de primer nivel. Utiliza índices en propiedades frecuentemente consultadas, aprovechando capacidades de indexación de JSON de tu base de datos específica.",
+        "en": "Implement specific techniques for efficiently designing document schemas in document databases or JSON/JSONB columns. Design documents with a focus on frequent use cases, grouping data that is queried together. Balance flexibility of dynamic schemas with consistency using schema validation (such as JSON Schema). Establish coherent naming conventions for properties. For nested documents, consider optimal depth by evaluating access and update patterns. Plan for schema evolution using strategies such as document versioning or optional properties. For performance, avoid excessively large documents and prioritize access to top-level properties. Use indexes on frequently queried properties, leveraging JSON indexing capabilities of your specific database."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["nosql", "json", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["nosql", "sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Diseñando un esquema JSON con validación y evolucionando con el tiempo",
+            "en": "Designing a JSON schema with validation and evolving over time"
+          },
+          "code": "// Documento de usuario con esquema versionado\n{\n  \"schemaVersion\": 2,\n  \"userId\": \"user123\",\n  \"name\": \"Juan Pérez\",\n  \"email\": \"juan@example.com\",\n  \"profile\": {\n    \"joinDate\": \"2023-01-15\",\n    \"preferences\": { \"theme\": \"dark\", \"notifications\": true }\n  },\n  // Campos añadidos en la versión 2 del esquema\n  \"devices\": [\n    { \"type\": \"mobile\", \"lastLogin\": \"2023-05-20T14:30:00Z\" }\n  ]\n}\n\n// Consulta con índice sobre propiedad JSON\nCREATE INDEX idx_users_email ON users ((data->>'email'));\nSELECT * FROM users WHERE data->>'email' = 'juan@example.com';"
+        }
+      ],
+      "relatedInstructions": ["db_mod_008", "db_nosql_009"]
+    }
+  ]
+}
