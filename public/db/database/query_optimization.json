@@ -194,6 +194,201 @@
         }
       ],
       "relatedInstructions": ["db_qry_004", "db_qry_006"]
+    },
+    {
+      "id": "db_qry_006",
+      "title": {
+        "es": "Paginación eficiente",
+        "en": "Efficient pagination"
+      },
+      "description": {
+        "es": "Implementar técnicas de paginación eficientes para grandes conjuntos de resultados",
+        "en": "Implement efficient pagination techniques for large result sets"
+      },
+      "text": {
+        "es": "Implementa técnicas de paginación eficientes para manejar grandes conjuntos de resultados, evitando cargar todos los datos en memoria. Utiliza cláusulas LIMIT/OFFSET o sus equivalentes, pero ten en cuenta que la eficiencia de OFFSET disminuye con páginas más profundas. Para conjuntos de datos muy grandes, considera enfoques basados en cursores o keyset pagination que utilizan los valores de la última fila recuperada para continuar la consulta. Asegúrate de que las columnas utilizadas para ordenar tengan índices apropiados para mantener un buen rendimiento en todas las páginas.",
+        "en": "Implement efficient pagination techniques to handle large result sets, avoiding loading all data into memory. Use LIMIT/OFFSET clauses or their equivalents, but be aware that OFFSET efficiency decreases with deeper pages. For very large datasets, consider cursor-based or keyset pagination approaches that use values from the last retrieved row to continue the query. Ensure columns used for ordering have appropriate indexes to maintain good performance across all pages."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "query_design", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando paginación basada en keyset para mejor rendimiento",
+            "en": "Implementing keyset-based pagination for better performance"
+          },
+          "code": "-- Paginación con OFFSET (menos eficiente para páginas profundas)\nSELECT * FROM products ORDER BY id LIMIT 20 OFFSET 980;\n\n-- Paginación basada en keyset (más eficiente para grandes conjuntos)\nSELECT * FROM products WHERE id > 980 ORDER BY id LIMIT 20;"
+        }
+      ],
+      "relatedInstructions": ["db_qry_005", "db_qry_008"]
+    },
+    {
+      "id": "db_qry_007",
+      "title": {
+        "es": "Consultas con parámetros preparados",
+        "en": "Parameterized queries"
+      },
+      "description": {
+        "es": "Utilizar consultas parametrizadas para mejorar seguridad y rendimiento",
+        "en": "Use parameterized queries to improve security and performance"
+      },
+      "text": {
+        "es": "Utiliza consultas parametrizadas (prepared statements) en lugar de concatenación de cadenas para construir consultas SQL dinámicas. Las consultas parametrizadas no solo previenen ataques de inyección SQL, sino que también mejoran el rendimiento al permitir que el motor de base de datos reutilice planes de ejecución para consultas similares. El motor puede compilar y optimizar la consulta una vez y ejecutarla muchas veces con diferentes valores de parámetros, reduciendo significativamente la sobrecarga de análisis y planificación.",
+        "en": "Use parameterized queries (prepared statements) instead of string concatenation to build dynamic SQL queries. Parameterized queries not only prevent SQL injection attacks but also improve performance by allowing the database engine to reuse execution plans for similar queries. The engine can compile and optimize the query once and execute it many times with different parameter values, significantly reducing parsing and planning overhead."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "security", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Usando consultas parametrizadas en vez de concatenación de strings",
+            "en": "Using parameterized queries instead of string concatenation"
+          },
+          "code": "// Incorrecto (vulnerable y menos eficiente)\nconst query = `SELECT * FROM users WHERE email = '${userInput}'`;\n\n// Correcto (seguro y más eficiente)\nconst query = 'SELECT * FROM users WHERE email = ?';\ndb.execute(query, [userInput]);"
+        }
+      ],
+      "relatedInstructions": ["db_qry_008", "sec_data_002"]
+    },
+    {
+      "id": "db_qry_008",
+      "title": {
+        "es": "Optimización de consultas de texto",
+        "en": "Text query optimization"
+      },
+      "description": {
+        "es": "Optimizar consultas que involucran búsqueda y manipulación de texto",
+        "en": "Optimize queries involving text search and manipulation"
+      },
+      "text": {
+        "es": "Optimiza las consultas que involucran búsqueda y manipulación de texto utilizando las características específicas del motor de tu base de datos. Utiliza índices de texto completo en lugar de búsquedas LIKE con comodín inicial ('%texto'). Considera el uso de extensiones especializadas como tsvector/tsquery en PostgreSQL o índices de texto en MySQL para búsquedas de texto eficientes. Para operaciones complejas de procesamiento de texto, evalúa si el procesamiento a nivel de aplicación podría ser más eficiente que hacerlo en la base de datos. Cuando sea posible, utiliza operadores específicos del motor para coincidencia de patrones, búsqueda de texto y operaciones de manipulación de cadenas.",
+        "en": "Optimize queries involving text search and manipulation by using database engine-specific features. Use full-text search indexes instead of LIKE searches with leading wildcards ('%text'). Consider using specialized extensions such as tsvector/tsquery in PostgreSQL or FULLTEXT indexes in MySQL for efficient text searches. For complex text processing operations, evaluate whether application-level processing might be more efficient than doing it in the database. When possible, use engine-specific operators for pattern matching, text search, and string manipulation operations."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "text_search", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Performance"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Optimizando búsquedas de texto en PostgreSQL",
+            "en": "Optimizing text searches in PostgreSQL"
+          },
+          "code": "-- Ineficiente (no puede usar índice estándar)\nSELECT * FROM articles WHERE content LIKE '%searchterm%';\n\n-- Eficiente (usa índice de texto completo)\nCREATE INDEX articles_content_idx ON articles USING GIN (to_tsvector('english', content));\nSELECT * FROM articles WHERE to_tsvector('english', content) @@ to_tsquery('english', 'searchterm');"
+        }
+      ],
+      "relatedInstructions": ["db_qry_007", "db_qry_009"]
+    },
+    {
+      "id": "db_qry_009",
+      "title": {
+        "es": "Optimización de tablas temporales y CTE",
+        "en": "Temporary tables and CTE optimization"
+      },
+      "description": {
+        "es": "Utilizar eficientemente tablas temporales y expresiones de tabla comunes",
+        "en": "Efficiently use temporary tables and common table expressions"
+      },
+      "text": {
+        "es": "Utiliza eficientemente tablas temporales y expresiones de tabla comunes (CTE) para simplificar consultas complejas y mejorar el rendimiento. Las tablas temporales son útiles para almacenar resultados intermedios en consultas multi-paso, especialmente cuando esos resultados se usan repetidamente. Las CTE pueden mejorar la legibilidad y mantenimiento del código sin comprometer el rendimiento. Ten en cuenta que algunos motores de bases de datos materializan resultados de CTE mientras que otros las tratan como vistas, lo que afecta el rendimiento. Evalúa el plan de ejecución para determinar si tablas temporales físicas ofrecen ventajas sobre CTE en tu caso específico.",
+        "en": "Efficiently use temporary tables and common table expressions (CTEs) to simplify complex queries and improve performance. Temporary tables are useful for storing intermediate results in multi-step queries, especially when those results are used repeatedly. CTEs can improve code readability and maintainability without compromising performance. Be aware that some database engines materialize CTE results while others treat them as views, which affects performance. Evaluate the execution plan to determine if physical temporary tables offer advantages over CTEs in your specific case."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "query_design", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Usando CTE para simplificar una consulta compleja",
+            "en": "Using CTE to simplify a complex query"
+          },
+          "code": "WITH active_customers AS (\n  SELECT id, name, email\n  FROM customers\n  WHERE status = 'active'\n),\nrecent_orders AS (\n  SELECT customer_id, COUNT(*) as order_count\n  FROM orders\n  WHERE order_date > CURRENT_DATE - INTERVAL '30 days'\n  GROUP BY customer_id\n)\nSELECT c.name, c.email, COALESCE(o.order_count, 0) as recent_orders\nFROM active_customers c\nLEFT JOIN recent_orders o ON c.id = o.customer_id\nORDER BY recent_orders DESC;"
+        }
+      ],
+      "relatedInstructions": ["db_qry_008", "db_qry_010"]
+    },
+    {
+      "id": "db_qry_010",
+      "title": {
+        "es": "Optimización de conjuntos de resultados grandes",
+        "en": "Large result set optimization"
+      },
+      "description": {
+        "es": "Estrategias para manejar eficientemente conjuntos de resultados muy grandes",
+        "en": "Strategies for efficiently handling very large result sets"
+      },
+      "text": {
+        "es": "Implementa estrategias específicas para manejar consultas que producen conjuntos de resultados muy grandes. Utiliza técnicas como la recuperación por lotes (streaming), donde los datos se procesan en fragmentos manejables en lugar de cargar todo el conjunto en memoria. Considera el uso de cursores del lado del servidor cuando sea apropiado, pero ten en cuenta su impacto en los recursos del servidor. Evalúa si operaciones de agregación, filtrado o muestreo pueden reducir el tamaño del conjunto de resultados sin comprometer los requisitos del negocio. Para análisis de datos masivos, considera herramientas especializadas como almacenes de datos columnares o sistemas de procesamiento distribuido.",
+        "en": "Implement specific strategies for handling queries that produce very large result sets. Use techniques such as batched retrieval (streaming), where data is processed in manageable chunks instead of loading the entire set into memory. Consider using server-side cursors when appropriate, but be aware of their impact on server resources. Evaluate whether aggregation, filtering, or sampling operations can reduce the result set size without compromising business requirements. For massive data analysis, consider specialized tools such as columnar data stores or distributed processing systems."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "large_data", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Procesando resultados grandes por lotes",
+            "en": "Processing large results in batches"
+          },
+          "code": "// JavaScript con Node.js y pg\nconst client = new Client();\nawait client.connect();\n\nconst cursor = client.query(new Cursor('SELECT * FROM large_table'));\n\n// Procesar en lotes de 1000 filas\nlet batchProcessing = true;\nwhile (batchProcessing) {\n  const rows = await cursor.read(1000);\n  if (rows.length === 0) {\n    batchProcessing = false;\n  } else {\n    // Procesar este lote\n    processBatch(rows);\n  }\n}"
+        }
+      ],
+      "relatedInstructions": ["db_qry_006", "db_qry_011"]
     }
   ]
 }
