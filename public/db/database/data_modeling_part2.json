@@ -1,0 +1,199 @@
+{
+  "instructions": [
+    {
+      "id": "db_mod_006",
+      "title": {
+        "es": "Diseño orientado al dominio (DDD)",
+        "en": "Domain-Driven Design (DDD)"
+      },
+      "description": {
+        "es": "Aplicar principios de DDD para alinear modelos de datos con el dominio de negocio",
+        "en": "Apply DDD principles to align data models with business domain"
+      },
+      "text": {
+        "es": "Aplica principios de Diseño Orientado al Dominio (DDD) para crear modelos de datos que reflejen fielmente las entidades y lógica del dominio de negocio. Identifica y define el lenguaje ubicuo (términos y conceptos compartidos por todos los stakeholders) y utilízalo consistentemente en el modelo. Delimita contextos acotados (bounded contexts) para separar modelos y evitar que conceptos similares con significados diferentes causen confusión. Distingue entre entidades (definidas por identidad), objetos de valor (definidos por atributos) y agregados (clusters de entidades). Mapea estos conceptos en la estructura de la base de datos, preservando las invariantes del dominio y reglas de negocio mediante el diseño adecuado.",
+        "en": "Apply Domain-Driven Design (DDD) principles to create data models that faithfully reflect business domain entities and logic. Identify and define the ubiquitous language (terms and concepts shared by all stakeholders) and use it consistently in the model. Delimit bounded contexts to separate models and prevent similar concepts with different meanings from causing confusion. Distinguish between entities (defined by identity), value objects (defined by attributes), and aggregates (clusters of entities). Map these concepts to the database structure, preserving domain invariants and business rules through appropriate design."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["architecture", "design", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Aplicando DDD a un sistema de gestión de pedidos",
+            "en": "Applying DDD to an order management system"
+          },
+          "code": "Contexto acotado: Pedidos | Agregado raíz: Pedido | Entidades: Pedido, LineaPedido | Objetos de valor: Dirección, MontoTotal | Invariante: Un pedido debe tener al menos una línea de pedido y un total válido"
+        }
+      ],
+      "relatedInstructions": ["db_mod_001", "be_arch_003"]
+    },
+    {
+      "id": "db_mod_007",
+      "title": {
+        "es": "Modelado para bases de datos relacionales",
+        "en": "Relational database modeling"
+      },
+      "description": {
+        "es": "Técnicas específicas para modelar datos en sistemas de bases de datos relacionales",
+        "en": "Specific techniques for modeling data in relational database systems"
+      },
+      "text": {
+        "es": "Implementa técnicas específicas para modelar datos en sistemas de bases de datos relacionales. Diseña tablas siguiendo principios de normalización para reducir redundancia y garantizar integridad de datos. Establece relaciones mediante claves primarias y foráneas con acciones referenciales apropiadas (CASCADE, SET NULL, RESTRICT). Utiliza tipos de datos precisos que reflejen el dominio y restricciones de los atributos. Implementa restricciones de integridad (UNIQUE, CHECK, NOT NULL) para garantizar la coherencia de los datos. Considera la implementación de herencia de tablas o patrones de diseño como Class Table Inheritance o Single Table Inheritance para modelar jerarquías de objetos según las capacidades del RDBMS.",
+        "en": "Implement specific techniques for modeling data in relational database systems. Design tables following normalization principles to reduce redundancy and ensure data integrity. Establish relationships using primary and foreign keys with appropriate referential actions (CASCADE, SET NULL, RESTRICT). Use precise data types that reflect the domain and constraints of attributes. Implement integrity constraints (UNIQUE, CHECK, NOT NULL) to ensure data coherence. Consider implementing table inheritance or design patterns such as Class Table Inheritance or Single Table Inheritance for modeling object hierarchies according to the capabilities of the RDBMS."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["relational", "design", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Modelando una jerarquía de productos en una base de datos relacional",
+            "en": "Modeling a product hierarchy in a relational database"
+          },
+          "code": "-- Single Table Inheritance\nCREATE TABLE products (\n  id SERIAL PRIMARY KEY,\n  name VARCHAR(100) NOT NULL,\n  price DECIMAL(10,2) NOT NULL,\n  product_type VARCHAR(20) NOT NULL,\n  -- Campos específicos para libros\n  author VARCHAR(100),\n  isbn VARCHAR(20),\n  -- Campos específicos para electrónicos\n  manufacturer VARCHAR(100),\n  warranty_months INTEGER\n);"
+        }
+      ],
+      "relatedInstructions": ["db_rel_001", "db_rel_002"]
+    },
+    {
+      "id": "db_mod_008",
+      "title": {
+        "es": "Modelado para bases de datos NoSQL",
+        "en": "NoSQL database modeling"
+      },
+      "description": {
+        "es": "Técnicas específicas para modelar datos en sistemas de bases de datos NoSQL",
+        "en": "Specific techniques for modeling data in NoSQL database systems"
+      },
+      "text": {
+        "es": "Implementa técnicas específicas para modelar datos en sistemas NoSQL, reconociendo las diferencias fundamentales con el modelado relacional. Diseña modelos orientados a consultas analizando los patrones de acceso a datos típicos en lugar de enfocarte en normalización. Para bases de datos documentales, considera embeber datos relacionados que se acceden juntos, usando desnormalización estratégica. Para bases de datos clave-valor, diseña claves compuestas que soporten los patrones de acceso previstos. En bases de datos columnares, organiza familias de columnas según patrones de acceso. Para bases de datos de grafos, identifica nodos, relaciones y propiedades que reflejen naturalmente la estructura conectada del dominio. Adapta el modelo a las fortalezas específicas del tipo de base de datos NoSQL elegido.",
+        "en": "Implement specific techniques for modeling data in NoSQL systems, recognizing the fundamental differences from relational modeling. Design query-oriented models by analyzing typical data access patterns rather than focusing on normalization. For document databases, consider embedding related data that is accessed together, using strategic denormalization. For key-value databases, design composite keys that support anticipated access patterns. In columnar databases, organize column families according to access patterns. For graph databases, identify nodes, relationships, and properties that naturally reflect the connected structure of the domain. Adapt the model to the specific strengths of the chosen NoSQL database type."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["nosql", "design", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["nosql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Modelando datos de un blog en MongoDB",
+            "en": "Modeling blog data in MongoDB"
+          },
+          "code": "// Documento con comentarios embebidos (optimizado para lectura de posts con comentarios)\n{\n  \"_id\": \"post123\",\n  \"title\": \"Introducción a NoSQL\",\n  \"content\": \"NoSQL ofrece flexibilidad...\",\n  \"author\": { \"id\": \"user456\", \"name\": \"Juan Pérez\" },\n  \"tags\": [\"nosql\", \"databases\", \"mongodb\"],\n  \"comments\": [\n    { \"user\": \"user789\", \"text\": \"Gran artículo!\" },\n    { \"user\": \"user101\", \"text\": \"Muy informativo\" }\n  ]\n}"
+        }
+      ],
+      "relatedInstructions": ["db_nosql_002", "db_nosql_010"]
+    },
+    {
+      "id": "db_mod_009",
+      "title": {
+        "es": "Modelado para sistemas híbridos",
+        "en": "Hybrid system modeling"
+      },
+      "description": {
+        "es": "Técnicas para diseñar modelos de datos que aprovechan múltiples tipos de bases de datos",
+        "en": "Techniques for designing data models that leverage multiple database types"
+      },
+      "text": {
+        "es": "Diseña arquitecturas de datos híbridas que combinen estratégicamente diferentes tipos de bases de datos para maximizar beneficios y mitigar limitaciones individuales. Identifica los casos de uso específicos que se beneficiarían de cada tipo de base de datos: sistemas relacionales para transacciones y datos estructurados con relaciones complejas, bases de datos de documentos para datos semi-estructurados con esquemas variables, bases de datos clave-valor para alta velocidad y escalabilidad, bases de datos de grafos para datos altamente conectados y bases de datos columnares para análisis de grandes volúmenes. Crea modelos coherentes que manejen la sincronización entre sistemas, establece estrategias para mantener la consistencia eventual entre bases de datos y diseña servicios intermedios que abstraigan la complejidad para las aplicaciones cliente.",
+        "en": "Design hybrid data architectures that strategically combine different database types to maximize benefits and mitigate individual limitations. Identify specific use cases that would benefit from each database type: relational systems for transactions and structured data with complex relationships, document databases for semi-structured data with variable schemas, key-value databases for high speed and scalability, graph databases for highly connected data, and columnar databases for large-volume analytics. Create coherent models that handle synchronization between systems, establish strategies for maintaining eventual consistency across databases, and design middleware services that abstract complexity for client applications."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["architecture", "polyglot_persistence", "advanced"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Diseñando una arquitectura híbrida para un sistema de comercio electrónico",
+            "en": "Designing a hybrid architecture for an e-commerce system"
+          },
+          "code": "Arquitectura híbrida: Productos/Catálogo en MongoDB (esquema flexible, alta disponibilidad) | Transacciones/Pedidos en PostgreSQL (ACID, integridad) | Sesiones/Carritos en Redis (velocidad, caducidad) | Recomendaciones/Relaciones en Neo4j (navegación de grafos) | Sincronización vía mensajes en Kafka"
+        }
+      ],
+      "relatedInstructions": ["db_mod_007", "db_mod_008"]
+    },
+    {
+      "id": "db_mod_010",
+      "title": {
+        "es": "Modelado orientado a eventos",
+        "en": "Event-oriented modeling"
+      },
+      "description": {
+        "es": "Diseñar modelos de datos para sistemas basados en eventos y flujos de eventos",
+        "en": "Design data models for event-based systems and event streams"
+      },
+      "text": {
+        "es": "Diseña modelos de datos especializados para sistemas basados en eventos, capturando el historial y estado del sistema como una secuencia de eventos inmutables. Implementa Event Sourcing almacenando cambios de estado como secuencias de eventos en lugar de actualizar el estado directamente, permitiendo recrear el estado en cualquier punto del tiempo. Diseña esquemas de eventos claros que capturen el tipo de evento, timestamp, datos relevantes y metadatos. Considera implementar Command Query Responsibility Segregation (CQRS) para separar modelos de escritura y lectura, optimizando cada uno para su propósito. Planifica la gestión del esquema de eventos para permitir evolución sin romper compatibilidad con eventos históricos. Diseña proyecciones y vistas materializadas que transformen eventos en modelos optimizados para consultas específicas.",
+        "en": "Design specialized data models for event-based systems, capturing system history and state as a sequence of immutable events. Implement Event Sourcing by storing state changes as sequences of events rather than updating state directly, allowing recreation of state at any point in time. Design clear event schemas that capture event type, timestamp, relevant data, and metadata. Consider implementing Command Query Responsibility Segregation (CQRS) to separate write and read models, optimizing each for its purpose. Plan for event schema management to allow evolution without breaking compatibility with historical events. Design projections and materialized views that transform events into models optimized for specific queries."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["architecture", "event_sourcing", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando Event Sourcing para un sistema bancario",
+            "en": "Implementing Event Sourcing for a banking system"
+          },
+          "code": "// Registro de eventos bancarios\ntable AccountEvents {\n  event_id: uuid PRIMARY KEY,\n  account_id: uuid INDEX,\n  event_type: enum(ACCOUNT_CREATED, DEPOSIT, WITHDRAWAL, TRANSFER),\n  timestamp: timestamp,\n  data: json, // Datos específicos del evento\n  metadata: json // Info adicional: usuario, dispositivo, etc.\n}\n\n// Vista materializada del saldo actual\ntable AccountBalances {\n  account_id: uuid PRIMARY KEY,\n  balance: decimal,\n  last_updated: timestamp\n}"
+        }
+      ],
+      "relatedInstructions": ["db_mod_006", "be_arch_005"]
+    }
+  ]
+}
