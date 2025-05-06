@@ -1,0 +1,199 @@
+{
+  "instructions": [
+    {
+      "id": "db_qry_011",
+      "title": {
+        "es": "Optimización de consultas dinámicas",
+        "en": "Dynamic query optimization"
+      },
+      "description": {
+        "es": "Técnicas para optimizar consultas generadas dinámicamente",
+        "en": "Techniques for optimizing dynamically generated queries"
+      },
+      "text": {
+        "es": "Implementa técnicas específicas para optimizar consultas SQL generadas dinámicamente. Utiliza consultas parametrizadas en lugar de construir SQL dinámico mediante concatenación de strings. Considera el uso de constructores de consultas que generen SQL optimizado basado en condiciones dinámicas. Evita agregar cláusulas condicionales innecesarias (como '1=1') que puedan dificultar la optimización del motor. Para aplicaciones con muchas variantes de consulta, considera usar estrategias de caché de plan de consulta. Siempre valida y sanitiza las entradas para evitar problemas de seguridad y rendimiento en consultas dinámicas.",
+        "en": "Implement specific techniques to optimize dynamically generated SQL queries. Use parameterized queries instead of building dynamic SQL through string concatenation. Consider using query builders that generate optimized SQL based on dynamic conditions. Avoid adding unnecessary conditional clauses (like '1=1') that may hinder engine optimization. For applications with many query variants, consider using query plan caching strategies. Always validate and sanitize inputs to avoid security and performance issues in dynamic queries."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "security", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Generando consultas dinámicas de manera eficiente",
+            "en": "Generating dynamic queries efficiently"
+          },
+          "code": "// Enfoque ineficiente y vulnerable\nlet query = 'SELECT * FROM products WHERE 1=1';\nif (category) query += ` AND category = '${category}'`;\nif (minPrice) query += ` AND price >= ${minPrice}`;\n\n// Enfoque eficiente y seguro\nlet params = [];\nlet conditions = [];\nlet query = 'SELECT * FROM products';\n\nif (category) {\n  conditions.push('category = ?');\n  params.push(category);\n}\n\nif (minPrice) {\n  conditions.push('price >= ?');\n  params.push(minPrice);\n}\n\nif (conditions.length > 0) {\n  query += ' WHERE ' + conditions.join(' AND ');\n}\n\ndb.execute(query, params);"
+        }
+      ],
+      "relatedInstructions": ["db_qry_007", "db_qry_012"]
+    },
+    {
+      "id": "db_qry_012",
+      "title": {
+        "es": "Optimización de UNION y operaciones de conjuntos",
+        "en": "UNION and set operation optimization"
+      },
+      "description": {
+        "es": "Optimizar operaciones de conjunto como UNION, INTERSECT y EXCEPT",
+        "en": "Optimize set operations such as UNION, INTERSECT, and EXCEPT"
+      },
+      "text": {
+        "es": "Optimiza operaciones de conjunto como UNION, INTERSECT y EXCEPT para mejorar el rendimiento de consultas que combinan múltiples conjuntos de resultados. Usa UNION ALL en lugar de UNION cuando no necesites eliminar duplicados, ya que evita la costosa operación de ordenación/agrupación para eliminar duplicados. Asegúrate de que las subconsultas participantes estén optimizadas individualmente y utilicen los índices apropiados. Considera aplicar filtros a las subconsultas antes de las operaciones de conjunto para reducir el tamaño de los conjuntos intermedios. Para operaciones complejas con múltiples conjuntos, evalúa la posibilidad de reescribir usando JOINs cuando sea posible.",
+        "en": "Optimize set operations such as UNION, INTERSECT, and EXCEPT to improve the performance of queries that combine multiple result sets. Use UNION ALL instead of UNION when you don't need to eliminate duplicates, as it avoids the costly sorting/grouping operation to remove duplicates. Ensure that participating subqueries are individually optimized and use appropriate indexes. Consider applying filters to subqueries before set operations to reduce intermediate result set sizes. For complex operations with multiple sets, evaluate the possibility of rewriting using JOINs when possible."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "query_design", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Performance"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Optimizando consultas con operaciones de conjunto",
+            "en": "Optimizing queries with set operations"
+          },
+          "code": "-- Menos eficiente (elimina duplicados innecesariamente)\nSELECT id, name FROM current_customers\nUNION\nSELECT id, name FROM new_customers;\n\n-- Más eficiente (evita el costo de eliminar duplicados)\nSELECT id, name FROM current_customers\nUNION ALL\nSELECT id, name FROM new_customers;"
+        }
+      ],
+      "relatedInstructions": ["db_qry_003", "db_qry_013"]
+    },
+    {
+      "id": "db_qry_013",
+      "title": {
+        "es": "Optimización basada en estadísticas",
+        "en": "Statistics-based optimization"
+      },
+      "description": {
+        "es": "Utilizar y mantener estadísticas actualizadas para optimizar consultas",
+        "en": "Use and maintain up-to-date statistics for query optimization"
+      },
+      "text": {
+        "es": "Asegúrate de que el motor de base de datos tenga estadísticas precisas y actualizadas sobre tus datos para generar planes de ejecución óptimos. Las estadísticas permiten al optimizador estimar la selectividad de los predicados y elegir algoritmos eficientes para las operaciones. Actualiza regularmente las estadísticas después de cambios significativos en los datos, especialmente en tablas grandes o con distribuciones de datos altamente sesgadas. Para bases de datos con cargas de trabajo variables, considera el uso de estadísticas extendidas o histogramas en columnas con distribuciones no uniformes. Monitorea el rendimiento de consultas después de actualizaciones de estadísticas para detectar posibles regresiones.",
+        "en": "Ensure the database engine has accurate and up-to-date statistics about your data to generate optimal execution plans. Statistics allow the optimizer to estimate predicate selectivity and choose efficient algorithms for operations. Regularly update statistics after significant data changes, especially on large tables or those with highly skewed data distributions. For databases with varying workloads, consider using extended statistics or histograms on columns with non-uniform distributions. Monitor query performance after statistics updates to detect potential regressions."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "maintenance", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Manteniendo estadísticas actualizadas en PostgreSQL",
+            "en": "Maintaining up-to-date statistics in PostgreSQL"
+          },
+          "code": "-- Actualizar estadísticas para una tabla\nANALYZE orders;\n\n-- Actualizar estadísticas para toda la base de datos\nANALYZE;\n\n-- Crear estadísticas extendidas para predicados de múltiples columnas\nCREATE STATISTICS order_stats ON customer_id, product_id FROM orders;"
+        }
+      ],
+      "relatedInstructions": ["db_qry_001", "db_qry_014"]
+    },
+    {
+      "id": "db_qry_014",
+      "title": {
+        "es": "Consultas con ordenamiento eficiente",
+        "en": "Efficient sort operations"
+      },
+      "description": {
+        "es": "Optimizar operaciones de ordenamiento para mejorar el rendimiento",
+        "en": "Optimize sort operations to improve performance"
+      },
+      "text": {
+        "es": "Optimiza operaciones de ordenamiento (ORDER BY) que pueden ser costosas, especialmente para grandes conjuntos de datos. Utiliza índices para evitar ordenamientos explícitos siempre que sea posible, creando índices en las columnas utilizadas frecuentemente en cláusulas ORDER BY. Limita la cantidad de datos a ordenar aplicando filtros y restricciones antes de la operación de ordenamiento. Considera usar índices que cubran todas las columnas en la consulta (índices cubrientes) para evitar acceso a tablas después del ordenamiento. Para consultas con LIMIT, algunos motores de bases de datos pueden optimizar para ordenar solo los N registros necesarios en lugar del conjunto completo.",
+        "en": "Optimize sort operations (ORDER BY) which can be costly, especially for large datasets. Use indexes to avoid explicit sorts whenever possible by creating indexes on columns frequently used in ORDER BY clauses. Limit the amount of data to be sorted by applying filters and constraints before the sort operation. Consider using indexes that cover all columns in the query (covering indexes) to avoid table access after sorting. For queries with LIMIT, some database engines can optimize to sort only the necessary N records instead of the entire set."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "query_design", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Performance"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Optimizando consultas con operaciones de ordenamiento",
+            "en": "Optimizing queries with sort operations"
+          },
+          "code": "-- Crear índice para operaciones de ordenamiento frecuentes\nCREATE INDEX idx_products_price_category ON products(category_id, price DESC);\n\n-- Consulta que utiliza el índice para evitar ordenamiento explícito\nSELECT id, name, price FROM products\nWHERE category_id = 5\nORDER BY price DESC\nLIMIT 10;"
+        }
+      ],
+      "relatedInstructions": ["db_qry_003", "db_qry_006"]
+    },
+    {
+      "id": "db_qry_015",
+      "title": {
+        "es": "Optimización para cargas de trabajo mixtas",
+        "en": "Mixed workload optimization"
+      },
+      "description": {
+        "es": "Balancear el rendimiento entre consultas analíticas y transaccionales",
+        "en": "Balance performance between analytical and transactional queries"
+      },
+      "text": {
+        "es": "Implementa estrategias específicas para optimizar bases de datos con cargas de trabajo mixtas que incluyen tanto consultas transaccionales (OLTP) como analíticas (OLAP). Considera la separación de cargas de trabajo mediante réplicas de solo lectura para consultas analíticas o mediante arquitecturas de procesamiento analítico/transaccional híbrido. Utiliza índices columnares para consultas analíticas y índices B-tree tradicionales para operaciones transaccionales. Programa consultas analíticas intensivas durante períodos de baja actividad transaccional cuando sea posible. Implementa mecanismos de priorización de consultas y control de recursos para evitar que consultas analíticas pesadas afecten el rendimiento transaccional.",
+        "en": "Implement specific strategies to optimize databases with mixed workloads that include both transactional (OLTP) and analytical (OLAP) queries. Consider workload separation through read-only replicas for analytical queries or hybrid analytical/transactional processing architectures. Use columnar indexes for analytical queries and traditional B-tree indexes for transactional operations. Schedule intensive analytical queries during periods of low transactional activity when possible. Implement query prioritization and resource control mechanisms to prevent heavy analytical queries from affecting transactional performance."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "query_optimization",
+      "tags": ["performance", "architecture", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Best Practices"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Configurando una arquitectura para cargas de trabajo mixtas",
+            "en": "Setting up an architecture for mixed workloads"
+          },
+          "code": "-- PostgreSQL: Establecer límites de recursos para consultas analíticas\nALTER ROLE analytics_user SET statement_timeout TO '300s';\nALTER ROLE analytics_user SET work_mem TO '1GB';\n\n-- PostgreSQL: Crear índice columnar para consultas analíticas\nCREATE INDEX idx_sales_columnar ON sales USING columnar_index(date, product_id, quantity, amount);"
+        }
+      ],
+      "relatedInstructions": ["db_qry_010", "db_qry_013"]
+    }
+  ]
+}
