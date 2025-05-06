@@ -1,0 +1,199 @@
+{
+  "instructions": [
+    {
+      "id": "db_mod_001",
+      "title": {
+        "es": "Diseño conceptual de datos",
+        "en": "Conceptual data design"
+      },
+      "description": {
+        "es": "Crear modelos conceptuales para representar entidades y relaciones del dominio",
+        "en": "Create conceptual models to represent domain entities and relationships"
+      },
+      "text": {
+        "es": "Comienza el diseño de bases de datos con un modelo conceptual que represente las entidades del dominio, sus atributos y las relaciones entre ellas, independientemente de la implementación técnica. Identifica las entidades principales del dominio y sus características esenciales. Define las relaciones entre entidades con sus cardinalidades (uno-a-uno, uno-a-muchos, muchos-a-muchos). Documenta las reglas de negocio y restricciones que afectan los datos. Este modelo debe ser fácilmente comprensible por las partes interesadas no técnicas y servir como base para el diseño lógico posterior.",
+        "en": "Begin database design with a conceptual model that represents domain entities, their attributes, and relationships between them, independent of technical implementation. Identify the main domain entities and their essential characteristics. Define relationships between entities with their cardinalities (one-to-one, one-to-many, many-to-many). Document business rules and constraints that affect the data. This model should be easily understandable by non-technical stakeholders and serve as the foundation for subsequent logical design."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["design", "planning", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Creando un modelo conceptual para un sistema de comercio electrónico",
+            "en": "Creating a conceptual model for an e-commerce system"
+          },
+          "code": "Entidades: Cliente, Producto, Pedido, Categoría | Relaciones: Cliente hace Pedidos (1:N), Pedido contiene Productos (N:M), Producto pertenece a Categoría (N:1)"
+        }
+      ],
+      "relatedInstructions": ["db_mod_002", "db_mod_003"]
+    },
+    {
+      "id": "db_mod_002",
+      "title": {
+        "es": "Diseño lógico de datos",
+        "en": "Logical data design"
+      },
+      "description": {
+        "es": "Transformar el modelo conceptual en un modelo lógico de base de datos",
+        "en": "Transform the conceptual model into a logical database model"
+      },
+      "text": {
+        "es": "Transforma el modelo conceptual en un modelo lógico de base de datos que defina la estructura de datos independientemente del sistema de gestión de base de datos específico. Mapea entidades a tablas o colecciones y relaciones a claves externas o referencias. Normaliza el diseño hasta un nivel apropiado para el caso de uso (generalmente 3NF para bases de datos relacionales). Define los tipos de datos lógicos para cada atributo. Identifica claves primarias y candidatas para cada entidad. Resuelve relaciones muchos-a-muchos mediante tablas de unión. Documenta las reglas de integridad referencial y las restricciones de dominio.",
+        "en": "Transform the conceptual model into a logical database model that defines the data structure independently of the specific database management system. Map entities to tables or collections and relationships to foreign keys or references. Normalize the design to an appropriate level for the use case (typically 3NF for relational databases). Define logical data types for each attribute. Identify primary and candidate keys for each entity. Resolve many-to-many relationships through junction tables. Document referential integrity rules and domain constraints."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["design", "planning", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Transformando un modelo conceptual en un modelo lógico",
+            "en": "Transforming a conceptual model into a logical model"
+          },
+          "code": "Tabla Cliente(id_cliente PK, nombre, email, dirección) | Tabla Producto(id_producto PK, nombre, precio, id_categoría FK) | Tabla Pedido(id_pedido PK, fecha, total, id_cliente FK) | Tabla Detalle_Pedido(id_pedido PK/FK, id_producto PK/FK, cantidad, precio_unitario)"
+        }
+      ],
+      "relatedInstructions": ["db_mod_001", "db_mod_004"]
+    },
+    {
+      "id": "db_mod_003",
+      "title": {
+        "es": "Diseño físico de datos",
+        "en": "Physical data design"
+      },
+      "description": {
+        "es": "Implementar el modelo lógico en un sistema de gestión de bases de datos específico",
+        "en": "Implement the logical model in a specific database management system"
+      },
+      "text": {
+        "es": "Implementa el modelo lógico en un sistema de gestión de bases de datos específico, considerando las características y limitaciones del sistema elegido. Define los tipos de datos físicos específicos del sistema (INTEGER, VARCHAR, etc.). Diseña índices para optimizar consultas frecuentes y cumplir requisitos de rendimiento. Implementa particionamiento si es necesario para conjuntos de datos grandes. Configura opciones de almacenamiento como tablespaces, compresión o configuraciones de caché. Evalúa y ajusta la configuración para equilibrar rendimiento, mantenibilidad y consumo de recursos. Documenta todas las decisiones de implementación física para referencia futura.",
+        "en": "Implement the logical model in a specific database management system, considering the characteristics and limitations of the chosen system. Define system-specific physical data types (INTEGER, VARCHAR, etc.). Design indexes to optimize frequent queries and meet performance requirements. Implement partitioning if necessary for large datasets. Configure storage options such as tablespaces, compression, or cache settings. Evaluate and adjust the configuration to balance performance, maintainability, and resource consumption. Document all physical implementation decisions for future reference."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["implementation", "performance", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql", "nosql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando un modelo físico en PostgreSQL",
+            "en": "Implementing a physical model in PostgreSQL"
+          },
+          "code": "CREATE TABLE clientes (id_cliente SERIAL PRIMARY KEY, nombre VARCHAR(100) NOT NULL, email VARCHAR(100) UNIQUE); CREATE INDEX idx_clientes_email ON clientes(email); CREATE TABLESPACE fast_reads LOCATION '/ssd/tablespaces'; ALTER TABLE pedidos SET TABLESPACE fast_reads;"
+        }
+      ],
+      "relatedInstructions": ["db_mod_002", "db_rel_003"]
+    },
+    {
+      "id": "db_mod_004",
+      "title": {
+        "es": "Normalización de datos",
+        "en": "Data normalization"
+      },
+      "description": {
+        "es": "Aplicar técnicas de normalización para reducir redundancia y preservar integridad",
+        "en": "Apply normalization techniques to reduce redundancy and preserve integrity"
+      },
+      "text": {
+        "es": "Aplica técnicas de normalización para reducir la redundancia de datos y preservar la integridad en bases de datos relacionales. Progresa a través de las formas normales: 1NF (eliminar grupos repetitivos, garantizar valores atómicos), 2NF (eliminar dependencias parciales), 3NF (eliminar dependencias transitivas), hasta BCNF (todas las dependencias determinadas por claves candidatas) según sea apropiado para la aplicación. Reconoce cuando es beneficioso desnormalizar estratégicamente para mejorar el rendimiento de lectura en ciertos escenarios. Documenta las decisiones de normalización y desnormalización con sus justificaciones. Evalúa el impacto en la complejidad de consultas, rendimiento y mantenimiento del modelo.",
+        "en": "Apply normalization techniques to reduce data redundancy and preserve integrity in relational databases. Progress through the normal forms: 1NF (removing repeating groups, ensuring atomic values), 2NF (removing partial dependencies), 3NF (removing transitive dependencies), to BCNF (all dependencies determined by candidate keys) as appropriate for the application. Recognize when it's beneficial to strategically denormalize to improve read performance in certain scenarios. Document normalization and denormalization decisions with their justifications. Evaluate the impact on query complexity, performance, and model maintenance."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["design", "data_integrity", "relational"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Aplicando normalización a una tabla de pedidos",
+            "en": "Applying normalization to an orders table"
+          },
+          "code": "Original (no normalizado): Pedidos(id, cliente_nombre, cliente_email, producto1, cantidad1, precio1, producto2, cantidad2, precio2) | 1NF: Pedidos(id, cliente_nombre, cliente_email) + DetallesPedido(pedido_id, producto, cantidad, precio) | 2NF/3NF: Clientes(id, nombre, email) + Pedidos(id, cliente_id) + DetallesPedido(pedido_id, producto_id, cantidad, precio)"
+        }
+      ],
+      "relatedInstructions": ["db_mod_002", "db_rel_001"]
+    },
+    {
+      "id": "db_mod_005",
+      "title": {
+        "es": "Desnormalización estratégica",
+        "en": "Strategic denormalization"
+      },
+      "description": {
+        "es": "Aplicar desnormalización selectiva para optimizar rendimiento de lectura",
+        "en": "Apply selective denormalization to optimize read performance"
+      },
+      "text": {
+        "es": "Aplica desnormalización estratégica y selectiva para optimizar el rendimiento de consultas de lectura en escenarios donde la consistencia inmediata es menos crítica que la velocidad de recuperación. Identifica patrones de acceso a datos frecuentes y considera duplicar datos para reducir operaciones costosas de JOIN. Implementa datos derivados o agregados precalculados para consultas analíticas comunes. Mantén tablas de resumen o vistas materializadas que se actualicen periódicamente. Implementa mecanismos para mantener la consistencia entre datos redundantes, como disparadores o procesos por lotes. Documenta claramente qué datos están desnormalizados y cómo se mantienen sincronizados para evitar confusiones futuras.",
+        "en": "Apply strategic and selective denormalization to optimize query performance in scenarios where immediate consistency is less critical than retrieval speed. Identify frequent data access patterns and consider duplicating data to reduce costly JOIN operations. Implement derived or aggregated pre-calculated data for common analytical queries. Maintain summary tables or materialized views that are periodically updated. Implement mechanisms to maintain consistency between redundant data, such as triggers or batch processes. Clearly document which data is denormalized and how it is kept in sync to avoid future confusion."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "data_modeling",
+      "tags": ["performance", "optimization", "advanced"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Design"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["sql", "nosql"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando desnormalización para mejorar rendimiento",
+            "en": "Implementing denormalization to improve performance"
+          },
+          "code": "-- Tabla normalizada\nSELECT o.order_id, c.name, c.email, p.title, p.price, oi.quantity\nFROM orders o\nJOIN customers c ON o.customer_id = c.id\nJOIN order_items oi ON o.order_id = oi.order_id\nJOIN products p ON oi.product_id = p.id;\n\n-- Con desnormalización estratégica\nCREATE TABLE order_summary (\n  order_id INT,\n  customer_name VARCHAR(100),\n  customer_email VARCHAR(100),\n  product_title VARCHAR(200),\n  product_price DECIMAL(10,2),\n  quantity INT\n);"
+        }
+      ],
+      "relatedInstructions": ["db_mod_004", "db_qry_005"]
+    }
+  ]
+}
