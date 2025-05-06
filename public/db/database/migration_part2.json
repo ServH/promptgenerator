@@ -1,0 +1,199 @@
+{
+  "instructions": [
+    {
+      "id": "db_mig_006",
+      "title": {
+        "es": "Migración de versiones de base de datos",
+        "en": "Database version migration"
+      },
+      "description": {
+        "es": "Estrategias para actualizar a nuevas versiones del mismo sistema de base de datos",
+        "en": "Strategies for upgrading to new versions of the same database system"
+      },
+      "text": {
+        "es": "Implementa estrategias específicas para actualizar a nuevas versiones del mismo sistema de gestión de bases de datos, minimizando impacto y riesgos. Comienza con un análisis completo de cambios entre versiones, identificando características obsoletas, nuevas funcionalidades y cambios en comportamiento que podrían afectar tu aplicación. Establece un entorno de pruebas utilizando datos representativos para validar compatibilidad y rendimiento. Utiliza herramientas oficiales de migración proporcionadas por el proveedor de la base de datos cuando estén disponibles. Considera opciones como actualización in-situ, migración paralela o respaldo/restauración según el tamaño de la base de datos y tolerancia a tiempo de inactividad. Implementa un plan de rollback detallado en caso de problemas. Para bases de datos críticas, considera primero actualizar sistemas menos críticos para ganar experiencia.",
+        "en": "Implement specific strategies for upgrading to new versions of the same database management system, minimizing impact and risks. Begin with a comprehensive analysis of changes between versions, identifying deprecated features, new functionalities, and behavioral changes that could affect your application. Set up a test environment using representative data to validate compatibility and performance. Use official migration tools provided by the database vendor when available. Consider options such as in-place upgrade, parallel migration, or backup/restore based on database size and downtime tolerance. Implement a detailed rollback plan in case of issues. For critical databases, consider upgrading less critical systems first to gain experience."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "migration",
+      "tags": ["version_upgrade", "maintenance", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Migration"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Actualizando una base de datos MySQL de 5.7 a 8.0",
+            "en": "Upgrading a MySQL database from 5.7 to 8.0"
+          },
+          "code": "# Plan de actualización MySQL 5.7 a 8.0\n\n1. Análisis de incompatibilidades:\n   - Identificar uso de palabras reservadas nuevas en MySQL 8.0\n   - Revisar cambios en comportamiento de SQL_MODE\n   - Verificar tipos de datos obsoletos\n\n2. Preparación:\n   - Ejecutar MySQL Upgrade Checker: mysqlcheck --check-upgrade --all-databases\n   - Resolver problemas identificados\n   - Actualizar herramientas cliente a versiones compatibles\n\n3. Respaldo completo:\n   - Crear backup lógico: mysqldump --all-databases > full_backup.sql\n   - Verificar backup: mysqldbimport --dry-run full_backup.sql\n\n4. Actualización:\n   - Detener MySQL 5.7\n   - Instalar MySQL 8.0\n   - Ejecutar mysql_upgrade -u root -p\n\n5. Verificación post-migración:\n   - Comprobar logs por errores\n   - Ejecutar suite de pruebas de aplicación\n   - Validar rendimiento con pruebas de carga"
+        }
+      ],
+      "relatedInstructions": ["db_mig_001", "db_mig_004"]
+    },
+    {
+      "id": "db_mig_007",
+      "title": {
+        "es": "Herramientas de migración y control de versiones",
+        "en": "Migration tooling and version control"
+      },
+      "description": {
+        "es": "Usar herramientas y control de versiones para gestionar migraciones de bases de datos",
+        "en": "Using tools and version control to manage database migrations"
+      },
+      "text": {
+        "es": "Implementa herramientas especializadas y técnicas de control de versiones para gestionar migraciones de base de datos de forma segura y reproducible. Utiliza frameworks de migración como Flyway, Liquibase, Alembic o herramientas específicas del ORM para definir, rastrear y aplicar cambios de esquema. Mantén todos los scripts de migración en control de versiones junto al código de la aplicación, garantizando que cada versión de la aplicación sea compatible con el estado correspondiente de la base de datos. Diseña migraciones idempotentes que se puedan ejecutar repetidamente sin efectos secundarios. Implementa un registro de migraciones en la propia base de datos que rastree qué migraciones se han aplicado. Automatiza la aplicación de migraciones como parte del proceso de CI/CD, incluyendo pruebas de validación post-migración.",
+        "en": "Implement specialized tools and version control techniques to manage database migrations safely and reproducibly. Use migration frameworks such as Flyway, Liquibase, Alembic, or ORM-specific tools to define, track, and apply schema changes. Keep all migration scripts in version control alongside application code, ensuring each application version is compatible with the corresponding database state. Design idempotent migrations that can be run repeatedly without side effects. Implement a migration registry in the database itself that tracks which migrations have been applied. Automate migration application as part of the CI/CD process, including post-migration validation tests."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "migration",
+      "tags": ["tooling", "automation", "universal"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Migration"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Configurando Flyway para gestionar migraciones de base de datos",
+            "en": "Setting up Flyway to manage database migrations"
+          },
+          "code": "# Estructura de proyecto con Flyway\n\nsrc/\n  main/\n    resources/\n      db/\n        migration/\n          V1__Create_initial_schema.sql\n          V2__Add_user_table.sql\n          V2.1__Add_email_to_users.sql\n          V3__Create_orders_schema.sql\n\n# Configuración de Flyway (flyway.conf)\nflyway.url=jdbc:postgresql://localhost:5432/myapp\nflyway.user=dbuser\nflyway.password=dbpass\nflyway.locations=classpath:db/migration\nflyway.baselineOnMigrate=true\n\n# Integración con Maven (pom.xml)\n<plugin>\n  <groupId>org.flywaydb</groupId>\n  <artifactId>flyway-maven-plugin</artifactId>\n  <version>8.5.13</version>\n  <configuration>\n    <configFiles>\n      <configFile>src/main/resources/flyway.conf</configFile>\n    </configFiles>\n  </configuration>\n</plugin>"
+        }
+      ],
+      "relatedInstructions": ["db_mig_002", "devops_cd_005"]
+    },
+    {
+      "id": "db_mig_008",
+      "title": {
+        "es": "Migración y pruebas",
+        "en": "Migration and testing"
+      },
+      "description": {
+        "es": "Estrategias para probar exhaustivamente migraciones antes de implementarlas en producción",
+        "en": "Strategies for thoroughly testing migrations before deploying to production"
+      },
+      "text": {
+        "es": "Implementa estrategias de prueba exhaustivas para validar migraciones de base de datos antes de implementarlas en producción, minimizando el riesgo de problemas inesperados. Establece múltiples entornos de prueba (desarrollo, QA, pre-producción) que reflejen con precisión el entorno de producción en términos de configuración, volumen de datos y patrones de acceso. Verifica tanto la integridad de los datos (mantener todas las relaciones y restricciones) como la validez funcional (todas las consultas y operaciones funcionan como se espera). Ejecuta pruebas automatizadas de integración y rendimiento después de cada migración. Implementa validaciones de datos post-migración para verificar la integridad y consistencia comparando recuentos, sumas de verificación o muestras representativas. Simula escenarios de rollback para confirmar que los planes de reversión funcionan correctamente.",
+        "en": "Implement comprehensive testing strategies to validate database migrations before deploying to production, minimizing the risk of unexpected issues. Establish multiple testing environments (development, QA, pre-production) that accurately reflect the production environment in terms of configuration, data volume, and access patterns. Verify both data integrity (maintaining all relationships and constraints) and functional validity (all queries and operations work as expected). Run automated integration and performance tests after each migration. Implement post-migration data validations to verify integrity and consistency by comparing counts, checksums, or representative samples. Simulate rollback scenarios to confirm that reversion plans work correctly."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "migration",
+      "tags": ["testing", "quality_assurance", "universal"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Migration"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Implementando validaciones para migraciones",
+            "en": "Implementing validations for migrations"
+          },
+          "code": "# Suite de pruebas para validar migración\n\n1. Verificaciones de integridad estructural:\n   ```sql\n   -- Verificar que todas las tablas existen\n   SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';\n   \n   -- Verificar que todas las columnas existen con tipos correctos\n   SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_schema = 'public';\n   \n   -- Verificar índices\n   SELECT indexname, indexdef FROM pg_indexes WHERE schemaname = 'public';\n   ```\n\n2. Verificación de integridad de datos:\n   ```python\n   def validate_migration():\n       # Comprobar número total de registros\n       pre_count = db_pre.get_table_counts()\n       post_count = db_post.get_table_counts()\n       assert compare_counts(pre_count, post_count)\n       \n       # Comprobar integridad referencial\n       validate_foreign_keys()\n       \n       # Verificar datos de muestra en tablas críticas\n       critical_records = get_critical_sample_data()\n       for record in critical_records:\n           verify_record_consistency(record)\n   ```\n\n3. Pruebas de rendimiento:\n   ```bash\n   # Ejecutar benchmarks pre y post migración\n   pgbench -c 20 -j 4 -T 60 -r -f queries/typical_workload.sql mydb"
+        }
+      ],
+      "relatedInstructions": ["db_mig_001", "db_mig_009"]
+    },
+    {
+      "id": "db_mig_009",
+      "title": {
+        "es": "Migración de bases de datos geográficamente distribuidas",
+        "en": "Geographically distributed database migration"
+      },
+      "description": {
+        "es": "Estrategias para migrar sistemas de bases de datos distribuidos en múltiples regiones",
+        "en": "Strategies for migrating database systems distributed across multiple regions"
+      },
+      "text": {
+        "es": "Implementa estrategias específicas para migrar bases de datos geográficamente distribuidas, abordando desafíos como sincronización entre regiones, latencia variable y cumplimiento normativo regional. Diseña un plan que minimice el impacto en usuarios de diferentes regiones, considerando ventanas de mantenimiento que respeten zonas horarias globales. Utiliza técnicas de migración progresiva por región, manteniendo sistemas de origen y destino sincronizados durante la transición mediante replicación bidireccional o herramientas de sincronización de datos. Implementa verificaciones post-migración específicas por región y mantén capacidades de rollback regional. Asegúrate de que la migración cumpla con requisitos de localización de datos y regulaciones de privacidad específicas de cada región (como GDPR, CCPA, etc.), incluyendo consideraciones sobre transferencias de datos transfronterizas cuando sea aplicable.",
+        "en": "Implement specific strategies for migrating geographically distributed databases, addressing challenges such as cross-region synchronization, variable latency, and regional regulatory compliance. Design a plan that minimizes impact on users in different regions, considering maintenance windows that respect global time zones. Use progressive migration techniques by region, keeping source and destination systems synchronized during transition through bidirectional replication or data synchronization tools. Implement region-specific post-migration verifications and maintain regional rollback capabilities. Ensure the migration complies with data localization requirements and privacy regulations specific to each region (such as GDPR, CCPA, etc.), including considerations for cross-border data transfers when applicable."
+      },
+      "importance": "medium",
+      "category": "database",
+      "subcategory": "migration",
+      "tags": ["distributed_systems", "global_scale", "advanced"],
+      "source": {
+        "agentType": "devin",
+        "repository": "Devin AI/devin.txt",
+        "context": "Database Migration"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Migrando una base de datos multi-región a una nueva plataforma",
+            "en": "Migrating a multi-region database to a new platform"
+          },
+          "code": "# Plan para migración regional progresiva\n\n1. Preparación:\n   - Establecer replicación desde sistema origen al destino\n   - Verificar latencia de replicación inter-regional\n   - Confirmar cumplimiento normativo por región\n\n2. Secuencia de migración por regiones:\n   - Comenzar con región menos crítica (Asia-Pacífico)\n   - Programar en horario de bajo tráfico local (3-5 AM hora local)\n   - Mantener operación dual durante 72 horas\n   - Verificar métricas de rendimiento regional\n\n3. Fase de transición:\n   ```\n   Para cada región:\n     1. Redirigir tráfico de escritura al nuevo sistema\n     2. Verificar sincronización bidireccional\n     3. Monitorear errores específicos de región\n     4. Redirigir tráfico de lectura al nuevo sistema\n     5. Período de estabilización (24h)\n     6. Si exitoso: avanzar a siguiente región\n     7. Si fallido: rollback regional y reevaluar\n   ```\n\n4. Post-migración:\n   - Validación final multi-región\n   - Desactivación gradual del sistema original\n   - Documentar configuraciones específicas por región"
+        }
+      ],
+      "relatedInstructions": ["db_mig_004", "db_mig_010"]
+    },
+    {
+      "id": "db_mig_010",
+      "title": {
+        "es": "Migración con requisitos de cumplimiento normativo",
+        "en": "Compliance-aware migration"
+      },
+      "description": {
+        "es": "Estrategias para garantizar el cumplimiento normativo durante migraciones de datos",
+        "en": "Strategies for ensuring regulatory compliance during data migrations"
+      },
+      "text": {
+        "es": "Implementa estrategias específicas para garantizar el cumplimiento de requisitos regulatorios y legales durante migraciones de bases de datos, particularmente en industrias altamente reguladas como finanzas, salud o con datos personales sensibles. Realiza una evaluación de impacto regulatorio antes de la migración, identificando requisitos aplicables (GDPR, HIPAA, PCI-DSS, etc.). Implementa controles de seguridad adecuados durante todo el proceso, incluyendo cifrado de datos en tránsito y en reposo, control de acceso, y registro de auditoría detallado de todas las actividades de migración. Establece procesos para verificar que los datos sensibles se clasifiquen y traten adecuadamente en el sistema destino, manteniendo cualquier seudonimización o anonimización necesaria. Documenta exhaustivamente todos los pasos y controles para demostrar cumplimiento a auditores y reguladores.",
+        "en": "Implement specific strategies to ensure compliance with regulatory and legal requirements during database migrations, particularly in highly regulated industries such as finance, healthcare, or with sensitive personal data. Conduct a regulatory impact assessment before migration, identifying applicable requirements (GDPR, HIPAA, PCI-DSS, etc.). Implement appropriate security controls throughout the process, including encryption of data in transit and at rest, access control, and detailed audit logging of all migration activities. Establish processes to verify that sensitive data is appropriately classified and handled in the destination system, maintaining any necessary pseudonymization or anonymization. Thoroughly document all steps and controls to demonstrate compliance to auditors and regulators."
+      },
+      "importance": "high",
+      "category": "database",
+      "subcategory": "migration",
+      "tags": ["compliance", "security", "advanced"],
+      "source": {
+        "agentType": "v0",
+        "repository": "v0 Prompts and Tools/Prompt.txt",
+        "context": "Database Migration"
+      },
+      "compatibility": {
+        "frameworks": ["all"],
+        "languages": ["all"],
+        "environments": ["all"]
+      },
+      "examples": [
+        {
+          "context": {
+            "es": "Migrando datos de pacientes con cumplimiento HIPAA",
+            "en": "Migrating patient data with HIPAA compliance"
+          },
+          "code": "# Plan de migración con cumplimiento HIPAA\n\n1. Evaluación pre-migración:\n   - Inventario de datos PHI (Protected Health Information)\n   - Matriz de requisitos de cumplimiento HIPAA aplicables\n   - Evaluación de riesgos de seguridad documentada\n\n2. Controles de seguridad durante la migración:\n   ```\n   // Configuración de cifrado para datos en tránsito\n   migration_config = {\n     transport_encryption: \"TLS 1.3\",\n     key_strength: \"256-bit\",\n     certificate_validation: true,\n     secure_channel_only: true\n   }\n   \n   // Registro de auditoría detallado\n   audit_log_config = {\n     include: [\"user\", \"timestamp\", \"source_ip\", \"data_accessed\", \"action\"],\n     store_duration: \"6 years\", // Requisito de retención HIPAA\n     tamper_proof: true\n   }\n   ```\n\n3. Verificación post-migración:\n   - Validación de integridad de datos PHI\n   - Confirmación de controles de acceso correctos\n   - Comprobación de segmentación de datos según principio de mínimo privilegio\n\n4. Documentación para cumplimiento:\n   - Registro de Business Associate Agreements (BAA) actualizados\n   - Certificación de destrucción segura de datos temporales\n   - Informe de análisis de brechas para mitigación de riesgos identificados"
+        }
+      ],
+      "relatedInstructions": ["db_mig_001", "sec_data_002"]
+    }
+  ]
+}
